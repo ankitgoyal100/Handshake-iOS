@@ -633,6 +633,7 @@
 		79C050F119D07505001BB956 /* SocialAccountsSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialAccountsSection.m; sourceTree = "<group>"; };
 		79C050F319D08D7B001BB956 /* SocialAccountTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialAccountTableViewCell.h; sourceTree = "<group>"; };
 		79C050F419D08D7B001BB956 /* SocialAccountTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialAccountTableViewCell.m; sourceTree = "<group>"; };
+		79CCAD3F1ACB647A004EEA89 /* Handshake 1_1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Handshake 1_1.xcdatamodel"; sourceTree = "<group>"; };
 		79D46C5C19D22D4F00C52FEE /* NSDateFormatter+STTwitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateFormatter+STTwitter.h"; sourceTree = "<group>"; };
 		79D46C5D19D22D4F00C52FEE /* NSDateFormatter+STTwitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateFormatter+STTwitter.m"; sourceTree = "<group>"; };
 		79D46C5E19D22D4F00C52FEE /* NSError+STTwitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+STTwitter.h"; sourceTree = "<group>"; };
@@ -2023,9 +2024,10 @@
 		792801EC19C8B36B0075261D /* Handshake.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				79CCAD3F1ACB647A004EEA89 /* Handshake 1_1.xcdatamodel */,
 				792801ED19C8B36B0075261D /* Handshake.xcdatamodel */,
 			);
-			currentVersion = 792801ED19C8B36B0075261D /* Handshake.xcdatamodel */;
+			currentVersion = 79CCAD3F1ACB647A004EEA89 /* Handshake 1_1.xcdatamodel */;
 			path = Handshake.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
