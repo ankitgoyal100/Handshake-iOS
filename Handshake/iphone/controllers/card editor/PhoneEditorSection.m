@@ -132,6 +132,10 @@
     return YES;
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return NO;
+}
+
 - (void)cellWasSelectedAtRow:(int)row indexPath:(NSIndexPath *)indexPath {
     if (row == [self.card.phones count]) {
         [self.viewController.tableView deselectRowAtIndexPath:indexPath animated:YES];

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Handshake. All rights reserved.
 //
 
-#import "SectionBasedTableViewController.h"
+#import "ContactViewController.h"
 
-@interface NewContactViewController : SectionBasedTableViewController
+@interface NewContactViewController : ContactViewController
 
 @end

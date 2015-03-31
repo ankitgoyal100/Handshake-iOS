@@ -45,9 +45,16 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    self.card.name = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    CFStringTrimWhitespace((__bridge CFMutableStringRef)text);
+    
+    self.card.name = text;
     
     return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return NO;
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {

@@ -11,10 +11,9 @@
 #import <CoreData/CoreData.h>
 #import "HandshakeCoreDataStore.h"
 #import "SSKeychain.h"
+#import "HandshakeClient.h"
 
 @interface HandshakeSession()
-
-@property (nonatomic, strong) AFHTTPRequestOperationManager *manager;
 
 @property (nonatomic, strong) NSString *authToken;
 @property (nonatomic, strong) User *user;
@@ -24,18 +23,6 @@
 @end
 
 @implementation HandshakeSession
-
-- (AFHTTPRequestOperationManager *)manager {
-    if (!_manager) {
-        _manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:3000/"]];
-        _manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    }
-    return _manager;
-}
-
-+ (AFHTTPRequestOperationManager *)manager {
-    return [self session].manager;
-}
 
 + (HandshakeSession *)session {
     static HandshakeSession *session = nil;
@@ -67,7 +54,7 @@
         if (!session.authToken) return NO;
         
         // check if session is valid and update user
-        [session.manager GET:@"/account" parameters:@{ @"auth_token":session.authToken, @"user_email":session.user.email } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[HandshakeClient client] GET:@"/account" parameters:@{ @"auth_token":session.authToken, @"user_id":session.user.userId } success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [session.user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"user"]]];
             [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_RESTORED object:nil];
             [session.managedObjectContext performBlockAndWait:^{
@@ -89,7 +76,7 @@
     // check if session already exists
     if ([self session].authToken) [self destroySession];
     
-    [[self manager] POST:@"/tokens" parameters:@{ @"email":email, @"password":password } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[HandshakeClient client] POST:@"/tokens" parameters:@{ @"email":email, @"password":password } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         HandshakeSession *session = [self session];
         session.authToken = responseObject[@"auth_token"];
         
@@ -107,6 +94,7 @@
             [session.managedObjectContext save:&error];
         }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@", error);
         if ([[operation response] statusCode] == 401) {
             if (failedBlock) failedBlock(AUTHENTICATION_ERROR);
         } else if (failedBlock) failedBlock(NETWORK_ERROR);
@@ -122,7 +110,7 @@
 }
 
 + (NSDictionary *)credentials {
-    return @{ @"auth_token":[self authToken], @"user_email":[self user].email };
+    return @{ @"auth_token":[self authToken], @"user_id":[self user].userId };
 }
 
 + (void)destroySession {
@@ -147,8 +135,21 @@
 }
 
 + (void)invalidate {
-    [self destroySession];
-    [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_INVALID object:nil];
+    [[HandshakeClient client] GET:@"/account" parameters:[self credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // nothing wrong
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil];
+        if ([[operation response] statusCode] == 401 && [dictionary[@"error"] containsString:@"confirm"]) {
+            // confirmation error
+            NSString *email = [self user].email;
+            [[HandshakeClient client] POST:@"/confirmation" parameters:@{ @"user":@{ @"email":email } } success:nil failure:nil];
+            [self destroySession];
+            [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_INVALID object:@{ @"confirmation_error":@YES, @"email":email }];
+        } else {
+            [self destroySession];
+            [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_INVALID object:@{ @"confirmation_error":@NO }];
+        }
+    }];
 }
 
 @end

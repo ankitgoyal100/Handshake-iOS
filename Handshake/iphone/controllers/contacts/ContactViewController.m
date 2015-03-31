@@ -63,7 +63,8 @@
     
     [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
-    [self.navigationItem addRightBarButtonItem:self.saveButton];
+    self.navigationItem.rightBarButtonItem = self.saveButton;
+    //[self.navigationItem addRightBarButtonItem:self.saveButton];
     
     [self.sections addObject:[[ContactHeaderSection alloc] initWithContact:self.contact viewController:self]];
     
@@ -80,7 +81,10 @@
         
         [Contact sync];
         
-        [self.navigationController popViewControllerAnimated:YES];
+        if ([self.navigationController.viewControllers count] > 1)
+            [self.navigationController popViewControllerAnimated:YES];
+        else
+            [self dismissViewControllerAnimated:YES completion:nil];
     } viewController:self]];
     
     [self.sections addObject:[[Section alloc] init]];

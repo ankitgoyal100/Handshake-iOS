@@ -37,7 +37,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    self.friendButton.frame = CGRectMake(self.bounds.size.width - 10 - self.friendButton.frame.size.width, (self.bounds.size.height - self.friendButton.frame.size.height) / 2, self.friendButton.frame.size.width, self.friendButton.frame.size.height);
+    self.friendButton.frame = CGRectMake(self.bounds.size.width - 10 - self.friendButton.frame.size.width, 0, self.friendButton.frame.size.width, self.bounds.size.height);
     
     if (self.friendButton.hidden)
         self.nameLabel.frame = CGRectMake(50, 0, self.bounds.size.width - 60, 57);

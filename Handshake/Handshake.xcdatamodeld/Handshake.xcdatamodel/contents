@@ -17,6 +17,7 @@
         <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pictureData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="addresses" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Address" inverseName="card" inverseEntity="Address" syncable="YES"/>
@@ -71,7 +72,7 @@
     </entity>
     <elements>
         <element name="Address" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="Card" positionX="0" positionY="0" width="128" height="268"/>
+        <element name="Card" positionX="0" positionY="0" width="128" height="285"/>
         <element name="Contact" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Email" positionX="0" positionY="0" width="128" height="90"/>
         <element name="Phone" positionX="0" positionY="0" width="128" height="90"/>

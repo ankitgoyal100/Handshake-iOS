@@ -12,6 +12,8 @@
 #import "HandshakeCoreDataStore.h"
 #import "DateConverter.h"
 
+static BOOL syncing = NO;
+
 @implementation Contact
 
 @dynamic contactId;
@@ -26,8 +28,6 @@
 }
 
 + (void)syncWithCompletionBlock:(void (^)())completionBlock {
-    static BOOL syncing = NO;
-    
     if (!syncing) {
         syncing = YES;
         
@@ -39,9 +39,11 @@
             
             __block NSArray *results;
             
-            [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] performBlockAndWait:^{
+            __block NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+            
+            [objectContext performBlockAndWait:^{
                 NSError *error;
-                results = [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] executeFetchRequest:request error:&error];
+                results = [objectContext executeFetchRequest:request error:&error];
             }];
             
             if (!results) {
@@ -60,13 +62,16 @@
             [self syncContactsOnPage:1 fromDate:checkDate finishedBlock:^{
                 // sync current contacts
                 
+                // reload context
+                objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+                
                 __block NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
                 
                 request.predicate = [NSPredicate predicateWithFormat:@"syncStatus!=%@", [NSNumber numberWithInt:ContactSynced]];
                 
-                [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] performBlockAndWait:^{
+                [objectContext performBlockAndWait:^{
                     NSError *error;
-                    results = [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] executeFetchRequest:request error:&error];
+                    results = [objectContext executeFetchRequest:request error:&error];
                 }];
                 
                 if (!results) {
@@ -81,11 +86,11 @@
                
                 for (Contact *contact in results) {
                     if ([contact.syncStatus intValue] == ContactDeleted) {
-                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"DELETE" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/contacts/%d", [contact.contactId intValue]]] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
+                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"DELETE" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/contacts/%d", [contact.contactId intValue]]] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
                         operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-                        operation.responseSerializer = [AFJSONResponseSerializer serializer];
+                        operation.responseSerializer = [HandshakeClient client].responseSerializer;
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                            [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] deleteObject:contact];
+                            [objectContext deleteObject:contact];
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             // do nothing
                         }];
@@ -98,7 +103,9 @@
                 } completionBlock:^(NSArray *operations) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                         // save
-                        [[HandshakeCoreDataStore defaultStore] saveBackgroundContext];
+                        [objectContext performBlockAndWait:^{
+                            [objectContext save:nil];
+                        }];
                         [[HandshakeCoreDataStore defaultStore] saveMainContext];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
@@ -110,7 +117,7 @@
                         });
                     });
                 }];
-                [[NSOperationQueue mainQueue] addOperations:preparedOperations waitUntilFinished:NO];
+                [[[NSOperationQueue alloc] init] addOperations:preparedOperations waitUntilFinished:NO];
             }];
         });
     }
@@ -120,9 +127,11 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[HandshakeSession credentials]];
         params[@"page"] = [[NSNumber numberWithInt:page] stringValue];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/contacts"] absoluteString] parameters:params error:nil]];
+        if (date)
+            params[@"since_date"] = [DateConverter convertToString:date];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"contacts"] absoluteString] parameters:params error:nil]];
         operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-        operation.responseSerializer = [AFJSONResponseSerializer serializer];
+        operation.responseSerializer = [HandshakeClient client].responseSerializer;
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             // map objects to ids
             NSMutableDictionary *contacts = [[NSMutableDictionary alloc] init];
@@ -137,9 +146,11 @@
             
             __block NSArray *results;
             
-            [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] performBlockAndWait:^{
+            __block NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+            
+            [objectContext performBlockAndWait:^{
                 NSError *error;
-                results = [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] executeFetchRequest:request error:&error];
+                results = [objectContext executeFetchRequest:request error:&error];
             }];
             
             if (!results) {
@@ -154,7 +165,7 @@
                 
                 if ([contactDict[@"is_deleted"] boolValue]) {
                     // delete
-                    [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] deleteObject:contact];
+                    [objectContext deleteObject:contact];
                 } else {
                     // update if contact is newer
                     if ([[DateConverter convertToDate:contactDict[@"updated_at"]] timeIntervalSinceDate:contact.updatedAt] > 0) {
@@ -168,12 +179,18 @@
             for (NSNumber *contactId in [contacts allKeys]) {
                 if ([contacts[contactId][@"is_deleted"] boolValue]) continue;
                 
-                NSEntityDescription *entity = [NSEntityDescription entityForName:@"Contact" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext]];
-                Contact *contact = [[Contact alloc] initWithEntity:entity insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext]];
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"Contact" inManagedObjectContext:objectContext];
+                Contact *contact = [[Contact alloc] initWithEntity:entity insertIntoManagedObjectContext:objectContext];
                 
                 [contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:contacts[contactId]]];
                 contact.syncStatus = [NSNumber numberWithInt:ContactSynced];
             }
+            
+            // save context
+            [objectContext performBlockAndWait:^{
+                [objectContext save:nil];
+            }];
+            [[HandshakeCoreDataStore defaultStore] saveMainContext];
             
             // check if last page (< 200 contacts returned)
             if ([responseObject[@"contacts"] count] < 200) {
@@ -194,8 +211,12 @@
                 }
             });
         }];
-        [[NSOperationQueue mainQueue] addOperation:operation];
+        [[[NSOperationQueue alloc] init] addOperation:operation];
     });
+}
+
++ (BOOL)syncing {
+    return syncing;
 }
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {

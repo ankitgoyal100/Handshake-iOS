@@ -25,7 +25,7 @@
     self.shakeId = dictionary[@"id"];
     self.createdAt = [DateConverter convertToDate:dictionary[@"created_at"]];
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
-    self.time = [DateConverter convertUnixToDate:[dictionary[@"time"] longValue]];
+    self.time = [DateConverter convertUnixToDate:[dictionary[@"time"] longLongValue]];
     self.latitude = dictionary[@"latitude"];
     self.longitude = dictionary[@"longitude"];
     self.location = dictionary[@"location"];

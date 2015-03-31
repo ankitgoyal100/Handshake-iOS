@@ -11,7 +11,6 @@
 @interface HandshakeCoreDataStore()
 
 @property (strong, nonatomic) NSManagedObjectContext *mainManagedObjectContext;
-@property (strong, nonatomic) NSManagedObjectContext *backgroundManagedObjectContext;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
@@ -27,40 +26,6 @@
     });
     
     return sharedInstance;
-}
-
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(contextDidSaveBackgroundQueueContext:)
-                                                     name:NSManagedObjectContextDidSaveNotification
-                                                   object:[self backgroundManagedObjectContext]];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(contextDidSaveMainQueueContext:)
-                                                     name:NSManagedObjectContextDidSaveNotification
-                                                   object:[self mainManagedObjectContext]];
-    }
-    return self;
-}
-
-- (void)contextDidSaveBackgroundQueueContext:(NSNotification *)notification
-{
-    @synchronized(self) {
-        [self.mainManagedObjectContext performBlock:^{
-            [self.mainManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
-        }];
-    }
-}
-
-- (void)contextDidSaveMainQueueContext:(NSNotification *)notification
-{
-    @synchronized(self) {
-        [self.backgroundManagedObjectContext performBlock:^{
-            [self.backgroundManagedObjectContext mergeChangesFromContextDidSaveNotification:notification];
-        }];
-    }
 }
 
 + (NSDictionary *)removeNullsFromDictionary:(id)dictionary {
@@ -108,20 +73,17 @@
 }
 
 // Return the NSManagedObjectContext to be used in the background during sync
-- (NSManagedObjectContext *)backgroundManagedObjectContext {
-    if (_backgroundManagedObjectContext != nil) {
-        return _backgroundManagedObjectContext;
-    }
-    
+- (NSManagedObjectContext *)childObjectContext {
     NSManagedObjectContext *masterContext = [self mainManagedObjectContext];
     if (masterContext != nil) {
-        _backgroundManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_backgroundManagedObjectContext performBlockAndWait:^{
-            [_backgroundManagedObjectContext setParentContext:masterContext];
+        NSManagedObjectContext *backgroundManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [backgroundManagedObjectContext performBlockAndWait:^{
+            [backgroundManagedObjectContext setParentContext:masterContext];
         }];
+        return backgroundManagedObjectContext;
     }
     
-    return _backgroundManagedObjectContext;
+    return nil;
 }
 
 - (void)saveMainContext {
@@ -131,17 +93,6 @@
         if (!saved) {
             // do some real error handling
             NSLog(@"Could not save master context due to %@", error);
-        }
-    }];
-}
-
-- (void)saveBackgroundContext {
-    [self.backgroundManagedObjectContext performBlockAndWait:^{
-        NSError *error = nil;
-        BOOL saved = [self.backgroundManagedObjectContext save:&error];
-        if (!saved) {
-            // do some real error handling
-            NSLog(@"Could not save background context due to %@", error);
         }
     }];
 }

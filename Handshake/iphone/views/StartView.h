@@ -12,7 +12,7 @@
 
 @property (nonatomic) UIImageView *backgroundImage;
 
-@property (nonatomic) UIButton *signUpButton;
-@property (nonatomic) UIButton *logInButton;
+@property (nonatomic, strong) UIButton *signUpButton;
+@property (nonatomic, strong) UIButton *logInButton;
 
 @end

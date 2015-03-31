@@ -8,13 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^AccountLoadedBlock)(NSString *username, NSString *name);
+typedef void (^AccountErrorBlock)(NSError *error);
+
 @interface FacebookHelper : NSObject
 
-+ (void)loadFacebookAccountWithSuccessBlock:(void (^)(NSString *username, NSString *name))successBlock errorBlock:(void (^)(NSError *error))errorBlock;
++ (FacebookHelper *)sharedHelper;
 
-+ (void)nameForUsername:(NSString *)username successBlock:(void (^)(NSString *name))successBlock errorBlock:(void (^)(NSError *error))errorBlock;
+- (void)loginWithSuccessBlock:(AccountLoadedBlock)successBlock errorBlock:(AccountErrorBlock)errorBlock;
 
-+ (NSString *)username;
-+ (NSString *)name;
+- (void)loadFacebookAccountWithSuccessBlock:(AccountLoadedBlock)successBlock errorBlock:(AccountErrorBlock)errorBlock;
+
+- (void)nameForUsername:(NSString *)username successBlock:(void (^)(NSString *name))successBlock errorBlock:(void (^)(NSError *error))errorBlock;
+
+- (void)logout;
+
+@property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong, readonly) NSString *name;
 
 @end

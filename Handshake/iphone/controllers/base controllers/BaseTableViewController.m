@@ -47,6 +47,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
     self.navigationController.navigationBar.barTintColor = LOGO_COLOR;
     self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [UIColor whiteColor] };
     
@@ -288,6 +290,10 @@
     }
     
     [self.tableView endUpdates];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 @end

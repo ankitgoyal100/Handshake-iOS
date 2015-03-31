@@ -79,9 +79,17 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     Email *email = self.card.emails[[self.viewController indexPathForCell:(BaseTableViewCell *)textField.superview].row];
-    email.address = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    CFStringTrimWhitespace((__bridge CFMutableStringRef)text);
+    
+    email.address = text;
     
     return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return NO;
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {

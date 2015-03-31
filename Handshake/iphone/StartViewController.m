@@ -15,26 +15,36 @@
 
 @interface StartViewController ()
 
-@property (nonatomic) StartView *startView;
+@property (nonatomic, strong) StartView *startView;
 
 @end
 
 @implementation StartViewController
 
+- (StartView *)startView {
+    if (!_startView) {
+        _startView = [[StartView alloc] initWithFrame:self.view.bounds];
+    }
+    return _startView;
+}
+
+- (id)initWithLoading:(BOOL)loading {
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        _loading = loading;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.startView = [[StartView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:self.startView];
+    
+    self.loading = self.loading;
     
     [self.startView.signUpButton addTarget:self action:@selector(signUp) forControlEvents:UIControlEventTouchUpInside];
     [self.startView.logInButton addTarget:self action:@selector(logIn) forControlEvents:UIControlEventTouchUpInside];
-    
-    if ([HandshakeSession restoreSession]) {
-        MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
-        controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [self presentViewController:controller animated:YES completion:nil];
-    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -57,19 +67,20 @@
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    
+    if (loading) {
+        self.startView.signUpButton.hidden = YES;
+        self.startView.logInButton.hidden = YES;
+    } else {
+        self.startView.signUpButton.hidden = NO;
+        self.startView.logInButton.hidden = NO;
+    }
 }
-*/
 
 @end

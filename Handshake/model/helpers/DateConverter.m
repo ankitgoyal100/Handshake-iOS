@@ -15,7 +15,7 @@
     
     if (df == nil) {
         df = [[NSDateFormatter alloc] init];
-        [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+        [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
         //[df setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         //NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
         //[df setLocale:locale];
@@ -27,12 +27,16 @@
 + (NSDate *)convertToDate:(NSString *)time {
     if ([time isKindOfClass:[NSNull class]]) return nil;
     
-    time = [time substringToIndex:19];
+    //time = [time substringToIndex:19];
     return [[DateConverter dateFormatter] dateFromString:time];
 }
 
-+ (NSDate *)convertUnixToDate:(long)time {
-    return [NSDate dateWithTimeIntervalSince1970:((double)time / 1000)];
++ (NSDate *)convertUnixToDate:(long long)time {
+    return [NSDate dateWithTimeIntervalSince1970:((double)(time / 1000))];
+}
+
++ (NSString *)convertToString:(NSDate *)date {
+    return [[DateConverter dateFormatter] stringFromDate:date];
 }
 
 @end

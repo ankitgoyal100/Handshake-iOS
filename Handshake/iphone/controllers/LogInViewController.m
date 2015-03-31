@@ -12,10 +12,15 @@
 #import "UIBarButtonItem+DefaultBackButton.h"
 #import "MainViewController.h"
 #import "HandshakeSession.h"
+#import "ForgotPasswordViewController.h"
+#import "HandshakeClient.h"
+#import "BaseNavigationController.h"
 
 @interface LogInViewController() <UIAlertViewDelegate>
 
 @property (nonatomic) LogInView *logInView;
+
+@property (nonatomic) BOOL cancelled;
 
 @end
 
@@ -23,6 +28,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.cancelled = NO;
     
     self.logInView = [[LogInView alloc] initWithFrame:self.view.bounds];
     [self.view addSubview:self.logInView];
@@ -33,6 +40,8 @@
     [self.logInView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    [self.logInView.forgotButton addTarget:self action:@selector(forgotPassword) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -48,6 +57,7 @@
 }
 
 - (void)back {
+    self.cancelled = YES;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -60,27 +70,20 @@
         self.logInView.loading = YES;
         [self.logInView endEditing:YES];
         [HandshakeSession loginWithEmail:self.logInView.emailField.text password:self.logInView.passwordField.text successBlock:^{
+            if (self.cancelled) return;
+            
             MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
             controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
             [self presentViewController:controller animated:YES completion:nil];
         } failedBlock:^(HandshakeSessionError error) {
+            if (self.cancelled) return;
+            
             self.logInView.loading = NO;
             if (error == AUTHENTICATION_ERROR)
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Email or password was incorrect." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
             else
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not log you on at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         }];
-//        [[HandshakeClient client] authenticateWithEmail:self.logInView.emailField.text password:self.logInView.passwordField.text success:^{
-//            MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
-//            controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//            [self presentViewController:controller animated:YES completion:nil];
-//        } failure:^(HandshakeError error) {
-//            self.logInView.loading = NO;
-//            if (error == AUTHENTICATION_ERROR)
-//                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Email or password was incorrect." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-//            else
-//                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not log you on at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-//        }];
     }
     return NO;
 }
@@ -97,6 +100,16 @@
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     [self.logInView.emailField becomeFirstResponder];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
+- (void)forgotPassword {
+    BaseNavigationController *controller = [[BaseNavigationController alloc] initWithRootViewController:[[ForgotPasswordViewController alloc] initWithNibName:nil bundle:nil]];
+    controller.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 @end

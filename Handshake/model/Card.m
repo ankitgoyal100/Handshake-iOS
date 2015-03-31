@@ -18,6 +18,7 @@
 #import "HandshakeClient.h"
 #import "User.h"
 
+static BOOL syncing = NO;
 
 @implementation Card
 
@@ -36,31 +37,32 @@
 @dynamic socials;
 @dynamic user;
 @dynamic cardOrder;
+@dynamic pictureData;
 
 + (void)sync {
     [self syncWithSuccessBlock:nil];
 }
 
 + (void)syncWithSuccessBlock:(void (^)())successBlock {
-    static BOOL syncing = NO;
-    
     if (!syncing) {
         syncing = YES;
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             // retrieve all cards
-            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/cards"] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
+            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/cards"] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
             operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-            operation.responseSerializer = [AFJSONResponseSerializer serializer];
+            operation.responseSerializer = [HandshakeClient client].responseSerializer;
             [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
                 // get user
                 NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
                 
                 __block NSArray *results = nil;
                 
-                [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] performBlockAndWait:^{
+                __block NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+                
+                [objectContext performBlockAndWait:^{
                     NSError *error;
-                    results = [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] executeFetchRequest:request error:&error];
+                    results = [objectContext executeFetchRequest:request error:&error];
                 }];
                 
                 if (![results count]) {
@@ -101,7 +103,7 @@
                         
                         // delete card
                         [user removeCardsObject:card];
-                        [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] deleteObject:card];
+                        [objectContext deleteObject:card];
                     } else {
                         // update if card is newer
                         if ([[DateConverter convertToDate:cardDict[@"updated_at"]] timeIntervalSinceDate:card.updatedAt] > 0) {
@@ -117,8 +119,8 @@
                 for (NSNumber *cardId in [cards allKeys]) {
                     NSDictionary *cardDict = cards[cardId];
                     
-                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Card" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext]];
-                    Card *card = [[Card alloc] initWithEntity:entity insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext]];
+                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Card" inManagedObjectContext:objectContext];
+                    Card *card = [[Card alloc] initWithEntity:entity insertIntoManagedObjectContext:objectContext];
                     
                     [card updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:cardDict]];
                     card.syncStatus = [NSNumber numberWithInt:CardSynced];
@@ -133,9 +135,9 @@
                 
                 request.predicate = [NSPredicate predicateWithFormat:@"syncStatus!=%@ AND user!=nil", [NSNumber numberWithInt:CardSynced]];
                 
-                [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] performBlockAndWait:^{
+                [objectContext performBlockAndWait:^{
                     NSError *error;
-                    results = [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] executeFetchRequest:request error:&error];
+                    results = [objectContext executeFetchRequest:request error:&error];
                 }];
                 
                 if (!results) {
@@ -154,14 +156,28 @@
                     if ([card.syncStatus intValue] == CardCreated) {
                         NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[HandshakeSession credentials]];
                         [params addEntriesFromDictionary:[card dictionary]];
-                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/cards"] absoluteString] parameters:params error:nil]];
+                        AFHTTPRequestOperation *operation = nil;
+                        
+                        // check if card needs picture uploaded
+                        if (!card.picture && card.pictureData) {
+                            operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer multipartFormRequestWithMethod:@"POST" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/cards"] absoluteString] parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                [formData appendPartWithFileData:card.pictureData name:@"picture" fileName:@"picture.jpg" mimeType:@"image/jpg"];
+                            } error:nil]];
+                        } else {
+                            operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"POST" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/cards"] absoluteString] parameters:params error:nil]];
+                        }
+                    
                         operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-                        operation.responseSerializer = [AFJSONResponseSerializer serializer];
+                        operation.responseSerializer = [HandshakeClient client].responseSerializer;
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                            NSLog(@"\n\n\n\n\n\n%@", card);
+                            // save old picture data if uploaded
+                            NSData *pictureData = nil;
+                            if (!card.picture && card.pictureData) pictureData = card.pictureData;
+                            
                             [card updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"card"]]];
                             card.syncStatus = [NSNumber numberWithInt:CardSynced];
-                            NSLog(@"\n\n\n\n\n\n%@", card);
+                            
+                            if (pictureData) card.pictureData = pictureData;
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             // do nothing
                         }];
@@ -169,22 +185,38 @@
                     } else if ([card.syncStatus intValue] == CardUpdated) {
                         NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[HandshakeSession credentials]];
                         [params addEntriesFromDictionary:[card dictionary]];
-                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"PUT" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/cards/%d", [card.cardId intValue]]] absoluteString] parameters:params error:nil]];
+                        AFHTTPRequestOperation *operation = nil;
+                        
+                        // check if card needs picture uploaded
+                        if (!card.picture && card.pictureData) {
+                            operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer multipartFormRequestWithMethod:@"PUT" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/cards/%d", [card.cardId intValue]]] absoluteString] parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                [formData appendPartWithFileData:card.pictureData name:@"picture" fileName:@"picture.jpg" mimeType:@"image/jpg"];
+                            } error:nil]];
+                        } else {
+                            operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"PUT" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/cards/%d", [card.cardId intValue]]] absoluteString] parameters:params error:nil]];
+                        }
+                        
                         operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-                        operation.responseSerializer = [AFJSONResponseSerializer serializer];
+                        operation.responseSerializer = [HandshakeClient client].responseSerializer;
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                            // save old picture data if uploaded
+                            NSData *pictureData = nil;
+                            if (!card.picture && card.pictureData) pictureData = card.pictureData;
+                            
                             [card updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"card"]]];
                             card.syncStatus = [NSNumber numberWithInt:CardSynced];
+                            
+                            if (pictureData) card.pictureData = pictureData;
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             // do nothing
                         }];
                         [operations addObject:operation];
                     } else if ([card.syncStatus intValue] == CardDeleted) {
-                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[AFHTTPRequestSerializer serializer] requestWithMethod:@"DELETE" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/cards/%d", [card.cardId intValue]]] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
+                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"DELETE" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:[NSString stringWithFormat:@"/cards/%d", [card.cardId intValue]]] absoluteString] parameters:[HandshakeSession credentials] error:nil]];
                         operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-                        operation.responseSerializer = [AFJSONResponseSerializer serializer];
+                        operation.responseSerializer = [HandshakeClient client].responseSerializer;
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                            [[[HandshakeCoreDataStore defaultStore] backgroundManagedObjectContext] deleteObject:card];
+                            [objectContext deleteObject:card];
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             // do nothing
                         }];
@@ -197,7 +229,9 @@
                 } completionBlock:^(NSArray *operations) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                         // save
-                        [[HandshakeCoreDataStore defaultStore] saveBackgroundContext];
+                        [objectContext performBlockAndWait:^{
+                            [objectContext save:nil];
+                        }];
                         [[HandshakeCoreDataStore defaultStore] saveMainContext];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{
@@ -209,7 +243,7 @@
                         });
                     });
                 }];
-                [[NSOperationQueue mainQueue] addOperations:preparedOperations waitUntilFinished:NO];
+                [[[NSOperationQueue alloc] init] addOperations:preparedOperations waitUntilFinished:NO];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     syncing = NO;
@@ -221,9 +255,14 @@
                     }
                 });
             }];
-            [[NSOperationQueue mainQueue] addOperation:operation];
+            [operation start];
+            //[[[NSOperationQueue alloc] init] addOperation:operation];
         });
     }
+}
+
++ (BOOL)syncing {
+    return syncing;
 }
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
@@ -233,6 +272,7 @@
     self.firstName = dictionary[@"first_name"];
     self.lastName = dictionary[@"last_name"];
     self.picture = dictionary[@"picture"];
+    self.pictureData = nil;
     self.name = dictionary[@"name"];
     
     for (Phone *phone in self.phones) [self.managedObjectContext deleteObject:phone];
@@ -296,6 +336,7 @@
     self.lastName = card.lastName;
     self.name = card.name;
     self.picture = card.picture;
+    self.pictureData = card.pictureData;
     
     for (Phone *phone in self.phones) [self.managedObjectContext deleteObject:phone];
     [self removePhones:self.phones];
@@ -418,7 +459,6 @@
     
     if (self.firstName) dictionary[@"first_name"] = self.firstName;
     if (self.lastName) dictionary[@"last_name"] = self.lastName;
-    if (self.picture) dictionary[@"picture"] = self.picture;
     if (self.name) dictionary[@"name"] = self.name;
     
     NSMutableArray *phones = [[NSMutableArray alloc] init];

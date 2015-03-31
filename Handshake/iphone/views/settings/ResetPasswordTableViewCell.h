@@ -10,4 +10,6 @@
 
 @interface ResetPasswordTableViewCell : BaseTableViewCell
 
+@property (nonatomic) BOOL loading;
+
 @end

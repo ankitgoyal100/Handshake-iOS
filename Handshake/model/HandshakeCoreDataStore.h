@@ -16,9 +16,8 @@
 - (NSURL *)applicationDocumentsDirectory;
 
 - (NSManagedObjectContext *)mainManagedObjectContext;
-- (NSManagedObjectContext *)backgroundManagedObjectContext;
+- (NSManagedObjectContext *)childObjectContext;
 - (void)saveMainContext;
-- (void)saveBackgroundContext;
 - (NSManagedObjectModel *)managedObjectModel;
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 

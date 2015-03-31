@@ -53,26 +53,25 @@
 
 - (void)cellWasSelectedAtRow:(int)row indexPath:(NSIndexPath *)indexPath {
     if (FBSession.activeSession.state != FBSessionStateOpen) {
-        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"] allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
-            if (!error) {
-                [self loadFacebook];
-            } else {
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not add Facebook account. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            }
+        [[FacebookHelper sharedHelper] loginWithSuccessBlock:^(NSString *username, NSString *name) {
+            self.addFacebookCell.loading = NO;
+            self.addFacebookCell.name = name;
+        } errorBlock:^(NSError *error) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not add Facebook account. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         }];
     } else if (!self.addFacebookCell.loading) {
         Social *social = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-        social.username = [FacebookHelper username];
+        social.username = [[FacebookHelper sharedHelper] username];
         social.network = @"facebook";
         [self.card addSocialsObject:social];
-        self.successBlock();
+        if (self.successBlock) self.successBlock();
     }
 }
 
 - (void)loadFacebook {
     if (FBSession.activeSession.state == FBSessionStateOpen) {
         self.addFacebookCell.loading = YES;
-        [FacebookHelper loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
+        [[FacebookHelper sharedHelper] loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
             self.addFacebookCell.loading = NO;
             self.addFacebookCell.name = name;
         } errorBlock:^(NSError *error) {

@@ -70,18 +70,21 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     if (textField.text.length == 0) return NO;
     
+    NSString *text = textField.text;
+    //CFStringTrimWhitespace((__bridge CFMutableStringRef)text);
+    
     Social *social = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-    social.username = textField.text;
+    social.username = text;
     social.network = @"twitter";
     [self.card addSocialsObject:social];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray *twitters = [defaults mutableArrayValueForKey:@"recent_twitters"];
     for (NSString *twitter in twitters) {
-        if ([twitter isEqualToString:textField.text])
+        if ([twitter isEqualToString:text])
             [twitters removeObject:twitter];
     }
-    [twitters insertObject:textField.text atIndex:0];
+    [twitters insertObject:text atIndex:0];
     if ([twitters count] > 3) [twitters removeLastObject];
     [defaults synchronize];
     

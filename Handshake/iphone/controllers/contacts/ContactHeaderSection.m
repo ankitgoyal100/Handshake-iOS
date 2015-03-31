@@ -8,6 +8,7 @@
 
 #import "ContactHeaderSection.h"
 #import "ContactHeaderTableViewCell.h"
+#import "ImageViewController.h"
 
 @interface ContactHeaderSection()
 
@@ -39,10 +40,15 @@
 }
 
 - (BaseTableViewCell *)cellForRow:(int)row indexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-    if ([self.contact.card.picture length])
-        self.headerCell.pictureView.imageURL = [NSURL URLWithString:self.contact.card.picture];
-    else
-        self.headerCell.pictureView.image = [UIImage imageNamed:@"default_picture.png"];
+    if (self.contact.card.pictureData) {
+        [self.headerCell.pictureButton setImage:[UIImage imageWithData:self.contact.card.pictureData] forState:UIControlStateNormal];
+        [self.headerCell.pictureButton addTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
+    } else if ([self.contact.card.picture length]) {
+        [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.contact.card.picture] target:self action:@selector(imageLoaded:)];
+    } else {
+        [self.headerCell.pictureButton setImage:[UIImage imageNamed:@"default_picture.png"] forState:UIControlStateNormal];
+        [self.headerCell.pictureButton removeTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
+    }
     self.headerCell.nameLabel.text = [self.contact.card formattedName];
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -55,6 +61,16 @@
         self.headerCell.locationLabel.text = [NSString stringWithFormat:@"%.5f, %.5f", [self.contact.shake.latitude doubleValue], [self.contact.shake.longitude doubleValue]];
     
     return self.headerCell;
+}
+
+- (void)imageLoaded:(UIImage *)image {
+    [self.headerCell.pictureButton setImage:image forState:UIControlStateNormal];
+    [self.headerCell.pictureButton addTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)viewPicture {
+    ImageViewController *controller = [[ImageViewController alloc] initWithImage:[self.headerCell.pictureButton imageForState:UIControlStateNormal]];
+    [self.viewController presentViewController:controller animated:YES completion:nil];
 }
 
 @end

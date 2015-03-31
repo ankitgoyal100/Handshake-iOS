@@ -37,9 +37,12 @@ static NSString * const CardSyncCompleted = @"CardSyncCompleted";
 @property (nonatomic, retain) NSOrderedSet *socials;
 @property (nonatomic, retain) User *user;
 @property (nonatomic, retain) NSNumber *cardOrder;
+@property (nonatomic, retain) NSData *pictureData;
 
 + (void)sync;
 + (void)syncWithSuccessBlock:(void (^)())successBlock;
+
++ (BOOL)syncing;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (void)updateFromCard:(Card *)card;

@@ -11,7 +11,7 @@
 
 @interface ContactHeaderTableViewCell : BaseTableViewCell
 
-@property (nonatomic) AsyncImageView *pictureView;
+@property (nonatomic) UIButton *pictureButton;
 @property (nonatomic) UILabel *nameLabel;
 @property (nonatomic) UILabel *timeLabel;
 @property (nonatomic) UILabel *locationLabel;

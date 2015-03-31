@@ -7,6 +7,7 @@
 //
 
 #import "BaseTableViewCell.h"
+#import "TwitterHelper.h"
 
 @interface TwitterTableViewCell : BaseTableViewCell
 
@@ -14,5 +15,8 @@
 
 @property (nonatomic) UIButton *followButton;
 @property (nonatomic) BOOL showsFollowButton;
+@property (nonatomic) TwitterStatus status;
+
+@property (nonatomic) BOOL loading;
 
 @end

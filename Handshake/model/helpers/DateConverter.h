@@ -11,6 +11,8 @@
 @interface DateConverter : NSObject
 
 + (NSDate *)convertToDate:(NSString *)time;
-+ (NSDate *)convertUnixToDate:(long)time;
++ (NSDate *)convertUnixToDate:(long long)time;
+
++ (NSString *)convertToString:(NSDate *)date;
 
 @end

@@ -10,4 +10,8 @@
 
 @interface StartViewController : UIViewController
 
+- (id)initWithLoading:(BOOL)loading;
+
+@property (nonatomic) BOOL loading;
+
 @end

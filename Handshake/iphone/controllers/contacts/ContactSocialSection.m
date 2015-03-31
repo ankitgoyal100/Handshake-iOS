@@ -11,6 +11,8 @@
 #import "TwitterTableViewCell.h"
 #import "FacebookHelper.h"
 #import "Social.h"
+#import "UIControl+Blocks.h"
+#import "TwitterHelper.h"
 
 @interface ContactSocialSection()
 
@@ -40,7 +42,9 @@
         
         if (!cell) cell = [[FacebookTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FacebookCell"];
         
-        [FacebookHelper nameForUsername:social.username successBlock:^(NSString *name) {
+        cell.showsFriendButton = NO;
+        
+        [[FacebookHelper sharedHelper] nameForUsername:social.username successBlock:^(NSString *name) {
             cell.nameLabel.text = name;
         } errorBlock:^(NSError *error) {
             cell.nameLabel.text = social.username;
@@ -55,6 +59,34 @@
         if (!cell) cell = [[TwitterTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"TwitterCell"];
         
         cell.username = social.username;
+        
+        __weak typeof(cell) weakCell = cell;
+        
+        [[TwitterHelper sharedHelper] check:social.username successBlock:^(TwitterStatus status) {
+            weakCell.status = status;
+        }];
+        
+        [cell.followButton addEventHandler:^(id sender) {
+            if (indexPath.row != [tableView indexPathForCell:weakCell].row || weakCell.loading) return;
+            
+            weakCell.loading = YES;
+            
+            if (weakCell.status == TwitterStatusNotFollowing) {
+                [[TwitterHelper sharedHelper] follow:social.username successBlock:^(int isProtected) {
+                    if (isProtected == 1)
+                        weakCell.status = TwitterStatusRequested;
+                    else
+                        weakCell.status = TwitterStatusFollowing;
+                    
+                    weakCell.loading = NO;
+                }];
+            } else if (weakCell.status == TwitterStatusFollowing || weakCell.status == TwitterStatusRequested) {
+                [[TwitterHelper sharedHelper] unfollow:social.username successBlock:^{
+                    weakCell.status = TwitterStatusNotFollowing;
+                    weakCell.loading = NO;
+                }];
+            }
+        } forControlEvents:UIControlEventTouchUpInside];
         
         return cell;
     }

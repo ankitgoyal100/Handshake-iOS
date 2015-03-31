@@ -40,13 +40,18 @@
         grayView.alpha = 0.7;
         [self addSubview:grayView];
         
-        UILabel *handshakeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.bounds.size.height / 2 - 60, frame.size.width, 60)];
-        handshakeLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:40];
-        handshakeLabel.text = @"Handshake";
-        handshakeLabel.textColor = [UIColor whiteColor];
-        handshakeLabel.backgroundColor = [UIColor clearColor];
-        handshakeLabel.textAlignment = NSTextAlignmentCenter;
-        [self addSubview:handshakeLabel];
+//        UILabel *handshakeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.bounds.size.height / 2 - 60, frame.size.width, 60)];
+//        handshakeLabel.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:40];
+//        handshakeLabel.text = @"Handshake";
+//        handshakeLabel.textColor = [UIColor whiteColor];
+//        handshakeLabel.backgroundColor = [UIColor clearColor];
+//        handshakeLabel.textAlignment = NSTextAlignmentCenter;
+//        [self addSubview:handshakeLabel];
+        
+        UIImageView *logoView = [[UIImageView alloc] initWithFrame:self.bounds];
+        logoView.contentMode = UIViewContentModeCenter;
+        logoView.image = [UIImage imageNamed:@"logo.png"];
+        [self addSubview:logoView];
         
         self.signUpButton = [[UIButton alloc] initWithFrame:CGRectMake(20, self.bounds.size.height - 140, self.bounds.size.width - 40, 55)];
         self.signUpButton.backgroundColor = LOGO_COLOR;

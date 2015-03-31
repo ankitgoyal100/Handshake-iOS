@@ -88,6 +88,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    CFStringTrimWhitespace((__bridge CFMutableStringRef)text);
     
     Address *address = self.card.addresses[[self.viewController indexPathForCell:(BaseTableViewCell *)textField.superview].row];
     
@@ -98,6 +99,10 @@
     if (textField.tag == 1) address.street1 = text;
     
     return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    return NO;
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {

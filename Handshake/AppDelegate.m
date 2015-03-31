@@ -12,8 +12,14 @@
 #import "FacebookHelper.h"
 #import "SSKeychain.h"
 #import "AFNetworkActivityIndicatorManager.h"
+#import "CardPictureCache.h"
+#import "StartViewController.h"
+#import "MainViewController.h"
+#import "HandshakeSession.h"
 
 @interface AppDelegate ()
+
+@property (nonatomic, strong) CardPictureCache *pictureCache;
 
 @end
 
@@ -30,13 +36,23 @@
     //[FBSession.activeSession closeAndClearTokenInformation];
     
     if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
-        //[FBSession open]
-        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"] allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
-            if (!error) {
-                [FacebookHelper loadFacebookAccountWithSuccessBlock:nil errorBlock:nil];
-            }
-        }];
+        [[FacebookHelper sharedHelper] loginWithSuccessBlock:nil errorBlock:nil];
     }
+    
+    self.pictureCache = [[CardPictureCache alloc] init];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    if ([HandshakeSession restoreSession]) {
+        MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
+        self.window.rootViewController = controller;
+    } else {
+        UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[StartViewController alloc] initWithLoading:NO]];
+        controller.navigationBarHidden = YES;
+        self.window.rootViewController = controller;
+    }
+
+    [self.window makeKeyAndVisible];
     
     return YES;
 }

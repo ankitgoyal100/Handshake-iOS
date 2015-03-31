@@ -10,7 +10,6 @@
 #import "NewEmailView.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "HandshakeAPI.h"
 #import "Handshake.h"
 
 @interface NewEmailViewController() <UITextFieldDelegate>

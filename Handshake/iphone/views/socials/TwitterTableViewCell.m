@@ -12,9 +12,19 @@
 
 @property (nonatomic) UILabel *nameLabel;
 
+@property (nonatomic) UIActivityIndicatorView *loadingView;
+
 @end
 
 @implementation TwitterTableViewCell
+
+- (UIActivityIndicatorView *)loadingView {
+    if (!_loadingView) {
+        _loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        [_loadingView stopAnimating];
+    }
+    return _loadingView;
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -32,10 +42,14 @@
         self.nameLabel.font = [UIFont systemFontOfSize:15];
         [self addSubview:self.nameLabel];
         
-        UIImage *followButtonImage = [UIImage imageNamed:@"follow_button.png"];
-        self.followButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, followButtonImage.size.width, followButtonImage.size.height)];
-        [self.followButton setBackgroundImage:followButtonImage forState:UIControlStateNormal];
+        self.followButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [self addSubview:self.followButton];
+        
+        [self addSubview:self.loadingView];
+        
+        self.showsFollowButton = YES;
+        
+        self.status = TwitterStatusNotFollowing;
     }
     return self;
 }
@@ -43,12 +57,14 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    self.followButton.frame = CGRectMake(self.bounds.size.width - 10 - self.followButton.frame.size.width, (self.bounds.size.height - self.followButton.frame.size.height) / 2, self.followButton.frame.size.width, self.followButton.frame.size.height);
+    self.followButton.frame = CGRectMake(self.bounds.size.width - 10 - self.followButton.frame.size.width, 0, self.followButton.frame.size.width, self.bounds.size.height);
     
     if (self.followButton.hidden)
         self.nameLabel.frame = CGRectMake(50, 0, self.bounds.size.width - 60, 57);
     else
         self.nameLabel.frame = CGRectMake(50, 0, self.bounds.size.width - self.followButton.frame.size.width - 20, self.bounds.size.height);
+    
+    self.loadingView.frame = CGRectMake(self.bounds.size.width - self.loadingView.bounds.size.width - 10, 0, self.loadingView.frame.size.width, self.bounds.size.height);
 }
 
 - (void)setShowsFollowButton:(BOOL)showsFollowButton {
@@ -70,6 +86,37 @@
 
 - (float)preferredHeight {
     return 57;
+}
+
+- (void)setStatus:(TwitterStatus)status {
+    _status = status;
+    
+    if (status == TwitterStatusNotFollowing) {
+        [self.followButton setImage:[UIImage imageNamed:@"add_social.png"] forState:UIControlStateNormal];
+    } else if (status == TwitterStatusFollowing) {
+        [self.followButton setImage:[UIImage imageNamed:@"following.png"] forState:UIControlStateNormal];
+    } else {
+        [self.followButton setImage:[UIImage imageNamed:@"requested.png"] forState:UIControlStateNormal];
+    }
+    
+    CGRect rect = self.followButton.frame;
+    rect.size.width = [self.followButton imageForState:UIControlStateNormal].size.width;
+    self.followButton.frame = rect;
+    
+    [self setNeedsDisplay];
+}
+
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    
+    if (loading) {
+        self.followButton.hidden = YES;
+        [self.loadingView startAnimating];
+    } else {
+        if (self.showsFollowButton)
+            self.followButton.hidden = NO;
+        [self.loadingView stopAnimating];
+    }
 }
 
 @end

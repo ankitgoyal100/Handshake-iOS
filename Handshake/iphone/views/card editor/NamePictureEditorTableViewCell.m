@@ -9,6 +9,12 @@
 #import "NamePictureEditorTableViewCell.h"
 #import "FXBlurView.h"
 
+@interface NamePictureEditorTableViewCell()
+
+@property (nonatomic) FXBlurView *editMask;
+
+@end
+
 @implementation NamePictureEditorTableViewCell
 
 - (UIButton *)pictureButton {
@@ -17,28 +23,30 @@
         _pictureButton.layer.cornerRadius = 40;
         _pictureButton.layer.masksToBounds = YES;
         
-        FXBlurView *blurView = [[FXBlurView alloc] initWithFrame:CGRectMake(0, 59, 80, 21)];
-        blurView.blurRadius = 4;
-        blurView.iterations = 3;
+        self.editMask = [[FXBlurView alloc] initWithFrame:CGRectMake(0, 59, 80, 21)];
+        self.editMask.blurRadius = 4;
+        self.editMask.iterations = 3;
         //blurView.dynamic = YES;
-        blurView.tintColor = [UIColor clearColor];
-        blurView.userInteractionEnabled = NO;
-        [_pictureButton addSubview:blurView];
+        self.editMask.tintColor = [UIColor clearColor];
+        self.editMask.userInteractionEnabled = NO;
+        self.editMask.dynamic = NO;
+        //self.editMask.updateInterval = 2;
+        [_pictureButton addSubview:self.editMask];
         
-        UIView *darkMask = [[UIView alloc] initWithFrame:blurView.frame];
+        UIView *darkMask = [[UIView alloc] initWithFrame:self.editMask.bounds];
         darkMask.backgroundColor = [UIColor blackColor];
         darkMask.alpha = 0.4;
         darkMask.userInteractionEnabled = NO;
-        [_pictureButton addSubview:darkMask];
+        [self.editMask addSubview:darkMask];
         
-        UILabel *editLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 58, 80, 21)];
+        UILabel *editLabel = [[UILabel alloc] initWithFrame:self.editMask.bounds];
         editLabel.backgroundColor = [UIColor clearColor];
         editLabel.textColor = [UIColor whiteColor];
         editLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:10];
         editLabel.textAlignment = NSTextAlignmentCenter;
         editLabel.text = @"EDIT";
         editLabel.userInteractionEnabled = NO;
-        [_pictureButton addSubview:editLabel];
+        [self.editMask addSubview:editLabel];
     }
     return _pictureButton;
 }
@@ -78,6 +86,8 @@
         [self addSubview:self.pictureButton];
         [self addSubview:self.firstNameField];
         [self addSubview:self.lastNameField];
+        
+        self.showsEditMask = YES;
     }
     return self;
 }
@@ -91,6 +101,21 @@
 
 - (float)preferredHeight {
     return 100;
+}
+
+- (void)setShowsEditMask:(BOOL)showsEditMask {
+    _showsEditMask = showsEditMask;
+    
+    if (showsEditMask) {
+        self.editMask.hidden = NO;
+    } else {
+        self.editMask.hidden = YES;
+    }
+}
+
+- (void)setPicture:(UIImage *)image {
+    [self.pictureButton setImage:image forState:UIControlStateNormal];
+    [self.editMask updateAsynchronously:YES completion:nil];
 }
 
 @end

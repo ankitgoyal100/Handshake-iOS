@@ -19,14 +19,24 @@
 #import "NewCardViewController.h"
 #import "HandshakeSession.h"
 #import "UIControl+Blocks.h"
+#import "CreateCardTutorialTableViewCell.h"
 
 @interface CardsViewController() <NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
+@property (nonatomic, strong) CreateCardTutorialTableViewCell *tutorialCell;
+
 @end
 
 @implementation CardsViewController
+
+- (CreateCardTutorialTableViewCell *)tutorialCell {
+    if (!_tutorialCell) {
+        _tutorialCell = [[CreateCardTutorialTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    }
+    return _tutorialCell;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -37,7 +47,7 @@
     newButton.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = newButton;
     
-    [Card sync];
+    [self updateEndCell];
     
     // fetch cards
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Card"];
@@ -59,12 +69,31 @@
     }];
 }
 
+- (void)updateEndCell {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Card"];
+    request.predicate = [NSPredicate predicateWithFormat:@"user!=nil AND syncStatus!=%@", [NSNumber numberWithInt:CardDeleted]];
+    
+    __block NSArray *results;
+    
+    [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
+        NSError *error = nil;
+        results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
+    }];
+    
+    if (results && [results count] > 0) {
+        if (self.endCell) self.endCell = nil;
+    } else {
+        if (!self.endCell) self.endCell = self.tutorialCell;
+    }
+}
+
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [self.tableView beginUpdates];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [self.tableView endUpdates];
+    [self updateEndCell];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
@@ -118,7 +147,9 @@
 - (void)configureCell:(CardTableViewCell *)cell row:(int)row section:(int)section indexPath:(NSIndexPath *)indexPath {
     Card *card = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section]];
     
-    if ([card.picture length])
+    if (card.pictureData)
+        cell.pictureView.image = [UIImage imageWithData:card.pictureData];
+    else if ([card.picture length])
         cell.pictureView.imageURL = [NSURL URLWithString:card.picture];
     else
         cell.pictureView.image = [UIImage imageNamed:@"default_picture.png"];

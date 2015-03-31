@@ -11,7 +11,7 @@
 
 @interface CardHeaderTableViewCell : BaseTableViewCell
 
-@property (nonatomic) AsyncImageView *pictureView;
+@property (nonatomic) UIButton *pictureButton;
 @property (nonatomic) UILabel *nameLabel;
 
 @end

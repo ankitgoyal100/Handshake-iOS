@@ -14,9 +14,11 @@
 #import "Email.h"
 #import "Address.h"
 
-@interface BasicInfoSection()
+@interface BasicInfoSection() <UIActionSheetDelegate>
 
 @property (nonatomic, strong) Card *card;
+
+@property (nonatomic, strong) Phone *currentPhone;
 
 @end
 
@@ -83,8 +85,8 @@
     int r = row;
     
     if (r < [self.card.phones count]) {
-        Phone *phone = self.card.phones[r];
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"telprompt://" stringByAppendingString:phone.number]]];
+        self.currentPhone = self.card.phones[r];
+        [[[UIActionSheet alloc] initWithTitle:self.currentPhone.number delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Call", @"Message", nil] showInView:self.viewController.view];
         return;
     }
     
@@ -99,7 +101,18 @@
     r -= [self.card.emails count];
     
     Address *address = self.card.addresses[r];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"http://maps.apple.com/?q=" stringByAppendingString:[[address formattedString] stringByReplacingOccurrencesOfString:@"\n" withString:@" "]]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"http://maps.apple.com/?q=" stringByAppendingString:[[[address formattedString] stringByReplacingOccurrencesOfString:@"\n" withString:@"%20"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"]]]];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *strippedNumber = [[self.currentPhone.number componentsSeparatedByCharactersInSet:
+                                 [[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
+                                componentsJoinedByString:@""];
+    if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Call"]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tel://" stringByAppendingString:strippedNumber]]];
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Message"]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"sms://" stringByAppendingString:strippedNumber]]];
+    }
 }
 
 @end

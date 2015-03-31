@@ -14,4 +14,8 @@
 @property (nonatomic) UITextField *firstNameField;
 @property (nonatomic) UITextField *lastNameField;
 
+@property (nonatomic) BOOL showsEditMask;
+
+- (void)setPicture:(UIImage *)image;
+
 @end

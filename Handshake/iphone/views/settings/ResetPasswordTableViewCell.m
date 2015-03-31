@@ -12,6 +12,8 @@
 
 @property (nonatomic) UILabel *resetPasswordLabel;
 
+@property (nonatomic) UIActivityIndicatorView *loadingView;
+
 @end
 
 @implementation ResetPasswordTableViewCell
@@ -28,12 +30,21 @@
     return _resetPasswordLabel;
 }
 
+- (UIActivityIndicatorView *)loadingView {
+    if (!_loadingView) {
+        _loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    }
+    return _loadingView;
+}
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
         
         [self addSubview:self.resetPasswordLabel];
+        
+        [self addSubview:self.loadingView];
     }
     return self;
 }
@@ -42,10 +53,24 @@
     [super layoutSubviews];
     
     self.resetPasswordLabel.frame = self.bounds;
+    
+    self.loadingView.frame = self.bounds;
 }
 
 - (float)preferredHeight {
     return 57;
+}
+
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    
+    if (loading) {
+        self.resetPasswordLabel.hidden = YES;
+        [self.loadingView startAnimating];
+    } else {
+        self.resetPasswordLabel.hidden = NO;
+        [self.loadingView stopAnimating];
+    }
 }
 
 @end

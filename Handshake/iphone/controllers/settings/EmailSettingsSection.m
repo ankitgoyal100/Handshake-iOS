@@ -69,20 +69,32 @@
     
     NSTimeInterval timeLeft = 172800 - (([[NSDate date] timeIntervalSince1970] - [user.confirmationSentAt timeIntervalSince1970]) / 1000.0);
     if (timeLeft < 60) {
-        self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft] stringValue] stringByAppendingString:@" SECONDS LEFT"];
+        if ((int)timeLeft == 1)
+            self.resendCell.timeLeftLabel.text = @"1 SECOND LEFT";
+        else
+            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft] stringValue] stringByAppendingString:@" SECONDS LEFT"];
     } else if (timeLeft < 3600) {
-        self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 60] stringValue] stringByAppendingString:@" MINUTES LEFT"];
+        if ((int)(timeLeft / 60) == 1)
+            self.resendCell.timeLeftLabel.text = @"1 MINUTE LEFT";
+        else
+            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 60] stringValue] stringByAppendingString:@" MINUTES LEFT"];
     } else if (timeLeft < 86400) {
-        self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 3600] stringValue] stringByAppendingString:@" HOURS LEFT"];
+        if ((int)(timeLeft / 86400) == 1)
+            self.resendCell.timeLeftLabel.text = @"1 HOUR LEFT";
+        else
+            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 3600] stringValue] stringByAppendingString:@" HOURS LEFT"];
     } else if (timeLeft < 2630000) {
-        self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 86400] stringValue] stringByAppendingString:@" DAYS LEFT"];
+        if ((int)(timeLeft / 2630000) == 1)
+            self.resendCell.timeLeftLabel.text = @"1 DAY LEFT";
+        else
+            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 86400] stringValue] stringByAppendingString:@" DAYS LEFT"];
     }
     
     return self.resendCell;
 }
 
 - (void)cellWasSelectedAtRow:(int)row indexPath:(NSIndexPath *)indexPath {
-    if (row == 1) {
+    if (row == 1 && !self.resendCell.loading) {
         self.resendCell.loading = YES;
         User *user = [HandshakeSession user];
         [[HandshakeClient client] POST:@"/confirmation" parameters:@{ @"user":@{ @"email":user.email } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -126,7 +138,7 @@
             } else {
                 [self newEmail:newEmail];
                 if ([[operation response] statusCode] == 422) {
-                    [[[UIAlertView alloc] initWithTitle:@"Error" message:[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][0] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][@"errors"][0] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                 } else
                     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not update email. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
             }

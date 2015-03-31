@@ -32,6 +32,8 @@ typedef enum {
 + (void)sync;
 + (void)syncWithCompletionBlock:(void (^)())completionBlock;
 
++ (BOOL)syncing;
+
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 
 @end

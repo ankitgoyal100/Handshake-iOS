@@ -10,8 +10,13 @@
 #import "SignUpView.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "HandshakeAPI.h"
 #import "MainViewController.h"
+#import "HandshakeClient.h"
+#import "HandshakeSession.h"
+#import "SocialSetupViewController.h"
+#import "TermsViewController.h"
+#import "Handshake.h"
+#import "BaseNavigationController.h"
 
 @interface SignUpViewController() <UIAlertViewDelegate>
 
@@ -31,9 +36,12 @@
     self.signUpView.passwordField.delegate = self;
     self.signUpView.passwordConfirmField.delegate = self;
     
+    self.signUpView.navigationItem.hidesBackButton = YES;
     [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    [self.signUpView.termsButton addTarget:self action:@selector(terms) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -68,16 +76,28 @@
             return NO;
         }
         
+        self.signUpView.navigationItem.leftBarButtonItems = @[];
+        
         self.signUpView.loading = YES;
-        [[HandshakeAPI client] signUpWithEmail:self.signUpView.emailField.text password:self.signUpView.passwordField.text success:^{
-            MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
-            controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-            [self presentViewController:controller animated:YES completion:nil];
-        } failure:^(HandshakeError error, NSArray *errors) {
+        [[HandshakeClient client] POST:@"/account" parameters:@{ @"email":self.signUpView.emailField.text, @"password":self.signUpView.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [HandshakeSession loginWithEmail:self.signUpView.emailField.text password:self.signUpView.passwordField.text successBlock:^{
+                UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[SocialSetupViewController alloc] initWithNibName:nil bundle:nil]];
+                controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+                [self presentViewController:controller animated:YES completion:nil];
+                
+                [[[UIAlertView alloc] initWithTitle:@"Confirmation Required" message:[NSString stringWithFormat:@"An email with a confirmation link was sent to %@.", [HandshakeSession user].email] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            } failedBlock:^(HandshakeSessionError error) {
+                [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+                self.signUpView.loading = NO;
+                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+            
             self.signUpView.loading = NO;
-            if (error == INPUT_ERROR)
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:[errors[0] stringByAppendingString:@"."] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            else
+            if ([[operation response] statusCode] == 422) {
+                [[[UIAlertView alloc] initWithTitle:@"Error" message:[[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][@"errors"][0] stringByAppendingString:@"."] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            } else
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         }];
     }
@@ -96,6 +116,18 @@
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     [self.signUpView.emailField becomeFirstResponder];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
+- (void)terms {
+    BaseNavigationController *controller = [[BaseNavigationController alloc] initWithRootViewController:[[TermsViewController alloc] initWithNibName:nil bundle:nil]];
+    controller.navigationBar.barTintColor = LOGO_COLOR;
+    controller.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName:[UIColor whiteColor] };
+    controller.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 @end

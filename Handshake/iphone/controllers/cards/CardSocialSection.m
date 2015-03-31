@@ -40,7 +40,7 @@
         
         if (!cell) cell = [[FacebookTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FacebookCell"];
         
-        [FacebookHelper nameForUsername:social.username successBlock:^(NSString *name) {
+        [[FacebookHelper sharedHelper] nameForUsername:social.username successBlock:^(NSString *name) {
             cell.nameLabel.text = name;
         } errorBlock:^(NSError *error) {
             cell.nameLabel.text = social.username;
