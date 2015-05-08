@@ -10,7 +10,7 @@
 #import "ResetPasswordTableViewCell.h"
 #import "HandshakeClient.h"
 #import "HandshakeSession.h"
-#import "User.h"
+#import "Account.h"
 
 @interface ResetPasswordSection()
 
@@ -39,8 +39,8 @@
     if (self.resetPasswordCell.loading) return;
     
     self.resetPasswordCell.loading = YES;
-    User *user = [HandshakeSession user];
-    [[HandshakeClient client] POST:@"/password" parameters:@{ @"user":@{ @"email":user.email } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    Account *account = [[HandshakeSession currentSession] account];
+    [[HandshakeClient client] POST:@"/password" parameters:@{ @"user":@{ @"email":account.email } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         self.resetPasswordCell.loading = NO;
         [[[UIAlertView alloc] initWithTitle:@"Reset Instructions Sent" message:@"You should receive an email shorty." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

@@ -67,7 +67,7 @@
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-
+    
     GKImageCropViewController *cropController = [[GKImageCropViewController alloc] init];
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
     cropController.preferredContentSize = picker.preferredContentSize;
@@ -161,6 +161,7 @@
     self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     self.imagePickerController.delegate = self;
     self.imagePickerController.allowsEditing = NO;
+    self.imagePickerController.navigationBar.tintColor = [UIColor blackColor];
     
     [self presentImagePickerController];
 }

@@ -147,30 +147,22 @@
 - (void)configureCell:(CardTableViewCell *)cell row:(int)row section:(int)section indexPath:(NSIndexPath *)indexPath {
     Card *card = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section]];
     
-    if (card.pictureData)
-        cell.pictureView.image = [UIImage imageWithData:card.pictureData];
-    else if ([card.picture length])
-        cell.pictureView.imageURL = [NSURL URLWithString:card.picture];
-    else
-        cell.pictureView.image = [UIImage imageNamed:@"default_picture.png"];
-    cell.nameLabel.text = [card formattedName];
-    cell.cardNameLabel.text = card.name;
-    
-    if ([card.cardOrder intValue] == 0) [cell.checkButton setImage:[UIImage imageNamed:@"checked.png"] forState:UIControlStateNormal];
-    else [cell.checkButton setImage:[UIImage imageNamed:@"unchecked.png"] forState:UIControlStateNormal];
+//    if (card.pictureData)
+//        cell.pictureView.image = [UIImage imageWithData:card.pictureData];
+//    else if ([card.picture length])
+//        cell.pictureView.imageURL = [NSURL URLWithString:card.picture];
+//    else
+//        cell.pictureView.image = [UIImage imageNamed:@"default_picture.png"];
+//    cell.nameLabel.text = [card formattedName];
+//    cell.cardNameLabel.text = card.name;
+//    
+//    if ([card.cardOrder intValue] == 0) [cell.checkButton setImage:[UIImage imageNamed:@"checked.png"] forState:UIControlStateNormal];
+//    else [cell.checkButton setImage:[UIImage imageNamed:@"unchecked.png"] forState:UIControlStateNormal];
     
     __weak typeof(cell) weakCell = cell;
     
     [cell.checkButton addEventHandler:^(id sender) {
-        User *user = [HandshakeSession user];
-        
-        // update card orders
-        for (Card *c in user.cards) {
-            if ([c.syncStatus intValue] == CardDeleted || [c.cardOrder intValue] >= [card.cardOrder intValue]) continue;
-            c.cardOrder = [NSNumber numberWithInt:[c.cardOrder intValue] + 1];
-        }
-        
-        card.cardOrder = [NSNumber numberWithInt:0];
+        //Account *account = [[HandshakeSession currentSession] account];
         
         [[HandshakeCoreDataStore defaultStore] saveMainContext];
         

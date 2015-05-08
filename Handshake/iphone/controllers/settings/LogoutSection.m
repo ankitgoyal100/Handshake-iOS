@@ -106,7 +106,7 @@
         // clear AsyncImageView cache
         [[AsyncImageLoader defaultCache] removeAllObjects];
         
-        [HandshakeSession logout];
+        [[HandshakeSession currentSession] logout];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.startController.loading = NO;

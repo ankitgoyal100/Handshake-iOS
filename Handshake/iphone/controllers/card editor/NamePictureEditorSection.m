@@ -35,21 +35,21 @@
     if (!_cell) {
         _cell = [[NamePictureEditorTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         
-        _cell.firstNameField.text = self.card.firstName;
-        _cell.firstNameField.delegate = self;
-        _cell.lastNameField.text = self.card.lastName;
-        _cell.lastNameField.delegate = self;
-        
-        [_cell.pictureButton addTarget:self action:@selector(updateImage) forControlEvents:UIControlEventTouchUpInside];
-        
-        if (self.card.pictureData)
-            [self.cell setPicture:[UIImage imageWithData:self.card.pictureData]];
-        else if (self.card.picture)
-            [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.card.picture] target:self action:@selector(imageLoaded:)];
-        else {
-            [self.cell setPicture:[UIImage imageNamed:@"add_picture.png"]];
-            self.cell.showsEditMask = NO;
-        }
+//        _cell.firstNameField.text = self.card.firstName;
+//        _cell.firstNameField.delegate = self;
+//        _cell.lastNameField.text = self.card.lastName;
+//        _cell.lastNameField.delegate = self;
+//        
+//        [_cell.pictureButton addTarget:self action:@selector(updateImage) forControlEvents:UIControlEventTouchUpInside];
+//        
+//        if (self.card.pictureData)
+//            [self.cell setPicture:[UIImage imageWithData:self.card.pictureData]];
+//        else if (self.card.picture)
+//            [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.card.picture] target:self action:@selector(imageLoaded:)];
+//        else {
+//            [self.cell setPicture:[UIImage imageNamed:@"add_picture.png"]];
+//            self.cell.showsEditMask = NO;
+//        }
     }
     return _cell;
 }
@@ -87,15 +87,15 @@
     NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     CFStringTrimWhitespace((__bridge CFMutableStringRef)text);
     
-    if (textField == self.cell.firstNameField) self.card.firstName = text;
-    if (textField == self.cell.lastNameField) self.card.lastName = text;
+//    if (textField == self.cell.firstNameField) self.card.firstName = text;
+//    if (textField == self.cell.lastNameField) self.card.lastName = text;
     
     return YES;
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
-    if (textField == self.cell.firstNameField) self.card.firstName = @"";
-    if (textField == self.cell.lastNameField) self.card.lastName = @"";
+//    if (textField == self.cell.firstNameField) self.card.firstName = @"";
+//    if (textField == self.cell.lastNameField) self.card.lastName = @"";
     
     return YES;
 }
@@ -107,8 +107,8 @@
 }
 
 - (void)imagePicker:(GKImagePicker *)imagePicker pickedImage:(UIImage *)image {
-    self.card.picture = nil;
-    self.card.pictureData = UIImageJPEGRepresentation(image, 1);
+//    self.card.picture = nil;
+//    self.card.pictureData = UIImageJPEGRepresentation(image, 1);
     [self.cell setPicture:image];
     self.cell.showsEditMask = YES;
 }

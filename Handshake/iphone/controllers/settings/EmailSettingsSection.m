@@ -18,7 +18,6 @@
 @interface EmailSettingsSection()
 
 @property (nonatomic, strong) EmailSettingsTableViewCell *emailCell;
-@property (nonatomic, strong) ResendConfirmationTableViewCell *resendCell;
 
 @end
 
@@ -31,13 +30,6 @@
     return _emailCell;
 }
 
-- (ResendConfirmationTableViewCell *)resendCell {
-    if (!_resendCell) {
-        _resendCell = [[ResendConfirmationTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-    }
-    return _resendCell;
-}
-
 - (id)initWithViewController:(SectionBasedTableViewController *)controller {
     self = [super initWithViewController:controller];
     if (self) {
@@ -47,64 +39,19 @@
 }
 
 - (int)rows {
-    User *user = [HandshakeSession user];
-    
-    // check if email is confirmed
-    if (user.confirmedAt && !user.unconfirmedEmail)
-        return 1;
-    return 2;
+    return 1;
 }
 
 - (BaseTableViewCell *)cellForRow:(int)row indexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-    User *user = [HandshakeSession user];
+    Account *account = [[HandshakeSession currentSession] account];
     
-    if (row == 0) {
-        if (user.unconfirmedEmail)
-            self.emailCell.emailLabel.text = user.unconfirmedEmail;
-        else
-            self.emailCell.emailLabel.text = user.email;
-        [self.emailCell.editButton addTarget:self action:@selector(newEmail) forControlEvents:UIControlEventTouchUpInside];
-        return self.emailCell;
-    }
-    
-    NSTimeInterval timeLeft = 172800 - (([[NSDate date] timeIntervalSince1970] - [user.confirmationSentAt timeIntervalSince1970]) / 1000.0);
-    if (timeLeft < 60) {
-        if ((int)timeLeft == 1)
-            self.resendCell.timeLeftLabel.text = @"1 SECOND LEFT";
-        else
-            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft] stringValue] stringByAppendingString:@" SECONDS LEFT"];
-    } else if (timeLeft < 3600) {
-        if ((int)(timeLeft / 60) == 1)
-            self.resendCell.timeLeftLabel.text = @"1 MINUTE LEFT";
-        else
-            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 60] stringValue] stringByAppendingString:@" MINUTES LEFT"];
-    } else if (timeLeft < 86400) {
-        if ((int)(timeLeft / 86400) == 1)
-            self.resendCell.timeLeftLabel.text = @"1 HOUR LEFT";
-        else
-            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 3600] stringValue] stringByAppendingString:@" HOURS LEFT"];
-    } else if (timeLeft < 2630000) {
-        if ((int)(timeLeft / 2630000) == 1)
-            self.resendCell.timeLeftLabel.text = @"1 DAY LEFT";
-        else
-            self.resendCell.timeLeftLabel.text = [[[NSNumber numberWithInt:timeLeft / 86400] stringValue] stringByAppendingString:@" DAYS LEFT"];
-    }
-    
-    return self.resendCell;
+    self.emailCell.emailLabel.text = account.email;
+    [self.emailCell.editButton addTarget:self action:@selector(newEmail) forControlEvents:UIControlEventTouchUpInside];
+    return self.emailCell;
 }
 
 - (void)cellWasSelectedAtRow:(int)row indexPath:(NSIndexPath *)indexPath {
-    if (row == 1 && !self.resendCell.loading) {
-        self.resendCell.loading = YES;
-        User *user = [HandshakeSession user];
-        [[HandshakeClient client] POST:@"/confirmation" parameters:@{ @"user":@{ @"email":user.email } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            self.resendCell.loading = NO;
-            [[[UIAlertView alloc] initWithTitle:@"Confirmation Resent" message:@"You should receive an email shortly." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            self.resendCell.loading = NO;
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not resend confirmation email. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        }];
-    }
+    
 }
 
 - (void)newEmail {
@@ -117,13 +64,13 @@
         
         int rows = [self rows];
         
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[HandshakeSession credentials]];
+        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
         params[@"email"] = newEmail;
         
         [[HandshakeClient client] PUT:@"/account" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             // update the user
-            [[HandshakeSession user] updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"user"]]];
-            [[HandshakeSession user].managedObjectContext save:nil];
+            [[[HandshakeSession currentSession] account] updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"user"]]];
+            [[[HandshakeSession currentSession] account].managedObjectContext save:nil];
             
             // if were missing a row animate it in
             if ([self rows] == 2 && rows == 1)
@@ -134,7 +81,7 @@
                 [self removeRowAtRow:1];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             if ([[operation response] statusCode] == 401) {
-                [HandshakeSession invalidate];
+                [[HandshakeSession currentSession] invalidate];
             } else {
                 [self newEmail:newEmail];
                 if ([[operation response] statusCode] == 422) {

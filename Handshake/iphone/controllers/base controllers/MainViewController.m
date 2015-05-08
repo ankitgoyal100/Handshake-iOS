@@ -17,46 +17,30 @@
 #import "HandshakeClient.h"
 #import "HandshakeCoreDataStore.h"
 #import "Card.h"
-#import "ShakeController.h"
 #import "Contact.h"
-
-@interface MainViewController()
-
-@property (nonatomic, strong) ShakeController *shakeController;
-
-@end
+#import "UserViewController.h"
+#import "LocationManager.h"
 
 @implementation MainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [Contact sync];
-    [Card sync];
-
-    // setup Contacts tab
-    UINavigationController *contacts = [[UINavigationController alloc] initWithRootViewController:[[ContactsViewController alloc] initWithNibName:nil bundle:nil]];
-    contacts.navigationBar.barTintColor = LOGO_COLOR;
-    contacts.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName:[UIColor whiteColor] };
-    contacts.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Contacts" image:[UIImage imageNamed:@"contacts.png"] selectedImage:[UIImage imageNamed:@"contacts_selected.png"]];
+    // setup view controllers
     
-    // setup Cards tab
-    UINavigationController *cards = [[UINavigationController alloc] initWithRootViewController:[[CardsViewController alloc] initWithNibName:nil bundle:nil]];
-    cards.navigationBar.barTintColor = LOGO_COLOR;
-    cards.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName:[UIColor whiteColor] };
-    cards.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Cards" image:[UIImage imageNamed:@"cards.png"] selectedImage:[UIImage imageNamed:@"cards_selected.png"]];
-    
-    // setup Settings tab
-    UINavigationController *settings = [[UINavigationController alloc] initWithRootViewController:[[SettingsViewController alloc] initWithNibName:nil bundle:nil]];
-    settings.navigationBar.barTintColor = LOGO_COLOR;
-    settings.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName:[UIColor whiteColor] };
-    settings.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Settings" image:[UIImage imageNamed:@"settings.png"] selectedImage:[UIImage imageNamed:@"settings_selected.png"]];
-    
-    self.viewControllers = @[contacts, cards, settings];
+    UserViewController *userController = (UserViewController *)((UINavigationController *)self.viewControllers[2]).visibleViewController;
+    userController.user = [[HandshakeSession currentSession] account];
+    userController.title = @"You";
     
     self.tabBar.tintColor = LOGO_COLOR;
     
-    self.shakeController = [[ShakeController alloc] init];
+//    self.tabBar.layer.masksToBounds = NO;
+//    self.tabBar.layer.shadowOffset = CGSizeMake(0, 1);
+//    self.tabBar.layer.shadowOpacity = 0.3;
+    
+    
+    
+    //[[LocationManager sharedManager] startUpdating];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -89,10 +73,6 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
-}
-
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
-    if (motion == UIEventSubtypeMotionShake) [self.shakeController shake];
 }
 
 @end

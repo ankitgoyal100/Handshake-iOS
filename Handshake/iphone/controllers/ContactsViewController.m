@@ -9,98 +9,57 @@
 #import "ContactsViewController.h"
 #import "Handshake.h"
 #import "SearchView.h"
-#import "ContactTableViewCell.h"
-#import "MessageTableViewCell.h"
-#import "ContactViewController.h"
-#import "NewContactViewController.h"
 #import "LoadingTableViewCell.h"
 #import <CoreData/CoreData.h>
 #import "HandshakeCoreDataStore.h"
 #import "Contact.h"
-#import "ShakeTutorialTableViewCell.h"
+#import "ContactCell.h"
+#import "UserViewController.h"
 
-@interface ContactsViewController() <UITextFieldDelegate, NSFetchedResultsControllerDelegate>
-
-@property (nonatomic) SearchView *searchView;
-
-@property (nonatomic, strong) MessageTableViewCell *meetPeopleCell;
-@property (nonatomic, strong) ShakeTutorialTableViewCell *tutorialCell;
+@interface ContactsViewController() <UITextFieldDelegate, NSFetchedResultsControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
-
-@property (nonatomic, strong) UIRefreshControl *refreshControl;
 
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @property (nonatomic, strong) NSMutableArray *searchResults;
 
+@property (weak, nonatomic) IBOutlet UIView *searchView;
+@property (weak, nonatomic) IBOutlet UITextField *searchField;
+
 @end
 
 @implementation ContactsViewController
 
-- (SearchView *)searchView {
-    if (!_searchView) _searchView = [[SearchView alloc] initWithFrame:CGRectMake(0, 64, self.view.bounds.size.width, 51)];
-    return _searchView;
-}
-
-- (MessageTableViewCell *)meetPeopleCell {
-    if (!_meetPeopleCell) _meetPeopleCell = [[MessageTableViewCell alloc] initWithMessage:@"Go meet more people!" reuseIdentifier:nil];
-    return _meetPeopleCell;
-}
-
-- (ShakeTutorialTableViewCell *)tutorialCell {
-    if (!_tutorialCell) {
-        _tutorialCell = [[ShakeTutorialTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-    }
-    return _tutorialCell;
-}
-
 - (NSMutableArray *)searchResults {
-    if (!_searchResults) _searchResults = [[NSMutableArray alloc] init];
+    if (!_searchResults) {
+        _searchResults = [[NSMutableArray alloc] init];
+    }
     return _searchResults;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    CGRect rect = self.searchView.frame;
+    rect.size.height = 64;
+    self.searchView.frame = rect;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidMove:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
     self.managedObjectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
     
-//    UITableViewController *tableViewController = [[UITableViewController alloc] init];
-//    tableViewController.tableView = self.tableView;
-//    
-//    self.refreshControl = [[UIRefreshControl alloc] init];
-//    [self.refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
-//    tableViewController.refreshControl = self.refreshControl;
-    
-    self.navigationItem.title = @"Contacts";
-    
-    self.searchView.searchField.delegate = self;
-    [self.searchView.cancelButton addTarget:self action:@selector(cancelSearch) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIEdgeInsets insets = self.tableView.contentInset;
-    insets.top += 50;
-    self.tableView.contentInset = insets;
-    
-    insets = self.tableView.scrollIndicatorInsets;
-    insets.top += 50;
-    self.tableView.scrollIndicatorInsets = insets;
-    
-    [self updateEndCell];
-    
-    [self.view addSubview:self.searchView];
-    [self.view bringSubviewToFront:self.searchView];
-    
-    //self.loading = YES;
-    //self.page = 1;
-    //[self loadContacts];
-    
+    [self fetch];
+}
+
+- (void)fetch {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
     
-    request.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"createdAt" ascending:NO]];
+    request.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"user.firstName" ascending:YES]];
     
     request.predicate = [NSPredicate predicateWithFormat:@"syncStatus != %@", [NSNumber numberWithInt:ContactDeleted]];
     
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"firstLetter" cacheName:nil];
     
     self.fetchedResultsController.delegate = self;
     
@@ -110,214 +69,263 @@
     }];
 }
 
-- (void)updateEndCell {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
-    request.predicate = [NSPredicate predicateWithFormat:@"syncStatus != %@", [NSNumber numberWithInt:ContactDeleted]];
+- (void)keyboardDidMove:(NSNotification *)notification {
+    CGRect rect = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
-    __block NSArray *results;
-    
-    [self.managedObjectContext performBlockAndWait:^{
-        NSError *error = nil;
-        results = [self.managedObjectContext executeFetchRequest:request error:&error];
-    }];
-    
-    if (results && [results count] > 0) {
-        self.endCell = self.meetPeopleCell;
-    } else {
-        self.endCell = self.tutorialCell;
-    }
-}
-
-//- (void)loadContacts {
-//    self.loadingMoreContacts = YES;
-//    
-//    [[HandshakeAPI client] contactsOnPage:self.page success:^(NSArray *contacts) {
-//        //check if number of contacts is less than 50 (end of pages)
-//        if ([contacts count] < 50) {
-//            self.page = -1;
-//            self.endCell = self.meetPeopleCell;
-//        } else
-//            self.page++;
-//        
-//        [self.contacts addObjectsFromArray:contacts];
-//        [self.contacts setArray:[[NSSet setWithArray:self.contacts] allObjects]];
-//        
-//        [self.refreshControl endRefreshing];
-//        self.loading = NO;
-//        self.loadingMoreContacts = NO;
-//    } failure:^(HandshakeError error) {
-//        if (error != NOT_LOGGED_IN)
-//            [self loadContacts];
-//    }];
-//}
-//
-//- (void)refresh {
-//    [self.contacts removeAllObjects];
-//    self.page = 1;
-//    [self loadContacts];
-//}
-
-- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
-    [self.tableView beginUpdates];
+    UIEdgeInsets insets = self.tableView.contentInset;
+    insets.bottom = MAX(self.view.window.frame.size.height - rect.origin.y - self.tabBarController.tabBar.frame.size.height, 0);
+    //self.tableView.contentInset = insets;
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [self.tableView endUpdates];
-    [self updateEndCell];
+    [self fetch];
+    [self.tableView reloadData];
 }
 
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    switch (type) {
-        case NSFetchedResultsChangeInsert: {
-            [self insertRowAtRow:(int)newIndexPath.row section:(int)newIndexPath.section];
-            break;
-        }
-        case NSFetchedResultsChangeDelete: {
-            [self removeRowAtRow:(int)indexPath.row section:(int)indexPath.section];
-            break;
-        }
-        case NSFetchedResultsChangeUpdate: {
-            ContactTableViewCell *cell = (ContactTableViewCell *)[self cellForRow:(int)newIndexPath.row section:(int)newIndexPath.section];
-            [self configureCell:cell row:(int)newIndexPath.row section:(int)newIndexPath.section indexPath:[self indexPathForCell:cell]];
-            break;
-        }
-        case NSFetchedResultsChangeMove: {
-            [self removeRowAtRow:(int)indexPath.row section:(int)indexPath.section];
-            [self insertRowAtRow:(int)newIndexPath.row section:(int)newIndexPath.section];
-            break;
-        }
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 26)];
+    
+    view.backgroundColor = [UIColor colorWithWhite:1 alpha:0.95];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(16, 0, self.view.frame.size.width - 32, view.frame.size.height)];
+    
+    label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
+    
+    NSArray *sections = [self.fetchedResultsController sections];
+    // if there is a '#' section
+    if ([[sections[0] name] isEqualToString:@"#"]) {
+        // if last section return '#', else add 1
+        if (section == [sections count] - 1)
+            label.text = @"#";
+        else
+            label.text = [[[self.fetchedResultsController sections][section + 1] name] uppercaseString];
+    } else
+        label.text = [[[self.fetchedResultsController sections][section] name] uppercaseString];
+    
+    [view addSubview:label];
+    
+    return view;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if ([self.searchField.text length] > 0) return 0;
+    
+    return 26;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if ([self.searchField.text length] > 0) return 1;
+    
+    return [[self.fetchedResultsController sections] count];
+}
+
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    if ([self.searchField.text length] > 0) return nil;
+    
+    return @[UITableViewIndexSearch, @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J", @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U", @"V", @"W", @"X", @"Y", @"Z", @"#"];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    if (index == 0) {
+        self.tableView.contentOffset = CGPointMake(0, 0); // scroll to top if search
+        return NSNotFound;
+    }
+    
+    // if '#" and '#' section exists
+    NSArray *sections = [self.fetchedResultsController sections];
+    BOOL numbers = [[sections[0] name] isEqualToString:@"#"];
+    if (index == 27)
+        return [sections count] - 1;
+    
+    NSMutableArray *distances;
+    if (numbers)
+        distances = [NSMutableArray arrayWithCapacity:[sections count] - 1];
+    else
+        distances = [NSMutableArray arrayWithCapacity:[sections count]];
+    
+    char titleChar = [title characterAtIndex:0];
+    
+    for (NSObject <NSFetchedResultsSectionInfo> *section in sections) {
+        if ([[section name] isEqualToString:@"#"])
+            continue;
+    
+        char sectionChar = [[section name] characterAtIndex:0];
+        int distance = ABS((int)sectionChar - (int)titleChar);
+        
+        if (numbers)
+            distances[[sections indexOfObject:section] - 1] = [NSNumber numberWithInt:distance];
+        else
+            distances[[sections indexOfObject:section]] = [NSNumber numberWithInt:distance];
+    }
+    
+    int shortest = 0;
+    for (NSNumber *distance in distances) {
+        if ([distance intValue] < [distances[shortest] intValue])
+            shortest = (int)[distances indexOfObject:distance];
+    }
+    
+    return shortest;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if ([self.searchField.text length] > 0)
+        return [self.searchResults count] + 1;
+    
+    NSArray *sections = [self.fetchedResultsController sections];
+    
+    // if there is a '#' section
+    if ([[sections[0] name] isEqualToString:@"#"]) {
+        // if last section return '#', else add 1
+        if (section == [sections count] - 1)
+            return [((id<NSFetchedResultsSectionInfo>)sections[0]) numberOfObjects] + 1; // add 1 for spacer
+        else
+            return [((id<NSFetchedResultsSectionInfo>)sections[section + 1]) numberOfObjects];
+    } else {
+        // if last section add spacer row
+        if (section == [sections count] - 1)
+            return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects] + 1;
+        else
+            return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects];
     }
 }
 
-- (int)numberOfSections {
-    return 1;
-}
-
-- (int)numberOfRowsInSection:(int)section {
-    if (self.searchView.searching && [self.searchView.searchField.text length] > 0) return (int)[self.searchResults count];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    ContactCell *cell = (ContactCell *)[tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
     
-    NSArray *sections = [self.fetchedResultsController sections];
-    id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    Contact *contact;
     
-    return (int)[sectionInfo numberOfObjects];
-}
-
-- (BaseTableViewCell *)cellAtRow:(int)row section:(int)section indexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-    ContactTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
+    if ([self.searchField.text length] > 0) {
+        if (indexPath.row == [self.searchResults count])
+            return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+        
+        contact = self.searchResults[indexPath.row];
+    } else {
+        NSArray *sections = [self.fetchedResultsController sections];
+        
+        // if last section and last row return a spacer
+        if (indexPath.section == [sections count] - 1) {
+            if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
+                return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+            else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
+                return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+        }
+        
+        // if there is a '#' section add 1 to indexPath
+        if ([[sections[0] name] isEqualToString:@"#"]) {
+            if (indexPath.section == [sections count] - 1)
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+            else
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section + 1]];
+        } else
+            contact = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    }
     
-    if (!cell) cell = [[ContactTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ContactCell"];
+    cell.pictureView.crossfadeDuration = 0;
+    cell.pictureView.showActivityIndicator = NO;
     
-    [self configureCell:cell row:row section:section indexPath:indexPath];
+    cell.pictureView.image = nil;
+    if (contact.user.pictureData)
+        cell.pictureView.image = [UIImage imageWithData:contact.user.pictureData];
+    else
+        cell.pictureView.imageURL = [NSURL URLWithString:contact.user.picture];
+    cell.nameLabel.text = [contact.user formattedName];
     
     return cell;
 }
 
-- (void)configureCell:(ContactTableViewCell *)cell row:(int)row section:(int)section indexPath:(NSIndexPath *)indexPath {
-    Contact *contact;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSArray *sections = [self.fetchedResultsController sections];
     
-    if (self.searchView.searching && [self.searchView.searchField.text length] > 0)
-        contact = self.searchResults[row];
-    else
-        contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section]];
+    // if searching and last row return 8
+    if ([self.searchField.text length] > 0 && indexPath.row == [self.searchResults count])
+        return 8;
+    else if ([self.searchField.text length] > 0)
+        return 56;
     
-    if (contact.card.pictureData)
-        cell.pictureView.image = [UIImage imageWithData:contact.card.pictureData];
-    else if ([contact.card.picture length])
-        cell.pictureView.imageURL = [NSURL URLWithString:contact.card.picture];
-    else
-        cell.pictureView.image = [UIImage imageNamed:@"default_picture.png"];
-    cell.nameLabel.text = [contact.card formattedName];
-    
-    NSTimeInterval time = [[NSDate date] timeIntervalSince1970] - [contact.shake.time timeIntervalSince1970];
-    if (time < 60) {
-        if ((int)time == 1)
-            cell.timeLabel.text = @"1 second ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time] stringValue] stringByAppendingString:@" seconds ago"];
-    } else if (time < 3600) {
-        if ((int)(time / 60) == 1)
-            cell.timeLabel.text = @"1 minute ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time / 60] stringValue] stringByAppendingString:@" minutes ago"];
-    } else if (time < 86400) {
-        if ((int)(time / 86400) == 1)
-            cell.timeLabel.text = @"1 hour ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time / 3600] stringValue] stringByAppendingString:@" hours ago"];
-    } else if (time < 2630000) {
-        if ((int)(time / 2630000) == 1)
-            cell.timeLabel.text = @"1 day ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time / 86400] stringValue] stringByAppendingString:@" days ago"];
-    } else if (time < 31560000) {
-        if ((int)(time / 31560000) == 1)
-            cell.timeLabel.text = @"1 month ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time / 2630000] stringValue] stringByAppendingString:@" months ago"];
-    } else {
-        if ((int)(time / 31560000) == 1)
-            cell.timeLabel.text = @"1 year ago";
-        else
-            cell.timeLabel.text = [[[NSNumber numberWithInt:time / 31560000] stringValue] stringByAppendingString:@" years ago"];
+    // if last section and last row return 8
+    if (indexPath.section == [sections count] - 1) {
+        if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
+            return 8;
+        else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
+            return 8;
     }
+    
+    return 56;
 }
 
-- (void)cellWasSelectedAtRow:(int)row section:(int)section indexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
     Contact *contact;
     
-    if (self.searchView.searching && [self.searchView.searchField.text length] > 0)
-        contact = self.searchResults[row];
-    else
-        contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section]];
+    if ([self.searchField.text length] > 0) {
+        if (indexPath.row == [self.searchResults count])
+            return; // do nothing
+        
+        contact = self.searchResults[indexPath.row];
+    } else {
+        NSArray *sections = [self.fetchedResultsController sections];
+        
+        // if last section and last row don't do anything
+        if (indexPath.section == [sections count] - 1) {
+            if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
+                return;
+            else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
+                return;
+        }
+        
+        // if there is a '#' section add 1 to indexPath
+        if ([[sections[0] name] isEqualToString:@"#"]) {
+            if (indexPath.section == [sections count] - 1)
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+            else
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section + 1]];
+        } else
+            contact = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    }
     
-    ContactViewController *controller = [[ContactViewController alloc] initWithContact:contact];
+    UserViewController *controller = (UserViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
+    
+    controller.user = contact.user;
+    
     [self.navigationController pushViewController:controller animated:YES];
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    self.searchView.searching = YES;
-    self.endCell = nil;
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
-    
-    [self search:textField.text];
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    textField.text = text;
-
-    [self search:text];
+    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    [self search:textField.text];
     
     return NO;
 }
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
+    textField.text = @"";
+    
     [self search:@""];
     
-    return YES;
+    return NO;
 }
 
-- (void)cancelSearch {
-    self.searchView.searching = NO;
-    [self.searchView.searchField resignFirstResponder];
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField endEditing:YES];
     
-    [self updateEndCell];
-    
-    [self.searchResults removeAllObjects];
-    
-    [self.tableView reloadData];
+    return NO;
 }
 
 - (void)search:(NSString *)searchText {
     [self.searchResults removeAllObjects];
     
     for (Contact *contact in [self.fetchedResultsController fetchedObjects]) {
-        NSComparisonResult firstName = [contact.card.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult lastName = [contact.card.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult name = [[contact.card formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult firstName = [contact.user.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult lastName = [contact.user.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult name = [[contact.user formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
         
-        if (firstName == NSOrderedSame || lastName == NSOrderedSame || name == NSOrderedSame) {
+        if ((contact.user.firstName && [contact.user.firstName length] > 0 && firstName == NSOrderedSame) || (contact.user.lastName && [contact.user.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
             [self.searchResults addObject:contact];
         }
     }

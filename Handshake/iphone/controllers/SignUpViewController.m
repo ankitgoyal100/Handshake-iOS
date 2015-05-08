@@ -17,10 +17,20 @@
 #import "TermsViewController.h"
 #import "Handshake.h"
 #import "BaseNavigationController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface SignUpViewController() <UIAlertViewDelegate>
 
-@property (nonatomic) SignUpView *signUpView;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
+
+@property (weak, nonatomic) IBOutlet UITextField *firstNameField;
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordField;
+
+@property (weak, nonatomic) IBOutlet UIButton *signUpButton;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+
 
 @end
 
@@ -29,23 +39,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.signUpView = [[SignUpView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.signUpView];
+    // set content inset
+    UIEdgeInsets insets = self.scrollView.contentInset;
+    insets.top = 64;
+    self.scrollView.contentInset = insets;
     
-    self.signUpView.emailField.delegate = self;
-    self.signUpView.passwordField.delegate = self;
-    self.signUpView.passwordConfirmField.delegate = self;
-    
-    self.signUpView.navigationItem.hidesBackButton = YES;
-    [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    // add back button
+    [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
-    
-    [self.signUpView.termsButton addTarget:self action:@selector(terms) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [self.signUpView.emailField becomeFirstResponder];
+    [self.firstNameField becomeFirstResponder];
     
     [super viewDidAppear:animated];
 }
@@ -61,65 +67,126 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if (self.signUpView.loading) return NO;
+    if ([self.activityIndicator isAnimating])
+        return NO;
     
-    if (textField == self.signUpView.emailField) {
-        [self.signUpView.passwordField becomeFirstResponder];
-    } else if (textField == self.signUpView.passwordField) {
-        [self.signUpView.passwordConfirmField becomeFirstResponder];
-    } else {
-        [self.signUpView endEditing:YES];
-        
-        // check password
-        if (![self.signUpView.passwordField.text isEqualToString:self.signUpView.passwordConfirmField.text]) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Passwords do not match." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            return NO;
-        }
-        
-        self.signUpView.navigationItem.leftBarButtonItems = @[];
-        
-        self.signUpView.loading = YES;
-        [[HandshakeClient client] POST:@"/account" parameters:@{ @"email":self.signUpView.emailField.text, @"password":self.signUpView.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [HandshakeSession loginWithEmail:self.signUpView.emailField.text password:self.signUpView.passwordField.text successBlock:^{
-                UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[SocialSetupViewController alloc] initWithNibName:nil bundle:nil]];
-                controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-                [self presentViewController:controller animated:YES completion:nil];
-                
-                [[[UIAlertView alloc] initWithTitle:@"Confirmation Required" message:[NSString stringWithFormat:@"An email with a confirmation link was sent to %@.", [HandshakeSession user].email] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            } failedBlock:^(HandshakeSessionError error) {
-                [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
-                self.signUpView.loading = NO;
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            }];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
-            
-            self.signUpView.loading = NO;
-            if ([[operation response] statusCode] == 422) {
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:[[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][@"errors"][0] stringByAppendingString:@"."] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            } else
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        }];
+    if (textField == self.firstNameField) {
+        [self.emailField becomeFirstResponder];
+    } else if (textField == self.emailField) {
+        [self.passwordField becomeFirstResponder];
+    } else if (textField == self.passwordField) {
+        [self signUp:nil];
     }
+    
     return NO;
 }
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    if ([self.firstNameField.text length] > 0 && [self.emailField.text length] > 0 && [self.passwordField.text length] >= 8) {
+        self.signUpButton.enabled = YES;
+        self.signUpButton.alpha = 1;
+    } else {
+        self.signUpButton.enabled = NO;
+        self.signUpButton.alpha = 0.5;
+    }
+    
+    return NO;
+}
+
+- (IBAction)signUp:(id)sender {
+    if ([self.firstNameField.text length] == 0 || [self.emailField.text length] == 0 || [self.passwordField.text length] < 8)
+        return;
+    
+    self.signUpButton.hidden = YES;
+    self.navItem.leftBarButtonItems = @[];
+    [self.activityIndicator startAnimating];
+    [self.view endEditing:YES];
+    
+    [[HandshakeClient client] POST:@"/account" parameters:@{ @"first_name":self.firstNameField.text, @"email":self.emailField.text, @"password":self.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
+                [self.view.window setRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"MainViewController"]];
+        } failedBlock:^(HandshakeSessionError error) {
+            [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+            self.signUpButton.hidden = NO;
+            [self.activityIndicator stopAnimating];
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+        self.signUpButton.hidden = NO;
+        [self.activityIndicator stopAnimating];
+
+        if ([[operation response] statusCode] == 422) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:[[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][@"errors"][0] stringByAppendingString:@"."] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } else
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    }];
+}
+
+
+//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+//    if (self.signUpView.loading) return NO;
+//    
+//    if (textField == self.signUpView.emailField) {
+//        [self.signUpView.passwordField becomeFirstResponder];
+//    } else if (textField == self.signUpView.passwordField) {
+//        [self.signUpView.passwordConfirmField becomeFirstResponder];
+//    } else {
+//        [self.signUpView endEditing:YES];
+//        
+//        // check password
+//        if (![self.signUpView.passwordField.text isEqualToString:self.signUpView.passwordConfirmField.text]) {
+//            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Passwords do not match." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//            return NO;
+//        }
+//        
+//        self.signUpView.navigationItem.leftBarButtonItems = @[];
+//        
+//        self.signUpView.loading = YES;
+//        [[HandshakeClient client] POST:@"/account" parameters:@{ @"email":self.signUpView.emailField.text, @"password":self.signUpView.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//            [HandshakeSession loginWithEmail:self.signUpView.emailField.text password:self.signUpView.passwordField.text successBlock:^(HandshakeSession *session) {
+//                UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[SocialSetupViewController alloc] initWithNibName:nil bundle:nil]];
+//                controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//                [self presentViewController:controller animated:YES completion:nil];
+//            } failedBlock:^(HandshakeSessionError error) {
+//                [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+//                self.signUpView.loading = NO;
+//                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//            }];
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            [self.signUpView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+//            
+//            self.signUpView.loading = NO;
+//            if ([[operation response] statusCode] == 422) {
+//                [[[UIAlertView alloc] initWithTitle:@"Error" message:[[NSJSONSerialization JSONObjectWithData:[operation responseData] options:kNilOptions error:nil][@"errors"][0] stringByAppendingString:@"."] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//            } else
+//                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not sign up at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//        }];
+//    }
+//    return NO;
+//}
 
 - (void)keyboardWillChange:(NSNotification *)notification {
     CGRect keyboardRect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
-    UIEdgeInsets content = self.signUpView.scrollView.contentInset;
-    UIEdgeInsets scrollBar = self.signUpView.scrollView.scrollIndicatorInsets;
-    content.bottom = scrollBar.bottom = MAX(self.view.frame.size.height - keyboardRect.origin.y, self.tabBarController.tabBar.frame.size.height);
-    self.signUpView.scrollView.contentInset = content;
-    self.signUpView.scrollView.scrollIndicatorInsets = scrollBar;
+    UIEdgeInsets content = self.scrollView.contentInset;
+    content.bottom = self.view.frame.size.height - keyboardRect.origin.y;
+    self.scrollView.contentInset = content;
+    
 }
 
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [self.signUpView.emailField becomeFirstResponder];
-}
+//- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
+//    [self.signUpView.emailField becomeFirstResponder];
+//}
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
+}
+
+- (IBAction)terms:(id)sender {
+    
 }
 
 - (void)terms {

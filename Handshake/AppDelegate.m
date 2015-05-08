@@ -12,14 +12,14 @@
 #import "FacebookHelper.h"
 #import "SSKeychain.h"
 #import "AFNetworkActivityIndicatorManager.h"
-#import "CardPictureCache.h"
+#import "UserPictureCache.h"
 #import "StartViewController.h"
 #import "MainViewController.h"
 #import "HandshakeSession.h"
 
 @interface AppDelegate ()
 
-@property (nonatomic, strong) CardPictureCache *pictureCache;
+@property (nonatomic, strong) UserPictureCache *pictureCache;
 
 @end
 
@@ -28,6 +28,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    // set navigation bar font
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[[UINavigationBar appearance] titleTextAttributes]];
+    dict[NSFontAttributeName] = [UIFont fontWithName:@"Roboto-Medium" size:17];
+    dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    [[UINavigationBar appearance] setTitleTextAttributes:dict];
+//    [[UINavigationBar appearance] setBackgroundImage:[[UIImage alloc] init]
+//                                      forBarPosition:UIBarPositionAny
+//                                          barMetrics:UIBarMetricsDefault];
+//    
+//    [[UINavigationBar appearance] setShadowImage:[[UIImage alloc] init]];
+//    [[UITabBar appearance] setBackgroundImage:[[UIImage alloc] init]];
+//    [[UITabBar appearance] setShadowImage:[[UIImage alloc] init]];
     
     [SSKeychain setAccessibilityType:kSecAttrAccessibleAlways];
     
@@ -39,11 +52,11 @@
         [[FacebookHelper sharedHelper] loginWithSuccessBlock:nil errorBlock:nil];
     }
     
-    self.pictureCache = [[CardPictureCache alloc] init];
-    
+    self.pictureCache = [[UserPictureCache alloc] init];
+    /*
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    if ([HandshakeSession restoreSession]) {
+    if ([HandshakeSession currentSession]) {
         MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
         self.window.rootViewController = controller;
     } else {
@@ -53,7 +66,7 @@
     }
 
     [self.window makeKeyAndVisible];
-    
+    */
     return YES;
 }
 

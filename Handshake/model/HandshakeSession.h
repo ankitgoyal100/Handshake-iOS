@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "User.h"
+#import "Account.h"
 
 #define SESSION_STARTED @"HandshakeSessionCreatedNotification"
 #define SESSION_RESTORED @"HandshakeSessionRestoredNotification"
@@ -16,24 +16,24 @@
 
 typedef enum {
     NETWORK_ERROR,
-    AUTHENTICATION_ERROR,
-    INVALID_SESSION
+    AUTHENTICATION_ERROR
 } HandshakeSessionError;
 
-typedef void (^LoginSuccessBlock)();
+@class HandshakeSession;
+
+typedef void (^LoginSuccessBlock)(HandshakeSession *session);
 typedef void (^LoginFailedBlock)(HandshakeSessionError error);
 
 @interface HandshakeSession : NSObject
 
-+ (BOOL)restoreSession;
+@property (nonatomic, strong, readonly) Account *account;
+@property (nonatomic, strong, readonly) NSString *authToken;
+@property (nonatomic, strong, readonly) NSDictionary *credentials;
+
++ (HandshakeSession *)currentSession;
 + (void)loginWithEmail:(NSString *)email password:(NSString *)password successBlock:(LoginSuccessBlock)successBlock failedBlock:(LoginFailedBlock)failedBlock;
 
-+ (User *)user;
-+ (NSString *)authToken;
-
-+ (NSDictionary *)credentials;
-
-+ (void)logout;
-+ (void)invalidate;
+- (void)logout;
+- (void)invalidate;
 
 @end

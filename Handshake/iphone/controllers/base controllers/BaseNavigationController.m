@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+//    self.navigationBar.layer.masksToBounds = NO;
+//    self.navigationBar.layer.shadowOffset = CGSizeMake(0, 1);
+//    self.navigationBar.layer.shadowOpacity = 0.3;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -14,7 +14,7 @@
     static AFHTTPRequestOperationManager *client = nil;
     if (!client) {
         //client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:3000/"]];
-        client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"https://handshakeapi.herokuapp.com/"]];
+        client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"https://handshakeapi11.herokuapp.com/"]];
         client.requestSerializer = [AFJSONRequestSerializer serializer];
         [client.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Accept"];
         [client.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];

@@ -24,10 +24,7 @@ static NSString * const CardSyncCompleted = @"CardSyncCompleted";
 
 @property (nonatomic, retain) NSNumber * cardId;
 @property (nonatomic, retain) NSDate * createdAt;
-@property (nonatomic, retain) NSString * firstName;
-@property (nonatomic, retain) NSString * lastName;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * picture;
 @property (nonatomic, retain) NSNumber * syncStatus;
 @property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSOrderedSet *addresses;
@@ -36,8 +33,6 @@ static NSString * const CardSyncCompleted = @"CardSyncCompleted";
 @property (nonatomic, retain) NSOrderedSet *phones;
 @property (nonatomic, retain) NSOrderedSet *socials;
 @property (nonatomic, retain) User *user;
-@property (nonatomic, retain) NSNumber *cardOrder;
-@property (nonatomic, retain) NSData *pictureData;
 
 + (void)sync;
 + (void)syncWithSuccessBlock:(void (^)())successBlock;
@@ -49,7 +44,6 @@ static NSString * const CardSyncCompleted = @"CardSyncCompleted";
 
 - (Card *)createCopy;
 
-- (NSString *)formattedName;
 - (void)cleanEmptyFields;
 
 - (NSDictionary *)dictionary;

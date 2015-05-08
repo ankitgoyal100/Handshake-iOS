@@ -35,10 +35,22 @@
 	<string>Handshake</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We use your location to help others find you! *Continued use of GPS running in the background can dramatically decrease battery life.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Roboto-Regular.ttf</string>
+		<string>Roboto-Light.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Handshake</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -47,8 +59,6 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<false/>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

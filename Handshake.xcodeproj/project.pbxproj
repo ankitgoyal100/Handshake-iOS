@@ -148,18 +148,45 @@
 		792803C219C8E5D00075261D /* HandshakeCoreDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C119C8E5D00075261D /* HandshakeCoreDataStore.m */; };
 		792803C519C8EF390075261D /* HandshakeSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C419C8EF390075261D /* HandshakeSyncManager.m */; };
 		792803C819C8F3150075261D /* HandshakeSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C719C8F3150075261D /* HandshakeSession.m */; };
-		792803CC19C8F42C0075261D /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803CB19C8F42C0075261D /* User.m */; };
 		793451F919CA1BD800746A08 /* NewCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 793451F819CA1BD800746A08 /* NewCardViewController.m */; };
+		795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003B31AE52003003DD9BF /* EmailAddressCell.m */; };
+		795003B71AE52099003DD9BF /* EmailEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003B61AE52099003DD9BF /* EmailEditController.m */; };
+		795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003B91AE525C1003DD9BF /* AddressEditController.m */; };
+		795003BD1AE525E0003DD9BF /* EnterAddressCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003BC1AE525E0003DD9BF /* EnterAddressCell.m */; };
+		795003C01AE55C9D003DD9BF /* AddSocialController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003BF1AE55C9D003DD9BF /* AddSocialController.m */; };
+		795003C31AE56FD4003DD9BF /* TwitterEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003C21AE56FD4003DD9BF /* TwitterEditController.m */; };
+		795003C61AEA6C7A003DD9BF /* NameEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003C51AEA6C7A003DD9BF /* NameEditController.m */; };
+		796866041ACCAC0400CCF0E2 /* GroupMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 796866031ACCAC0400CCF0E2 /* GroupMember.m */; };
+		7968660B1ACCB58300CCF0E2 /* Handshake.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7968660A1ACCB58300CCF0E2 /* Handshake.storyboard */; };
+		7968660E1ACCBAA000CCF0E2 /* primary_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7968660C1ACCBAA000CCF0E2 /* primary_background.png */; };
+		7968660F1ACCBAA000CCF0E2 /* white_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7968660D1ACCBAA000CCF0E2 /* white_background.png */; };
+		796866111ACCBDB000CCF0E2 /* primary_pressed_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 796866101ACCBDB000CCF0E2 /* primary_pressed_background.png */; };
+		796866251ACDA65B00CCF0E2 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866191ACDA65B00CCF0E2 /* Roboto-Black.ttf */; };
+		796866261ACDA65B00CCF0E2 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661A1ACDA65B00CCF0E2 /* Roboto-BlackItalic.ttf */; };
+		796866271ACDA65B00CCF0E2 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661B1ACDA65B00CCF0E2 /* Roboto-Bold.ttf */; };
+		796866281ACDA65B00CCF0E2 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661C1ACDA65B00CCF0E2 /* Roboto-BoldItalic.ttf */; };
+		796866291ACDA65B00CCF0E2 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661D1ACDA65B00CCF0E2 /* Roboto-Italic.ttf */; };
+		7968662A1ACDA65B00CCF0E2 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661E1ACDA65B00CCF0E2 /* Roboto-Light.ttf */; };
+		7968662B1ACDA65B00CCF0E2 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7968661F1ACDA65B00CCF0E2 /* Roboto-LightItalic.ttf */; };
+		7968662C1ACDA65B00CCF0E2 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866201ACDA65B00CCF0E2 /* Roboto-Medium.ttf */; };
+		7968662D1ACDA65B00CCF0E2 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866211ACDA65B00CCF0E2 /* Roboto-MediumItalic.ttf */; };
+		7968662E1ACDA65B00CCF0E2 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866221ACDA65B00CCF0E2 /* Roboto-Regular.ttf */; };
+		7968662F1ACDA65B00CCF0E2 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866231ACDA65B00CCF0E2 /* Roboto-Thin.ttf */; };
+		796866301ACDA65B00CCF0E2 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 796866241ACDA65B00CCF0E2 /* Roboto-ThinItalic.ttf */; };
+		796866321ACDE7CE00CCF0E2 /* FormTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796866311ACDE7CE00CCF0E2 /* FormTextField.swift */; };
+		796866361ACE2CBE00CCF0E2 /* OutlineButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796866351ACE2CBE00CCF0E2 /* OutlineButton.swift */; };
+		796D47EC1AEAE1180001E36C /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 796D47EB1AEAE1180001E36C /* ContactCell.m */; };
+		79766C971AE038AC00C5CA3D /* PhoneNumberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79766C961AE038AC00C5CA3D /* PhoneNumberCell.m */; };
+		79766C9A1AE0394B00C5CA3D /* LabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79766C991AE0394B00C5CA3D /* LabelCell.m */; };
+		79766C9E1AE039C600C5CA3D /* PhoneEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79766C9D1AE039C600C5CA3D /* PhoneEditController.m */; };
 		7997B79919DC493600525550 /* ForgotPasswordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B79819DC493600525550 /* ForgotPasswordView.m */; };
 		7997B79C19DC49FD00525550 /* ForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B79B19DC49FD00525550 /* ForgotPasswordViewController.m */; };
 		7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B79E19DC57A400525550 /* BaseNavigationController.m */; };
 		7997B7A219DEEC0C00525550 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7997B7A119DEEC0C00525550 /* icon@2x.png */; };
 		7997B7A419DF304100525550 /* add_picture@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7997B7A319DF304100525550 /* add_picture@2x.png */; };
 		7997B7A719DF3EAE00525550 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B7A619DF3EAE00525550 /* ImageViewController.m */; };
-		7997B7A919E1FAC800525550 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7997B7A819E1FAC800525550 /* CoreMotion.framework */; };
 		7997B7AC19E2130700525550 /* ShakeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B7AB19E2130700525550 /* ShakeView.m */; };
 		7997B7AE19E224E600525550 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7997B7AD19E224E600525550 /* CoreLocation.framework */; };
-		7997B7B119E244F900525550 /* ShakeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7997B7B019E244F900525550 /* ShakeController.m */; };
 		7997B7B319E2BC7E00525550 /* Launch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7997B7B219E2BC7E00525550 /* Launch.xib */; };
 		7997B7B519E2BD4C00525550 /* launch@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7997B7B419E2BD4C00525550 /* launch@2x.png */; };
 		7997B7B719E3063F00525550 /* icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7997B7B619E3063F00525550 /* icon@3x.png */; };
@@ -212,7 +239,29 @@
 		79B3FEB719C9150300759F69 /* Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB619C9150300759F69 /* Phone.m */; };
 		79B3FEBD19C9150400759F69 /* Social.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEBC19C9150400759F69 /* Social.m */; };
 		79B3FEC019C9155900759F69 /* HandshakeClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEBF19C9155900759F69 /* HandshakeClient.m */; };
-		79B3FEC319C917A700759F69 /* Shake.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEC219C917A700759F69 /* Shake.m */; };
+		79B752C21AF6F4B9007660E5 /* GroupsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752C11AF6F4B9007660E5 /* GroupsViewController.m */; };
+		79B752C51AF6FD2E007660E5 /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752C41AF6FD2E007660E5 /* Group.m */; };
+		79B752C91AF81545007660E5 /* GroupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752C81AF81545007660E5 /* GroupView.m */; };
+		79B752CC1AFACF59007660E5 /* GroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752CB1AFACF59007660E5 /* GroupViewController.m */; };
+		79B752CF1AFC5DD6007660E5 /* GroupMembersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752CE1AFC5DD6007660E5 /* GroupMembersViewController.m */; };
+		79B752D21AFC63D0007660E5 /* MembersCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752D11AFC63D0007660E5 /* MembersCell.m */; };
+		79B752D51AFC6450007660E5 /* MemberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752D41AFC6450007660E5 /* MemberCell.m */; };
+		79B752DB1AFC6CEB007660E5 /* EditGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752DA1AFC6CEB007660E5 /* EditGroupViewController.m */; };
+		79B752DE1AFD0C70007660E5 /* JoinGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B752DD1AFD0C70007660E5 /* JoinGroupViewController.m */; };
+		79BD34161ACF71C5008079CF /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34151ACF71C5008079CF /* UserViewController.m */; };
+		79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD341C1AD0546B008079CF /* PhoneCell.m */; };
+		79BD34201AD054DB008079CF /* EmailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD341F1AD054DB008079CF /* EmailCell.m */; };
+		79BD34231AD054E7008079CF /* AddressCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34221AD054E7008079CF /* AddressCell.m */; };
+		79BD34261AD054F5008079CF /* FacebookCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34251AD054F5008079CF /* FacebookCell.m */; };
+		79BD34291AD05500008079CF /* TwitterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34281AD05500008079CF /* TwitterCell.m */; };
+		79BD342C1AD05700008079CF /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD342B1AD05700008079CF /* User.m */; };
+		79BD34371AD3200E008079CF /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34361AD3200E008079CF /* LocationManager.m */; };
+		79BD343F1AD4B3FE008079CF /* AddCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD343E1AD4B3FE008079CF /* AddCell.m */; };
+		79BD34481AD84BF3008079CF /* PhoneEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34471AD84BF3008079CF /* PhoneEditCell.m */; };
+		79BD344B1AD84C76008079CF /* EmailEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD344A1AD84C76008079CF /* EmailEditCell.m */; };
+		79BD344E1AD84C85008079CF /* AddressEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD344D1AD84C85008079CF /* AddressEditCell.m */; };
+		79BD34511AD84C98008079CF /* FacebookEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34501AD84C98008079CF /* FacebookEditCell.m */; };
+		79BD34541AD84CA6008079CF /* TwitterEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34531AD84CA6008079CF /* TwitterEditCell.m */; };
 		79C050DF19CF650D001BB956 /* GKCropBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050CB19CF650D001BB956 /* GKCropBorderView.m */; };
 		79C050E019CF650D001BB956 /* GKImageCropOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050CD19CF650D001BB956 /* GKImageCropOverlayView.m */; };
 		79C050E119CF650D001BB956 /* GKImageCropView.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050CF19CF650D001BB956 /* GKImageCropView.m */; };
@@ -227,9 +276,10 @@
 		79C050EA19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C050DC19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png */; };
 		79C050EB19CF650D001BB956 /* PLCameraSheetDoneButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C050DD19CF650D001BB956 /* PLCameraSheetDoneButtonPressed.png */; };
 		79C050EC19CF650D001BB956 /* PLCameraSheetDoneButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C050DE19CF650D001BB956 /* PLCameraSheetDoneButtonPressed@2x.png */; };
-		79C050EF19CF8351001BB956 /* CardPictureCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050EE19CF8351001BB956 /* CardPictureCache.m */; };
+		79C050EF19CF8351001BB956 /* UserPictureCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050EE19CF8351001BB956 /* UserPictureCache.m */; };
 		79C050F219D07505001BB956 /* SocialAccountsSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050F119D07505001BB956 /* SocialAccountsSection.m */; };
 		79C050F519D08D7B001BB956 /* SocialAccountTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C050F419D08D7B001BB956 /* SocialAccountTableViewCell.m */; };
+		79CCAD421ACC72C4004EEA89 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 79CCAD411ACC72C4004EEA89 /* Account.m */; };
 		79D46C7919D22D4F00C52FEE /* NSDateFormatter+STTwitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C5D19D22D4F00C52FEE /* NSDateFormatter+STTwitter.m */; };
 		79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C5F19D22D4F00C52FEE /* NSError+STTwitter.m */; };
 		79D46C7B19D22D4F00C52FEE /* NSString+STTwitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C6119D22D4F00C52FEE /* NSString+STTwitter.m */; };
@@ -519,10 +569,51 @@
 		792803C419C8EF390075261D /* HandshakeSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSyncManager.m; sourceTree = "<group>"; };
 		792803C619C8F3150075261D /* HandshakeSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeSession.h; sourceTree = "<group>"; };
 		792803C719C8F3150075261D /* HandshakeSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSession.m; sourceTree = "<group>"; };
-		792803CA19C8F42C0075261D /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		792803CB19C8F42C0075261D /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		793451F719CA1BD800746A08 /* NewCardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCardViewController.h; sourceTree = "<group>"; };
 		793451F819CA1BD800746A08 /* NewCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewCardViewController.m; sourceTree = "<group>"; };
+		795003B21AE52003003DD9BF /* EmailAddressCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailAddressCell.h; path = "user editor view/edit field view/EmailAddressCell.h"; sourceTree = "<group>"; };
+		795003B31AE52003003DD9BF /* EmailAddressCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailAddressCell.m; path = "user editor view/edit field view/EmailAddressCell.m"; sourceTree = "<group>"; };
+		795003B51AE52099003DD9BF /* EmailEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailEditController.h; path = editor/EmailEditController.h; sourceTree = "<group>"; };
+		795003B61AE52099003DD9BF /* EmailEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailEditController.m; path = editor/EmailEditController.m; sourceTree = "<group>"; };
+		795003B81AE525C1003DD9BF /* AddressEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressEditController.h; path = editor/AddressEditController.h; sourceTree = "<group>"; };
+		795003B91AE525C1003DD9BF /* AddressEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressEditController.m; path = editor/AddressEditController.m; sourceTree = "<group>"; };
+		795003BB1AE525E0003DD9BF /* EnterAddressCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnterAddressCell.h; path = "user editor view/edit field view/EnterAddressCell.h"; sourceTree = "<group>"; };
+		795003BC1AE525E0003DD9BF /* EnterAddressCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EnterAddressCell.m; path = "user editor view/edit field view/EnterAddressCell.m"; sourceTree = "<group>"; };
+		795003BE1AE55C9D003DD9BF /* AddSocialController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddSocialController.h; path = editor/AddSocialController.h; sourceTree = "<group>"; };
+		795003BF1AE55C9D003DD9BF /* AddSocialController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddSocialController.m; path = editor/AddSocialController.m; sourceTree = "<group>"; };
+		795003C11AE56FD4003DD9BF /* TwitterEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TwitterEditController.h; path = editor/TwitterEditController.h; sourceTree = "<group>"; };
+		795003C21AE56FD4003DD9BF /* TwitterEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TwitterEditController.m; path = editor/TwitterEditController.m; sourceTree = "<group>"; };
+		795003C41AEA6C7A003DD9BF /* NameEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameEditController.h; path = editor/NameEditController.h; sourceTree = "<group>"; };
+		795003C51AEA6C7A003DD9BF /* NameEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NameEditController.m; path = editor/NameEditController.m; sourceTree = "<group>"; };
+		796866021ACCAC0400CCF0E2 /* GroupMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupMember.h; sourceTree = "<group>"; };
+		796866031ACCAC0400CCF0E2 /* GroupMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupMember.m; sourceTree = "<group>"; };
+		7968660A1ACCB58300CCF0E2 /* Handshake.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Handshake.storyboard; sourceTree = "<group>"; };
+		7968660C1ACCBAA000CCF0E2 /* primary_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = primary_background.png; sourceTree = "<group>"; };
+		7968660D1ACCBAA000CCF0E2 /* white_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = white_background.png; sourceTree = "<group>"; };
+		796866101ACCBDB000CCF0E2 /* primary_pressed_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = primary_pressed_background.png; sourceTree = "<group>"; };
+		796866191ACDA65B00CCF0E2 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
+		7968661A1ACDA65B00CCF0E2 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
+		7968661B1ACDA65B00CCF0E2 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
+		7968661C1ACDA65B00CCF0E2 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
+		7968661D1ACDA65B00CCF0E2 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Italic.ttf"; sourceTree = "<group>"; };
+		7968661E1ACDA65B00CCF0E2 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
+		7968661F1ACDA65B00CCF0E2 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
+		796866201ACDA65B00CCF0E2 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
+		796866211ACDA65B00CCF0E2 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
+		796866221ACDA65B00CCF0E2 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		796866231ACDA65B00CCF0E2 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Thin.ttf"; sourceTree = "<group>"; };
+		796866241ACDA65B00CCF0E2 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
+		796866311ACDE7CE00CCF0E2 /* FormTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormTextField.swift; sourceTree = "<group>"; };
+		796866341ACDE91D00CCF0E2 /* Handshake-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Handshake-Bridging-Header.h"; sourceTree = "<group>"; };
+		796866351ACE2CBE00CCF0E2 /* OutlineButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutlineButton.swift; sourceTree = "<group>"; };
+		796D47EA1AEAE1180001E36C /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactCell.h; sourceTree = "<group>"; };
+		796D47EB1AEAE1180001E36C /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactCell.m; sourceTree = "<group>"; };
+		79766C951AE038AC00C5CA3D /* PhoneNumberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneNumberCell.h; path = "user editor view/edit field view/PhoneNumberCell.h"; sourceTree = "<group>"; };
+		79766C961AE038AC00C5CA3D /* PhoneNumberCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneNumberCell.m; path = "user editor view/edit field view/PhoneNumberCell.m"; sourceTree = "<group>"; };
+		79766C981AE0394B00C5CA3D /* LabelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelCell.h; path = "user editor view/edit field view/LabelCell.h"; sourceTree = "<group>"; };
+		79766C991AE0394B00C5CA3D /* LabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LabelCell.m; path = "user editor view/edit field view/LabelCell.m"; sourceTree = "<group>"; };
+		79766C9C1AE039C600C5CA3D /* PhoneEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneEditController.h; path = editor/PhoneEditController.h; sourceTree = "<group>"; };
+		79766C9D1AE039C600C5CA3D /* PhoneEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneEditController.m; path = editor/PhoneEditController.m; sourceTree = "<group>"; };
 		7997B79719DC493600525550 /* ForgotPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgotPasswordView.h; sourceTree = "<group>"; };
 		7997B79819DC493600525550 /* ForgotPasswordView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordView.m; sourceTree = "<group>"; };
 		7997B79A19DC49FD00525550 /* ForgotPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgotPasswordViewController.h; sourceTree = "<group>"; };
@@ -533,12 +624,9 @@
 		7997B7A319DF304100525550 /* add_picture@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "add_picture@2x.png"; sourceTree = "<group>"; };
 		7997B7A519DF3EAE00525550 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		7997B7A619DF3EAE00525550 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
-		7997B7A819E1FAC800525550 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		7997B7AA19E2130700525550 /* ShakeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShakeView.h; sourceTree = "<group>"; };
 		7997B7AB19E2130700525550 /* ShakeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShakeView.m; sourceTree = "<group>"; };
 		7997B7AD19E224E600525550 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		7997B7AF19E244F900525550 /* ShakeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShakeController.h; sourceTree = "<group>"; };
-		7997B7B019E244F900525550 /* ShakeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShakeController.m; sourceTree = "<group>"; };
 		7997B7B219E2BC7E00525550 /* Launch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Launch.xib; path = ../Launch.xib; sourceTree = "<group>"; };
 		7997B7B419E2BD4C00525550 /* launch@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "launch@2x.png"; sourceTree = "<group>"; };
 		7997B7B619E3063F00525550 /* icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@3x.png"; sourceTree = "<group>"; };
@@ -605,8 +693,52 @@
 		79B3FEBC19C9150400759F69 /* Social.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Social.m; sourceTree = "<group>"; };
 		79B3FEBE19C9155900759F69 /* HandshakeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeClient.h; sourceTree = "<group>"; };
 		79B3FEBF19C9155900759F69 /* HandshakeClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeClient.m; sourceTree = "<group>"; };
-		79B3FEC119C917A700759F69 /* Shake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shake.h; sourceTree = "<group>"; };
-		79B3FEC219C917A700759F69 /* Shake.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shake.m; sourceTree = "<group>"; };
+		79B752C01AF6F4B9007660E5 /* GroupsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupsViewController.h; path = groups/GroupsViewController.h; sourceTree = "<group>"; };
+		79B752C11AF6F4B9007660E5 /* GroupsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupsViewController.m; path = groups/GroupsViewController.m; sourceTree = "<group>"; };
+		79B752C31AF6FD2E007660E5 /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
+		79B752C41AF6FD2E007660E5 /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		79B752C71AF81545007660E5 /* GroupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupView.h; path = groups/GroupView.h; sourceTree = "<group>"; };
+		79B752C81AF81545007660E5 /* GroupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupView.m; path = groups/GroupView.m; sourceTree = "<group>"; };
+		79B752CA1AFACF59007660E5 /* GroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupViewController.h; path = groups/GroupViewController.h; sourceTree = "<group>"; };
+		79B752CB1AFACF59007660E5 /* GroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupViewController.m; path = groups/GroupViewController.m; sourceTree = "<group>"; };
+		79B752CD1AFC5DD6007660E5 /* GroupMembersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupMembersViewController.h; path = groups/GroupMembersViewController.h; sourceTree = "<group>"; };
+		79B752CE1AFC5DD6007660E5 /* GroupMembersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupMembersViewController.m; path = groups/GroupMembersViewController.m; sourceTree = "<group>"; };
+		79B752D01AFC63D0007660E5 /* MembersCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MembersCell.h; path = groups/MembersCell.h; sourceTree = "<group>"; };
+		79B752D11AFC63D0007660E5 /* MembersCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MembersCell.m; path = groups/MembersCell.m; sourceTree = "<group>"; };
+		79B752D31AFC6450007660E5 /* MemberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemberCell.h; path = groups/MemberCell.h; sourceTree = "<group>"; };
+		79B752D41AFC6450007660E5 /* MemberCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MemberCell.m; path = groups/MemberCell.m; sourceTree = "<group>"; };
+		79B752D91AFC6CEB007660E5 /* EditGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditGroupViewController.h; path = groups/EditGroupViewController.h; sourceTree = "<group>"; };
+		79B752DA1AFC6CEB007660E5 /* EditGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EditGroupViewController.m; path = groups/EditGroupViewController.m; sourceTree = "<group>"; };
+		79B752DC1AFD0C70007660E5 /* JoinGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoinGroupViewController.h; sourceTree = "<group>"; };
+		79B752DD1AFD0C70007660E5 /* JoinGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JoinGroupViewController.m; sourceTree = "<group>"; };
+		79BD34141ACF71C5008079CF /* UserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserViewController.h; sourceTree = "<group>"; };
+		79BD34151ACF71C5008079CF /* UserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserViewController.m; sourceTree = "<group>"; };
+		79BD341B1AD0546B008079CF /* PhoneCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneCell.h; path = "user views/PhoneCell.h"; sourceTree = "<group>"; };
+		79BD341C1AD0546B008079CF /* PhoneCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneCell.m; path = "user views/PhoneCell.m"; sourceTree = "<group>"; };
+		79BD341E1AD054DB008079CF /* EmailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailCell.h; path = "user views/EmailCell.h"; sourceTree = "<group>"; };
+		79BD341F1AD054DB008079CF /* EmailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailCell.m; path = "user views/EmailCell.m"; sourceTree = "<group>"; };
+		79BD34211AD054E7008079CF /* AddressCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressCell.h; path = "user views/AddressCell.h"; sourceTree = "<group>"; };
+		79BD34221AD054E7008079CF /* AddressCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressCell.m; path = "user views/AddressCell.m"; sourceTree = "<group>"; };
+		79BD34241AD054F5008079CF /* FacebookCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookCell.h; path = "user views/FacebookCell.h"; sourceTree = "<group>"; };
+		79BD34251AD054F5008079CF /* FacebookCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookCell.m; path = "user views/FacebookCell.m"; sourceTree = "<group>"; };
+		79BD34271AD05500008079CF /* TwitterCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TwitterCell.h; path = "user views/TwitterCell.h"; sourceTree = "<group>"; };
+		79BD34281AD05500008079CF /* TwitterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TwitterCell.m; path = "user views/TwitterCell.m"; sourceTree = "<group>"; };
+		79BD342A1AD05700008079CF /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		79BD342B1AD05700008079CF /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		79BD34351AD3200E008079CF /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		79BD34361AD3200E008079CF /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
+		79BD343D1AD4B3FE008079CF /* AddCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddCell.h; path = "user editor view/AddCell.h"; sourceTree = "<group>"; };
+		79BD343E1AD4B3FE008079CF /* AddCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddCell.m; path = "user editor view/AddCell.m"; sourceTree = "<group>"; };
+		79BD34461AD84BF3008079CF /* PhoneEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneEditCell.h; path = "user editor view/PhoneEditCell.h"; sourceTree = "<group>"; };
+		79BD34471AD84BF3008079CF /* PhoneEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneEditCell.m; path = "user editor view/PhoneEditCell.m"; sourceTree = "<group>"; };
+		79BD34491AD84C76008079CF /* EmailEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailEditCell.h; path = "user editor view/EmailEditCell.h"; sourceTree = "<group>"; };
+		79BD344A1AD84C76008079CF /* EmailEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailEditCell.m; path = "user editor view/EmailEditCell.m"; sourceTree = "<group>"; };
+		79BD344C1AD84C85008079CF /* AddressEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressEditCell.h; path = "user editor view/AddressEditCell.h"; sourceTree = "<group>"; };
+		79BD344D1AD84C85008079CF /* AddressEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressEditCell.m; path = "user editor view/AddressEditCell.m"; sourceTree = "<group>"; };
+		79BD344F1AD84C98008079CF /* FacebookEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FacebookEditCell.h; path = "user editor view/FacebookEditCell.h"; sourceTree = "<group>"; };
+		79BD34501AD84C98008079CF /* FacebookEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FacebookEditCell.m; path = "user editor view/FacebookEditCell.m"; sourceTree = "<group>"; };
+		79BD34521AD84CA6008079CF /* TwitterEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TwitterEditCell.h; path = "user editor view/TwitterEditCell.h"; sourceTree = "<group>"; };
+		79BD34531AD84CA6008079CF /* TwitterEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TwitterEditCell.m; path = "user editor view/TwitterEditCell.m"; sourceTree = "<group>"; };
 		79C050CA19CF650D001BB956 /* GKCropBorderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GKCropBorderView.h; sourceTree = "<group>"; };
 		79C050CB19CF650D001BB956 /* GKCropBorderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GKCropBorderView.m; sourceTree = "<group>"; };
 		79C050CC19CF650D001BB956 /* GKImageCropOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GKImageCropOverlayView.h; sourceTree = "<group>"; };
@@ -627,13 +759,15 @@
 		79C050DC19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PLCameraSheetDoneButton@2x.png"; sourceTree = "<group>"; };
 		79C050DD19CF650D001BB956 /* PLCameraSheetDoneButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PLCameraSheetDoneButtonPressed.png; sourceTree = "<group>"; };
 		79C050DE19CF650D001BB956 /* PLCameraSheetDoneButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PLCameraSheetDoneButtonPressed@2x.png"; sourceTree = "<group>"; };
-		79C050ED19CF8351001BB956 /* CardPictureCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardPictureCache.h; sourceTree = "<group>"; };
-		79C050EE19CF8351001BB956 /* CardPictureCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardPictureCache.m; sourceTree = "<group>"; };
+		79C050ED19CF8351001BB956 /* UserPictureCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPictureCache.h; sourceTree = "<group>"; };
+		79C050EE19CF8351001BB956 /* UserPictureCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPictureCache.m; sourceTree = "<group>"; };
 		79C050F019D07505001BB956 /* SocialAccountsSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialAccountsSection.h; sourceTree = "<group>"; };
 		79C050F119D07505001BB956 /* SocialAccountsSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialAccountsSection.m; sourceTree = "<group>"; };
 		79C050F319D08D7B001BB956 /* SocialAccountTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialAccountTableViewCell.h; sourceTree = "<group>"; };
 		79C050F419D08D7B001BB956 /* SocialAccountTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialAccountTableViewCell.m; sourceTree = "<group>"; };
 		79CCAD3F1ACB647A004EEA89 /* Handshake 1_1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Handshake 1_1.xcdatamodel"; sourceTree = "<group>"; };
+		79CCAD401ACC72C4004EEA89 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
+		79CCAD411ACC72C4004EEA89 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
 		79D46C5C19D22D4F00C52FEE /* NSDateFormatter+STTwitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateFormatter+STTwitter.h"; sourceTree = "<group>"; };
 		79D46C5D19D22D4F00C52FEE /* NSDateFormatter+STTwitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateFormatter+STTwitter.m"; sourceTree = "<group>"; };
 		79D46C5E19D22D4F00C52FEE /* NSError+STTwitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+STTwitter.h"; sourceTree = "<group>"; };
@@ -682,7 +816,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7997B7AE19E224E600525550 /* CoreLocation.framework in Frameworks */,
-				7997B7A919E1FAC800525550 /* CoreMotion.framework in Frameworks */,
 				79D46C8919D22D5F00C52FEE /* Social.framework in Frameworks */,
 				79D46C8719D22D5B00C52FEE /* Accounts.framework in Frameworks */,
 				792803BB19C8B4580075261D /* AddressBook.framework in Frameworks */,
@@ -743,6 +876,7 @@
 				792801EC19C8B36B0075261D /* Handshake.xcdatamodeld */,
 				7997B7B219E2BC7E00525550 /* Launch.xib */,
 				792801E519C8B36B0075261D /* Supporting Files */,
+				7968660A1ACCB58300CCF0E2 /* Handshake.storyboard */,
 			);
 			path = Handshake;
 			sourceTree = "<group>";
@@ -822,8 +956,8 @@
 			children = (
 				7928022919C8B3C40075261D /* FacebookHelper.h */,
 				7928022A19C8B3C40075261D /* FacebookHelper.m */,
-				79C050ED19CF8351001BB956 /* CardPictureCache.h */,
-				79C050EE19CF8351001BB956 /* CardPictureCache.m */,
+				79C050ED19CF8351001BB956 /* UserPictureCache.h */,
+				79C050EE19CF8351001BB956 /* UserPictureCache.m */,
 				79D46C8A19D22D9E00C52FEE /* TwitterHelper.h */,
 				79D46C8B19D22D9E00C52FEE /* TwitterHelper.m */,
 			);
@@ -856,6 +990,8 @@
 		7928023219C8B3C40075261D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				79B752BF1AF6F49B007660E5 /* groups */,
+				79766C9B1AE039A900C5CA3D /* editor */,
 				7997B7BC19E3093200525550 /* post sign up */,
 				7997B7A519DF3EAE00525550 /* ImageViewController.h */,
 				7997B7A619DF3EAE00525550 /* ImageViewController.m */,
@@ -874,6 +1010,10 @@
 				7997B79B19DC49FD00525550 /* ForgotPasswordViewController.m */,
 				7997B7CD19EDC70100525550 /* TermsViewController.h */,
 				7997B7CE19EDC70100525550 /* TermsViewController.m */,
+				79BD34141ACF71C5008079CF /* UserViewController.h */,
+				79BD34151ACF71C5008079CF /* UserViewController.m */,
+				79BD34351AD3200E008079CF /* LocationManager.h */,
+				79BD34361AD3200E008079CF /* LocationManager.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -888,8 +1028,6 @@
 				7928023819C8B3C40075261D /* section based */,
 				7997B79D19DC57A400525550 /* BaseNavigationController.h */,
 				7997B79E19DC57A400525550 /* BaseNavigationController.m */,
-				7997B7AF19E244F900525550 /* ShakeController.h */,
-				7997B7B019E244F900525550 /* ShakeController.m */,
 			);
 			path = "base controllers";
 			sourceTree = "<group>";
@@ -1000,6 +1138,9 @@
 		7928028119C8B3C40075261D /* views */ = {
 			isa = PBXGroup;
 			children = (
+				79B752C61AF8152E007660E5 /* groups */,
+				79BD343C1AD4B3CA008079CF /* user editor view */,
+				79BD341A1AD05437008079CF /* user view */,
 				7997B7C319E30B3100525550 /* post sign up */,
 				7928028219C8B3C40075261D /* base cells */,
 				7928028D19C8B3C40075261D /* basic info */,
@@ -1018,6 +1159,8 @@
 				7997B79819DC493600525550 /* ForgotPasswordView.m */,
 				7997B7AA19E2130700525550 /* ShakeView.h */,
 				7997B7AB19E2130700525550 /* ShakeView.m */,
+				796866311ACDE7CE00CCF0E2 /* FormTextField.swift */,
+				796866351ACE2CBE00CCF0E2 /* OutlineButton.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1131,6 +1274,8 @@
 				792802C219C8B3C40075261D /* SearchView.m */,
 				7997B7D219EF376C00525550 /* ShakeTutorialTableViewCell.h */,
 				7997B7D319EF376C00525550 /* ShakeTutorialTableViewCell.m */,
+				796D47EA1AEAE1180001E36C /* ContactCell.h */,
+				796D47EB1AEAE1180001E36C /* ContactCell.m */,
 			);
 			path = contacts;
 			sourceTree = "<group>";
@@ -1177,8 +1322,14 @@
 				79B3FEBF19C9155900759F69 /* HandshakeClient.m */,
 				792803C619C8F3150075261D /* HandshakeSession.h */,
 				792803C719C8F3150075261D /* HandshakeSession.m */,
-				792803CA19C8F42C0075261D /* User.h */,
-				792803CB19C8F42C0075261D /* User.m */,
+				79CCAD401ACC72C4004EEA89 /* Account.h */,
+				79CCAD411ACC72C4004EEA89 /* Account.m */,
+				79BD342A1AD05700008079CF /* User.h */,
+				79BD342B1AD05700008079CF /* User.m */,
+				79B752C31AF6FD2E007660E5 /* Group.h */,
+				79B752C41AF6FD2E007660E5 /* Group.m */,
+				796866021ACCAC0400CCF0E2 /* GroupMember.h */,
+				796866031ACCAC0400CCF0E2 /* GroupMember.m */,
 				79B3FEBB19C9150400759F69 /* Social.h */,
 				79B3FEBC19C9150400759F69 /* Social.m */,
 				79B3FEB519C9150300759F69 /* Phone.h */,
@@ -1189,10 +1340,9 @@
 				79B3FEAD19C9150300759F69 /* Address.m */,
 				79B3FEA919C9150200759F69 /* Contact.h */,
 				79B3FEAA19C9150200759F69 /* Contact.m */,
-				79B3FEC119C917A700759F69 /* Shake.h */,
-				79B3FEC219C917A700759F69 /* Shake.m */,
 				79D4AD5619C93F3100F5A154 /* Card.h */,
 				79D4AD5719C93F3100F5A154 /* Card.m */,
+				796866341ACDE91D00CCF0E2 /* Handshake-Bridging-Header.h */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1209,6 +1359,10 @@
 		792802ED19C8B3C40075261D /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				796866181ACDA65B00CCF0E2 /* fonts */,
+				7968660C1ACCBAA000CCF0E2 /* primary_background.png */,
+				796866101ACCBDB000CCF0E2 /* primary_pressed_background.png */,
+				7968660D1ACCBAA000CCF0E2 /* white_background.png */,
 				7997B7A019DEEC0C00525550 /* icons */,
 				7997B7A319DF304100525550 /* add_picture@2x.png */,
 				7997B7DA19EF84AC00525550 /* add_picture@3x.png */,
@@ -1335,7 +1489,6 @@
 			isa = PBXGroup;
 			children = (
 				7997B7AD19E224E600525550 /* CoreLocation.framework */,
-				7997B7A819E1FAC800525550 /* CoreMotion.framework */,
 				79D46C8819D22D5F00C52FEE /* Social.framework */,
 				79D46C8619D22D5B00C52FEE /* Accounts.framework */,
 				792803BE19C8B48F0075261D /* FacebookSDK.framework */,
@@ -1343,6 +1496,59 @@
 				792803BA19C8B4580075261D /* Security.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		796866181ACDA65B00CCF0E2 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				796866191ACDA65B00CCF0E2 /* Roboto-Black.ttf */,
+				7968661A1ACDA65B00CCF0E2 /* Roboto-BlackItalic.ttf */,
+				7968661B1ACDA65B00CCF0E2 /* Roboto-Bold.ttf */,
+				7968661C1ACDA65B00CCF0E2 /* Roboto-BoldItalic.ttf */,
+				7968661D1ACDA65B00CCF0E2 /* Roboto-Italic.ttf */,
+				7968661E1ACDA65B00CCF0E2 /* Roboto-Light.ttf */,
+				7968661F1ACDA65B00CCF0E2 /* Roboto-LightItalic.ttf */,
+				796866201ACDA65B00CCF0E2 /* Roboto-Medium.ttf */,
+				796866211ACDA65B00CCF0E2 /* Roboto-MediumItalic.ttf */,
+				796866221ACDA65B00CCF0E2 /* Roboto-Regular.ttf */,
+				796866231ACDA65B00CCF0E2 /* Roboto-Thin.ttf */,
+				796866241ACDA65B00CCF0E2 /* Roboto-ThinItalic.ttf */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
+		79766C941AE0388900C5CA3D /* edit field view */ = {
+			isa = PBXGroup;
+			children = (
+				79766C951AE038AC00C5CA3D /* PhoneNumberCell.h */,
+				79766C961AE038AC00C5CA3D /* PhoneNumberCell.m */,
+				79766C981AE0394B00C5CA3D /* LabelCell.h */,
+				79766C991AE0394B00C5CA3D /* LabelCell.m */,
+				795003B21AE52003003DD9BF /* EmailAddressCell.h */,
+				795003B31AE52003003DD9BF /* EmailAddressCell.m */,
+				795003BB1AE525E0003DD9BF /* EnterAddressCell.h */,
+				795003BC1AE525E0003DD9BF /* EnterAddressCell.m */,
+			);
+			name = "edit field view";
+			sourceTree = "<group>";
+		};
+		79766C9B1AE039A900C5CA3D /* editor */ = {
+			isa = PBXGroup;
+			children = (
+				79766C9C1AE039C600C5CA3D /* PhoneEditController.h */,
+				79766C9D1AE039C600C5CA3D /* PhoneEditController.m */,
+				795003B51AE52099003DD9BF /* EmailEditController.h */,
+				795003B61AE52099003DD9BF /* EmailEditController.m */,
+				795003B81AE525C1003DD9BF /* AddressEditController.h */,
+				795003B91AE525C1003DD9BF /* AddressEditController.m */,
+				795003BE1AE55C9D003DD9BF /* AddSocialController.h */,
+				795003BF1AE55C9D003DD9BF /* AddSocialController.m */,
+				795003C11AE56FD4003DD9BF /* TwitterEditController.h */,
+				795003C21AE56FD4003DD9BF /* TwitterEditController.m */,
+				795003C41AEA6C7A003DD9BF /* NameEditController.h */,
+				795003C51AEA6C7A003DD9BF /* NameEditController.m */,
+			);
+			name = editor;
 			sourceTree = "<group>";
 		};
 		7997B7A019DEEC0C00525550 /* icons */ = {
@@ -1379,6 +1585,73 @@
 				7997B7C519E30B5700525550 /* SetupMessageTableViewCell.m */,
 			);
 			name = "post sign up";
+			sourceTree = "<group>";
+		};
+		79B752BF1AF6F49B007660E5 /* groups */ = {
+			isa = PBXGroup;
+			children = (
+				79B752C01AF6F4B9007660E5 /* GroupsViewController.h */,
+				79B752C11AF6F4B9007660E5 /* GroupsViewController.m */,
+				79B752CA1AFACF59007660E5 /* GroupViewController.h */,
+				79B752CB1AFACF59007660E5 /* GroupViewController.m */,
+				79B752CD1AFC5DD6007660E5 /* GroupMembersViewController.h */,
+				79B752CE1AFC5DD6007660E5 /* GroupMembersViewController.m */,
+				79B752D91AFC6CEB007660E5 /* EditGroupViewController.h */,
+				79B752DA1AFC6CEB007660E5 /* EditGroupViewController.m */,
+				79B752DC1AFD0C70007660E5 /* JoinGroupViewController.h */,
+				79B752DD1AFD0C70007660E5 /* JoinGroupViewController.m */,
+			);
+			name = groups;
+			sourceTree = "<group>";
+		};
+		79B752C61AF8152E007660E5 /* groups */ = {
+			isa = PBXGroup;
+			children = (
+				79B752C71AF81545007660E5 /* GroupView.h */,
+				79B752C81AF81545007660E5 /* GroupView.m */,
+				79B752D01AFC63D0007660E5 /* MembersCell.h */,
+				79B752D11AFC63D0007660E5 /* MembersCell.m */,
+				79B752D31AFC6450007660E5 /* MemberCell.h */,
+				79B752D41AFC6450007660E5 /* MemberCell.m */,
+			);
+			name = groups;
+			sourceTree = "<group>";
+		};
+		79BD341A1AD05437008079CF /* user view */ = {
+			isa = PBXGroup;
+			children = (
+				79BD341B1AD0546B008079CF /* PhoneCell.h */,
+				79BD341C1AD0546B008079CF /* PhoneCell.m */,
+				79BD341E1AD054DB008079CF /* EmailCell.h */,
+				79BD341F1AD054DB008079CF /* EmailCell.m */,
+				79BD34211AD054E7008079CF /* AddressCell.h */,
+				79BD34221AD054E7008079CF /* AddressCell.m */,
+				79BD34241AD054F5008079CF /* FacebookCell.h */,
+				79BD34251AD054F5008079CF /* FacebookCell.m */,
+				79BD34271AD05500008079CF /* TwitterCell.h */,
+				79BD34281AD05500008079CF /* TwitterCell.m */,
+			);
+			name = "user view";
+			sourceTree = "<group>";
+		};
+		79BD343C1AD4B3CA008079CF /* user editor view */ = {
+			isa = PBXGroup;
+			children = (
+				79766C941AE0388900C5CA3D /* edit field view */,
+				79BD343D1AD4B3FE008079CF /* AddCell.h */,
+				79BD343E1AD4B3FE008079CF /* AddCell.m */,
+				79BD34461AD84BF3008079CF /* PhoneEditCell.h */,
+				79BD34471AD84BF3008079CF /* PhoneEditCell.m */,
+				79BD34491AD84C76008079CF /* EmailEditCell.h */,
+				79BD344A1AD84C76008079CF /* EmailEditCell.m */,
+				79BD344C1AD84C85008079CF /* AddressEditCell.h */,
+				79BD344D1AD84C85008079CF /* AddressEditCell.m */,
+				79BD344F1AD84C98008079CF /* FacebookEditCell.h */,
+				79BD34501AD84C98008079CF /* FacebookEditCell.m */,
+				79BD34521AD84CA6008079CF /* TwitterEditCell.h */,
+				79BD34531AD84CA6008079CF /* TwitterEditCell.m */,
+			);
+			name = "user editor view";
 			sourceTree = "<group>";
 		};
 		79C050C819CF650D001BB956 /* GKImagePicker */ = {
@@ -1517,6 +1790,11 @@
 					792801E119C8B36B0075261D = {
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = 59G34X7E6F;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					792801FA19C8B36B0075261D = {
 						CreatedOnToolsVersion = 6.0;
@@ -1549,15 +1827,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				7928038F19C8B3C40075261D /* address@2x.png in Resources */,
+				796866261ACDA65B00CCF0E2 /* Roboto-BlackItalic.ttf in Resources */,
+				7968660E1ACCBAA000CCF0E2 /* primary_background.png in Resources */,
 				7997B7E919EF85EF00525550 /* checked@3x.png in Resources */,
 				7997B7DF19EF856300525550 /* add@3x.png in Resources */,
 				7997B7B719E3063F00525550 /* icon@3x.png in Resources */,
 				7928039819C8B3C40075261D /* email@2x.png in Resources */,
 				79C050E919CF650D001BB956 /* PLCameraSheetDoneButton.png in Resources */,
 				792803A119C8B3C40075261D /* PhoneFormats.dat in Resources */,
+				796866281ACDA65B00CCF0E2 /* Roboto-BoldItalic.ttf in Resources */,
 				7928039619C8B3C40075261D /* delete@2x.png in Resources */,
+				7968662C1ACDA65B00CCF0E2 /* Roboto-Medium.ttf in Resources */,
 				7997B7B519E2BD4C00525550 /* launch@2x.png in Resources */,
 				7928039F19C8B3C40075261D /* new@2x.png in Resources */,
+				7968660B1ACCB58300CCF0E2 /* Handshake.storyboard in Resources */,
 				7997B81519EF8A5600525550 /* back@3x.png in Resources */,
 				7997B7EB19EF862600525550 /* contacts@3x.png in Resources */,
 				7928039019C8B3C40075261D /* card_name@2x.png in Resources */,
@@ -1572,17 +1855,22 @@
 				7997B80D19EF886B00525550 /* settings_selected@3x.png in Resources */,
 				79E8FC7619CCC02B0005DF53 /* default_picture@2x.png in Resources */,
 				7997B80119EF878D00525550 /* new@3x.png in Resources */,
+				796866111ACCBDB000CCF0E2 /* primary_pressed_background.png in Resources */,
 				7928039A19C8B3C40075261D /* facebook@2x.png in Resources */,
 				792803A519C8B3C40075261D /* settings@2x.png in Resources */,
+				7968662F1ACDA65B00CCF0E2 /* Roboto-Thin.ttf in Resources */,
 				7997B7F919EF86FF00525550 /* facebook@3x.png in Resources */,
 				7928039119C8B3C40075261D /* cards@2x.png in Resources */,
 				7997B7DB19EF84AC00525550 /* add_picture@3x.png in Resources */,
+				7968662B1ACDA65B00CCF0E2 /* Roboto-LightItalic.ttf in Resources */,
 				79C050E619CF650D001BB956 /* PLCameraSheetButton@2x.png in Resources */,
 				79D46C8E19D3616400C52FEE /* add_social@2x.png in Resources */,
 				7997B80B19EF886200525550 /* settings@3x.png in Resources */,
+				796866291ACDA65B00CCF0E2 /* Roboto-Italic.ttf in Resources */,
 				792801F619C8B36B0075261D /* Images.xcassets in Resources */,
 				79C050E719CF650D001BB956 /* PLCameraSheetButtonPressed.png in Resources */,
 				792803A619C8B3C40075261D /* settings_selected@2x.png in Resources */,
+				796866301ACDA65B00CCF0E2 /* Roboto-ThinItalic.ttf in Resources */,
 				79C050EA19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png in Resources */,
 				792803A319C8B3C40075261D /* save@2x.png in Resources */,
 				7928039919C8B3C40075261D /* exit@2x.png in Resources */,
@@ -1590,6 +1878,7 @@
 				7928039419C8B3C40075261D /* contacts@2x.png in Resources */,
 				79C050E519CF650D001BB956 /* PLCameraSheetButton.png in Resources */,
 				7997B7ED19EF864900525550 /* contacts_selected@3x.png in Resources */,
+				796866251ACDA65B00CCF0E2 /* Roboto-Black.ttf in Resources */,
 				7928033719C8B3C40075261D /* back@2x.png in Resources */,
 				7997B81719EF8BB300525550 /* logo@2x.png in Resources */,
 				7997B7BB19E306B500525550 /* icon40@2x.png in Resources */,
@@ -1597,6 +1886,7 @@
 				7997B7F719EF86D900525550 /* exit@3x.png in Resources */,
 				7928039719C8B3C40075261D /* edit@2x.png in Resources */,
 				7997B7E719EF85BF00525550 /* cards_selected@3x.png in Resources */,
+				7968660F1ACCBAA000CCF0E2 /* white_background.png in Resources */,
 				7997B7FD19EF874100525550 /* label_arrow@3x.png in Resources */,
 				792803A919C8B3C40075261D /* twitter@2x.png in Resources */,
 				7928039D19C8B3C40075261D /* label_arrow@2x.png in Resources */,
@@ -1610,9 +1900,12 @@
 				7997B7DD19EF84FF00525550 /* add_social@3x.png in Resources */,
 				7928039219C8B3C40075261D /* cards_selected@2x.png in Resources */,
 				7928039519C8B3C40075261D /* contacts_selected@2x.png in Resources */,
+				7968662E1ACDA65B00CCF0E2 /* Roboto-Regular.ttf in Resources */,
 				7997B7BA19E306B500525550 /* icon29@2x.png in Resources */,
 				7997B7F319EF869C00525550 /* edit@3x.png in Resources */,
+				796866271ACDA65B00CCF0E2 /* Roboto-Bold.ttf in Resources */,
 				7997B80519EF87F200525550 /* requested@3x.png in Resources */,
+				7968662A1ACDA65B00CCF0E2 /* Roboto-Light.ttf in Resources */,
 				792803A719C8B3C40075261D /* start@2x.jpg in Resources */,
 				7997B7EF19EF866B00525550 /* default_picture@3x.png in Resources */,
 				792803A419C8B3C40075261D /* search@2x.png in Resources */,
@@ -1628,6 +1921,7 @@
 				7997B7B319E2BC7E00525550 /* Launch.xib in Resources */,
 				7997B80719EF881C00525550 /* save@3x.png in Resources */,
 				79C050EC19CF650D001BB956 /* PLCameraSheetDoneButtonPressed@2x.png in Resources */,
+				7968662D1ACDA65B00CCF0E2 /* Roboto-MediumItalic.ttf in Resources */,
 				792803AC19C8B3C40075261D /* SSKeychain.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1647,6 +1941,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7928037619C8B3C40075261D /* CardNameTableViewCell.m in Sources */,
+				79BD34201AD054DB008079CF /* EmailCell.m in Sources */,
 				7928035A19C8B3C40075261D /* ResetPasswordSection.m in Sources */,
 				79C050E119CF650D001BB956 /* GKImageCropView.m in Sources */,
 				792803B219C8B3C40075261D /* UIAlertView+AFNetworking.m in Sources */,
@@ -1656,9 +1951,12 @@
 				7928034219C8B3C40075261D /* CardEditorViewController.m in Sources */,
 				7928036A19C8B3C40075261D /* EditableTableViewCell.m in Sources */,
 				7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */,
+				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
+				795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */,
 				7997B7BF19E309C200525550 /* SocialSetupViewController.m in Sources */,
 				7928037519C8B3C40075261D /* CardHeaderTableViewCell.m in Sources */,
 				7928037919C8B3C40075261D /* ContactTableViewCell.m in Sources */,
+				795003BD1AE525E0003DD9BF /* EnterAddressCell.m in Sources */,
 				792803B019C8B3C40075261D /* AFNetworkActivityIndicatorManager.m in Sources */,
 				7928038319C8B3C40075261D /* TwitterTableViewCell.m in Sources */,
 				7928034919C8B3C40075261D /* PhoneEditorSection.m in Sources */,
@@ -1666,11 +1964,13 @@
 				7928034F19C8B3C40075261D /* CardViewController.m in Sources */,
 				79D46C7919D22D4F00C52FEE /* NSDateFormatter+STTwitter.m in Sources */,
 				7928035F19C8B3C40075261D /* LoadingTableViewCell.m in Sources */,
+				79BD34511AD84C98008079CF /* FacebookEditCell.m in Sources */,
 				7928035719C8B3C40075261D /* EmailSettingsSection.m in Sources */,
 				7928037B19C8B3C40075261D /* LogInView.m in Sources */,
 				79D46C8119D22D4F00C52FEE /* STTwitterOS.m in Sources */,
 				7928036819C8B3C40075261D /* CardNameEditTableViewCell.m in Sources */,
 				79B3FEAE19C9150300759F69 /* Address.m in Sources */,
+				79B752C91AF81545007660E5 /* GroupView.m in Sources */,
 				79B3FEAB19C9150200759F69 /* Contact.m in Sources */,
 				7928037E19C8B3C40075261D /* NewEmailView.m in Sources */,
 				7928037719C8B3C40075261D /* CardTableViewCell.m in Sources */,
@@ -1679,6 +1979,8 @@
 				79C050F219D07505001BB956 /* SocialAccountsSection.m in Sources */,
 				7928036519C8B3C40075261D /* PhoneTableViewCell.m in Sources */,
 				7928034719C8B3C40075261D /* NamePictureEditorSection.m in Sources */,
+				79766C971AE038AC00C5CA3D /* PhoneNumberCell.m in Sources */,
+				79BD344E1AD84C85008079CF /* AddressEditCell.m in Sources */,
 				79B3FEBD19C9150400759F69 /* Social.m in Sources */,
 				792803C519C8EF390075261D /* HandshakeSyncManager.m in Sources */,
 				7928035619C8B3C40075261D /* LogInViewController.m in Sources */,
@@ -1689,16 +1991,20 @@
 				7928037419C8B3C40075261D /* TwitterEditTableViewCell.m in Sources */,
 				7928033919C8B3C40075261D /* UINavigationItem+Additions.m in Sources */,
 				7928033419C8B3C40075261D /* AsyncImageView.m in Sources */,
-				79C050EF19CF8351001BB956 /* CardPictureCache.m in Sources */,
+				79C050EF19CF8351001BB956 /* UserPictureCache.m in Sources */,
 				7928037A19C8B3C40075261D /* SearchView.m in Sources */,
 				79E8FBDB19CC9FCE0005DF53 /* DeleteContactSection.m in Sources */,
+				79766C9A1AE0394B00C5CA3D /* LabelCell.m in Sources */,
 				79D46C7D19D22D4F00C52FEE /* STTwitterAPI.m in Sources */,
 				792801EE19C8B36B0075261D /* Handshake.xcdatamodeld in Sources */,
 				7928033B19C8B3C40075261D /* MainViewController.m in Sources */,
+				796D47EC1AEAE1180001E36C /* ContactCell.m in Sources */,
+				79BD342C1AD05700008079CF /* User.m in Sources */,
 				7928033619C8B3C40075261D /* FacebookHelper.m in Sources */,
 				7928032E19C8B3C40075261D /* AFSecurityPolicy.m in Sources */,
 				79D46C8519D22D4F00C52FEE /* STHTTPRequest.m in Sources */,
 				792803B519C8B3C40075261D /* UIProgressView+AFNetworking.m in Sources */,
+				79BD34291AD05500008079CF /* TwitterCell.m in Sources */,
 				7928037019C8B3C40075261D /* AddFacebookTableViewCell.m in Sources */,
 				7928036F19C8B3C40075261D /* PhoneEditTableViewCell.m in Sources */,
 				7928038019C8B3C40075261D /* ResetPasswordTableViewCell.m in Sources */,
@@ -1714,14 +2020,18 @@
 				7928038919C8B3C40075261D /* DateConverter.m in Sources */,
 				79C050E219CF650D001BB956 /* GKImageCropViewController.m in Sources */,
 				79C050E419CF650D001BB956 /* GKResizeableCropOverlayView.m in Sources */,
+				79B752CF1AFC5DD6007660E5 /* GroupMembersViewController.m in Sources */,
 				79B3FEB119C9150300759F69 /* Email.m in Sources */,
 				792803B119C8B3C40075261D /* UIActivityIndicatorView+AFNetworking.m in Sources */,
+				79766C9E1AE039C600C5CA3D /* PhoneEditController.m in Sources */,
 				7997B7C919E35A8700525550 /* CardSetupViewController.m in Sources */,
 				79C050E019CF650D001BB956 /* GKImageCropOverlayView.m in Sources */,
 				7928035B19C8B3C40075261D /* SettingsViewController.m in Sources */,
 				7928035019C8B3C40075261D /* BasicInfoSection.m in Sources */,
 				7928037F19C8B3C40075261D /* ResendConfirmationTableViewCell.m in Sources */,
+				796866321ACDE7CE00CCF0E2 /* FormTextField.swift in Sources */,
 				7928032F19C8B3C40075261D /* AFURLConnectionOperation.m in Sources */,
+				79B752CC1AFACF59007660E5 /* GroupViewController.m in Sources */,
 				7928033819C8B3C40075261D /* UIBarButtonItem+DefaultBackButton.m in Sources */,
 				7997B7A719DF3EAE00525550 /* ImageViewController.m in Sources */,
 				7928032A19C8B3C40075261D /* AFHTTPRequestOperation.m in Sources */,
@@ -1729,6 +2039,7 @@
 				792803B319C8B3C40075261D /* UIButton+AFNetworking.m in Sources */,
 				792803B719C8B3C40075261D /* UIWebView+AFNetworking.m in Sources */,
 				7928037C19C8B3C40075261D /* EmailSettingsTableViewCell.m in Sources */,
+				79B752C21AF6F4B9007660E5 /* GroupsViewController.m in Sources */,
 				79C050DF19CF650D001BB956 /* GKCropBorderView.m in Sources */,
 				79D46C8319D22D4F00C52FEE /* BAVPlistNode.m in Sources */,
 				7928038419C8B3C40075261D /* StartView.m in Sources */,
@@ -1739,34 +2050,42 @@
 				792803AB19C8B3C40075261D /* RMPhoneFormat.m in Sources */,
 				792803B619C8B3C40075261D /* UIRefreshControl+AFNetworking.m in Sources */,
 				7928036619C8B3C40075261D /* AddFieldTableViewCell.m in Sources */,
+				79BD34481AD84BF3008079CF /* PhoneEditCell.m in Sources */,
 				7928037819C8B3C40075261D /* ContactHeaderTableViewCell.m in Sources */,
+				796866361ACE2CBE00CCF0E2 /* OutlineButton.swift in Sources */,
 				7928034B19C8B3C40075261D /* CardHeaderSection.m in Sources */,
 				7997B7D719EF58EF00525550 /* CreateCardTutorialTableViewCell.m in Sources */,
 				7928036019C8B3C40075261D /* MessageTableViewCell.m in Sources */,
-				792803CC19C8F42C0075261D /* User.m in Sources */,
+				795003B71AE52099003DD9BF /* EmailEditController.m in Sources */,
 				79D46C7F19D22D4F00C52FEE /* STTwitterHTML.m in Sources */,
 				7928035219C8B3C40075261D /* ContactSocialSection.m in Sources */,
 				79B3FEB719C9150300759F69 /* Phone.m in Sources */,
 				7928034C19C8B3C40075261D /* CardNameSection.m in Sources */,
-				79B3FEC319C917A700759F69 /* Shake.m in Sources */,
+				79B752DE1AFD0C70007660E5 /* JoinGroupViewController.m in Sources */,
 				7928033019C8B3C40075261D /* AFURLRequestSerialization.m in Sources */,
 				7997B7CC19E35CE000525550 /* CardSetupSection.m in Sources */,
 				792803B419C8B3C40075261D /* UIImageView+AFNetworking.m in Sources */,
 				7928038219C8B3C40075261D /* FacebookTableViewCell.m in Sources */,
+				79BD34231AD054E7008079CF /* AddressCell.m in Sources */,
 				7928034D19C8B3C40075261D /* CardSocialSection.m in Sources */,
 				7928036E19C8B3C40075261D /* NamePictureEditorTableViewCell.m in Sources */,
 				7997B7AC19E2130700525550 /* ShakeView.m in Sources */,
 				7928034119C8B3C40075261D /* AddTwitterSection.m in Sources */,
+				79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */,
 				79D46C8419D22D4F00C52FEE /* JSONSyntaxHighlight.m in Sources */,
 				7928036219C8B3C40075261D /* SeparatorTableViewCell.m in Sources */,
 				7928036919C8B3C40075261D /* DeleteCardTableViewCell.m in Sources */,
 				7928033E19C8B3C40075261D /* AddFacebookSection.m in Sources */,
+				79B752D21AFC63D0007660E5 /* MembersCell.m in Sources */,
 				792803AF19C8B3C40075261D /* UIControl+Blocks.m in Sources */,
+				79BD34371AD3200E008079CF /* LocationManager.m in Sources */,
 				792803C819C8F3150075261D /* HandshakeSession.m in Sources */,
 				7928035D19C8B3C40075261D /* StartViewController.m in Sources */,
 				7997B79919DC493600525550 /* ForgotPasswordView.m in Sources */,
 				79D46C8219D22D4F00C52FEE /* STTwitterOSRequest.m in Sources */,
+				79B752D51AFC6450007660E5 /* MemberCell.m in Sources */,
 				79C050E319CF650D001BB956 /* GKImagePicker.m in Sources */,
+				795003C61AEA6C7A003DD9BF /* NameEditController.m in Sources */,
 				79B3FEC019C9155900759F69 /* HandshakeClient.m in Sources */,
 				7928034819C8B3C40075261D /* NewTwitterViewController.m in Sources */,
 				79D46C8C19D22D9E00C52FEE /* TwitterHelper.m in Sources */,
@@ -1776,29 +2095,39 @@
 				7997B7CF19EDC70100525550 /* TermsViewController.m in Sources */,
 				7928032C19C8B3C40075261D /* AFHTTPSessionManager.m in Sources */,
 				7928036419C8B3C40075261D /* EmailTableViewCell.m in Sources */,
+				79CCAD421ACC72C4004EEA89 /* Account.m in Sources */,
+				79BD344B1AD84C76008079CF /* EmailEditCell.m in Sources */,
 				7928032D19C8B3C40075261D /* AFNetworkReachabilityManager.m in Sources */,
 				7928034419C8B3C40075261D /* DeleteCardSection.m in Sources */,
 				7928033D19C8B3C40075261D /* SectionBasedTableViewController.m in Sources */,
+				79BD34261AD054F5008079CF /* FacebookCell.m in Sources */,
 				79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */,
 				793451F919CA1BD800746A08 /* NewCardViewController.m in Sources */,
 				7928035519C8B3C40075261D /* ContactsViewController.m in Sources */,
 				7997B7C619E30B5700525550 /* SetupMessageTableViewCell.m in Sources */,
 				7928033119C8B3C40075261D /* AFURLResponseSerialization.m in Sources */,
+				79BD34161ACF71C5008079CF /* UserViewController.m in Sources */,
 				7928037319C8B3C40075261D /* FacebookEditTableViewCell.m in Sources */,
 				7928036D19C8B3C40075261D /* LabelTableViewCell.m in Sources */,
+				79B752DB1AFC6CEB007660E5 /* EditGroupViewController.m in Sources */,
 				7928036B19C8B3C40075261D /* EmailEditTableViewCell.m in Sources */,
 				7928033C19C8B3C40075261D /* Section.m in Sources */,
 				7928035919C8B3C40075261D /* NewEmailViewController.m in Sources */,
+				795003C01AE55C9D003DD9BF /* AddSocialController.m in Sources */,
 				7928036119C8B3C40075261D /* SectionSeparatorTableViewCell.m in Sources */,
 				7997B7D419EF376C00525550 /* ShakeTutorialTableViewCell.m in Sources */,
 				7928033219C8B3C40075261D /* AFURLSessionManager.m in Sources */,
 				7928035319C8B3C40075261D /* ContactViewController.m in Sources */,
+				79BD343F1AD4B3FE008079CF /* AddCell.m in Sources */,
+				79BD34541AD84CA6008079CF /* TwitterEditCell.m in Sources */,
+				795003C31AE56FD4003DD9BF /* TwitterEditController.m in Sources */,
 				792803C219C8E5D00075261D /* HandshakeCoreDataStore.m in Sources */,
+				79B752C51AF6FD2E007660E5 /* Group.m in Sources */,
 				7928036C19C8B3C40075261D /* LabelEditableTableViewCell.m in Sources */,
+				796866041ACCAC0400CCF0E2 /* GroupMember.m in Sources */,
 				7928034619C8B3C40075261D /* LabelSelectionViewController.m in Sources */,
 				792801E819C8B36B0075261D /* main.m in Sources */,
 				7928035119C8B3C40075261D /* ContactHeaderSection.m in Sources */,
-				7997B7B119E244F900525550 /* ShakeController.m in Sources */,
 				7928038119C8B3C40075261D /* SignUpView.m in Sources */,
 				7928035419C8B3C40075261D /* NewContactViewController.m in Sources */,
 				7928034A19C8B3C40075261D /* SocialsEditorSection.m in Sources */,
@@ -1922,10 +2251,12 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/samober/Documents/FacebookSDK,
+					"$(PROJECT_DIR)/Handshake",
 				);
 				INFOPLIST_FILE = Handshake/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Handshake/model/Handshake-Bridging-Header.h";
@@ -1944,10 +2275,12 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/samober/Documents/FacebookSDK,
+					"$(PROJECT_DIR)/Handshake",
 				);
 				INFOPLIST_FILE = Handshake/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Handshake/model/Handshake-Bridging-Header.h";

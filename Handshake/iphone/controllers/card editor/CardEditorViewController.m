@@ -69,12 +69,6 @@
         // destroy temp card
         [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] deleteObject:self.card];
         
-        // update card orders
-        for (Card *card in [HandshakeSession user].cards) {
-            if (card == self.oldCard || [card.syncStatus intValue] == CardDeleted || [card.cardOrder intValue] < [self.oldCard.cardOrder intValue]) continue;
-            card.cardOrder = [NSNumber numberWithInt:[card.cardOrder intValue] - 1];
-        }
-        
         // save the context
         [[HandshakeCoreDataStore defaultStore] saveMainContext];
         
@@ -98,10 +92,6 @@
 }
 
 - (void)save {
-    if (self.card.firstName.length == 0 && self.card.lastName.length == 0) {
-        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"You must add your name to the card." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        return;
-    }
     
     if (self.card.name.length == 0) {
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Please name your card." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];

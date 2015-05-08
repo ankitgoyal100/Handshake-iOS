@@ -16,7 +16,7 @@
     if (df == nil) {
         df = [[NSDateFormatter alloc] init];
         [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
-        //[df setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [df setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         //NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
         //[df setLocale:locale];
     }

@@ -16,11 +16,17 @@
 #import "HandshakeClient.h"
 #import "BaseNavigationController.h"
 
-@interface LogInViewController() <UIAlertViewDelegate>
+@interface LogInViewController()
 
-@property (nonatomic) LogInView *logInView;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
-@property (nonatomic) BOOL cancelled;
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordField;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityView;
+
+@property (weak, nonatomic) IBOutlet UIButton *logInButton;
 
 @end
 
@@ -29,23 +35,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.cancelled = NO;
+    [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
-    self.logInView = [[LogInView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.logInView];
     
-    self.logInView.emailField.delegate = self;
-    self.logInView.passwordField.delegate = self;
-    
-    [self.logInView.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
-    
-    [self.logInView.forgotButton addTarget:self action:@selector(forgotPassword) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [self.logInView.emailField becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    [self.emailField becomeFirstResponder];
     
     [super viewDidAppear:animated];
 }
@@ -57,58 +55,70 @@
 }
 
 - (void)back {
-    self.cancelled = YES;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if (self.logInView.loading) return NO;
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     
-    if (textField == self.logInView.emailField) {
-        [self.logInView.passwordField becomeFirstResponder];
+    if ([self.emailField.text length] > 0 && [self.passwordField.text length] > 0) {
+        self.logInButton.enabled = YES;
+        self.logInButton.alpha = 1;
     } else {
-        self.logInView.loading = YES;
-        [self.logInView endEditing:YES];
-        [HandshakeSession loginWithEmail:self.logInView.emailField.text password:self.logInView.passwordField.text successBlock:^{
-            if (self.cancelled) return;
-            
-            MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
-            controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-            [self presentViewController:controller animated:YES completion:nil];
-        } failedBlock:^(HandshakeSessionError error) {
-            if (self.cancelled) return;
-            
-            self.logInView.loading = NO;
-            if (error == AUTHENTICATION_ERROR)
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Email or password was incorrect." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-            else
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not log you on at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        }];
+        self.logInButton.enabled = NO;
+        self.logInButton.alpha = 0.5;
     }
+    
     return NO;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.emailField) {
+        [self.passwordField becomeFirstResponder];
+    } else if (textField == self.passwordField) {
+        [self logIn:nil];
+    }
+    
+    return NO;
+}
+
+- (IBAction)logIn:(id)sender {
+    if ([self.emailField.text length] == 0 || [self.passwordField.text length] == 0)
+        return;
+    
+    self.logInButton.hidden = YES;
+    self.navItem.leftBarButtonItems = @[];
+    [self.activityView startAnimating];
+    [self.view endEditing:YES];
+    
+    [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
+        [self.view.window setRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"MainViewController"]];
+    } failedBlock:^(HandshakeSessionError error) {
+        self.logInButton.hidden = NO;
+        [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+        [self.activityView stopAnimating];
+        
+        if (error == AUTHENTICATION_ERROR)
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Email or password was incorrect." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        else
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not log you on at this time. Please try again later." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    }];
 }
 
 - (void)keyboardWillChange:(NSNotification *)notification {
     CGRect keyboardRect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
-    UIEdgeInsets content = self.logInView.scrollView.contentInset;
-    UIEdgeInsets scrollBar = self.logInView.scrollView.scrollIndicatorInsets;
-    content.bottom = scrollBar.bottom = MAX(self.view.frame.size.height - keyboardRect.origin.y, self.tabBarController.tabBar.frame.size.height);
-    self.logInView.scrollView.contentInset = content;
-    self.logInView.scrollView.scrollIndicatorInsets = scrollBar;
-}
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [self.logInView.emailField becomeFirstResponder];
+    UIEdgeInsets content = self.scrollView.contentInset;
+    content.bottom = self.view.frame.size.height - keyboardRect.origin.y;
+    self.scrollView.contentInset = content;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
 
-- (void)forgotPassword {
-    BaseNavigationController *controller = [[BaseNavigationController alloc] initWithRootViewController:[[ForgotPasswordViewController alloc] initWithNibName:nil bundle:nil]];
-    controller.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+- (IBAction)forgotPassword:(id)sender {
+    UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"ForgotPasswordViewController"];
     [self presentViewController:controller animated:YES completion:nil];
 }
 

@@ -74,10 +74,10 @@
 }
 
 - (void)save {
-    if (self.card.firstName.length == 0 && self.card.lastName.length == 0) {
-        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"You must add your name to the card." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        return;
-    }
+//    if (self.card.firstName.length == 0 && self.card.lastName.length == 0) {
+//        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"You must add your name to the card." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//        return;
+//    }
     
     if (self.card.name.length == 0) {
         [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Please name your card." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
@@ -90,11 +90,8 @@
     // set created flag
     self.card.syncStatus = [NSNumber numberWithInt:CardCreated];
     
-    // set card order
-    self.card.cardOrder = [NSNumber numberWithInt:(int)[[HandshakeSession user].cards count]];
-    
     // add card to current user
-    self.card.user = [HandshakeSession user];
+    self.card.user = [[HandshakeSession currentSession] account];
     
     [[HandshakeCoreDataStore defaultStore] saveMainContext];
     

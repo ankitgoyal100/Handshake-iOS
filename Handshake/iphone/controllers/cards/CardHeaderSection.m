@@ -40,16 +40,16 @@
 }
 
 - (BaseTableViewCell *)cellForRow:(int)row indexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-    if (self.card.pictureData) {
-        [self.headerCell.pictureButton setImage:[UIImage imageWithData:self.card.pictureData] forState:UIControlStateNormal];
-        [self.headerCell.pictureButton addTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
-    } else if ([self.card.picture length]) {
-        [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.card.picture] target:self action:@selector(imageLoaded:)];
-    } else {
-        [self.headerCell.pictureButton setImage:[UIImage imageNamed:@"default_picture.png"] forState:UIControlStateNormal];
-        [self.headerCell.pictureButton removeTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
-    }
-    self.headerCell.nameLabel.text = [self.card formattedName];
+//    if (self.card.pictureData) {
+//        [self.headerCell.pictureButton setImage:[UIImage imageWithData:self.card.pictureData] forState:UIControlStateNormal];
+//        [self.headerCell.pictureButton addTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
+//    } else if ([self.card.picture length]) {
+//        [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.card.picture] target:self action:@selector(imageLoaded:)];
+//    } else {
+//        [self.headerCell.pictureButton setImage:[UIImage imageNamed:@"default_picture.png"] forState:UIControlStateNormal];
+//        [self.headerCell.pictureButton removeTarget:self action:@selector(viewPicture) forControlEvents:UIControlEventTouchUpInside];
+//    }
+//    self.headerCell.nameLabel.text = [self.card formattedName];
     
     return self.headerCell;
 }

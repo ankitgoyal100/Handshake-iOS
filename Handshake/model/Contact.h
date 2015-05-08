@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "Card.h"
-#import "Shake.h"
+#import "User.h"
 
 static NSString * const ContactSyncCompleted = @"ContactSyncCompleted";
 
@@ -25,8 +25,7 @@ typedef enum {
 @property (nonatomic, retain) NSNumber * contactId;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSDate * updatedAt;
-@property (nonatomic, retain) Card *card;
-@property (nonatomic, retain) Shake *shake;
+@property (nonatomic, retain) User *user;
 @property (nonatomic, retain) NSNumber * syncStatus;
 
 + (void)sync;
@@ -35,5 +34,7 @@ typedef enum {
 + (BOOL)syncing;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
+
+- (NSString *)firstLetter;
 
 @end

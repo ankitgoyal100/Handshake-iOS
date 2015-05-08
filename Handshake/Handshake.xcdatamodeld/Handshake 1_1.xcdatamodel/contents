@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C109" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Account" representedClassName="Account" parentEntity="User" syncable="YES">
+        <attribute name="email" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
     <entity name="Address" representedClassName="Address" syncable="YES">
         <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
@@ -10,7 +14,7 @@
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Card" inverseName="addresses" inverseEntity="Card" syncable="YES"/>
     </entity>
     <entity name="Card" representedClassName="Card" syncable="YES">
-        <attribute name="cardId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="cardId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
@@ -23,7 +27,7 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="cards" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Contact" representedClassName="Contact" syncable="YES">
-        <attribute name="contactId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="contactId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
@@ -34,6 +38,22 @@
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Card" inverseName="emails" inverseEntity="Card" syncable="YES"/>
+    </entity>
+    <entity name="Group" representedClassName="Group" syncable="YES">
+        <attribute name="code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="members" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GroupMember" inverseName="group" inverseEntity="GroupMember" syncable="YES"/>
+    </entity>
+    <entity name="GroupMember" representedClassName="GroupMember" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="groupMemberId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Group" inverseName="members" inverseEntity="Group" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="groups" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Phone" representedClassName="Phone" syncable="YES">
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
@@ -47,21 +67,24 @@
     </entity>
     <entity name="User" representedClassName="User" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pictureData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Card" inverseName="user" inverseEntity="Card" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <relationship name="cards" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Card" inverseName="user" inverseEntity="Card" syncable="YES"/>
         <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Contact" inverseName="user" inverseEntity="Contact" syncable="YES"/>
+        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroupMember" inverseName="user" inverseEntity="GroupMember" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Account" positionX="241" positionY="117" width="128" height="73"/>
         <element name="Address" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="Card" positionX="0" positionY="0" width="128" height="210"/>
+        <element name="Card" positionX="0" positionY="0" width="128" height="208"/>
         <element name="Contact" positionX="0" positionY="0" width="128" height="133"/>
-        <element name="Email" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="Email" positionX="0" positionY="0" width="128" height="88"/>
+        <element name="Group" positionX="9" positionY="90" width="128" height="148"/>
+        <element name="GroupMember" positionX="18" positionY="99" width="128" height="120"/>
         <element name="Phone" positionX="0" positionY="0" width="128" height="90"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>
         <element name="User" positionX="0" positionY="0" width="128" height="193"/>
