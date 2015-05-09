@@ -83,8 +83,8 @@
         if (indexPath.row * 2 + i < [[self.fetchController fetchedObjects] count]) {
             __block Group *group = (Group *)[self.fetchController fetchedObjects][indexPath.row * 2 + i];
             
-            int tileWidth = (self.view.frame.size.width / 2) - 8 - 2;
-            GroupView *groupView = [[GroupView alloc] initWithFrame:CGRectMake((8 + i * 4) + tileWidth * i, (indexPath.row == 0 ? 8 : 4), tileWidth, 164)];
+            int tileWidth = (self.view.frame.size.width / 2) - 10;
+            GroupView *groupView = [[GroupView alloc] initWithFrame:CGRectMake((8 + i * 4) + tileWidth * i, (indexPath.row == 0 ? 8 : 4), tileWidth, 184)];
             groupView.group = group;
             [cell addSubview:groupView];
             
@@ -110,11 +110,11 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) return 172;
+    if (indexPath.row == 0) return 192;
     
-    if (indexPath.row == [self tableView:tableView numberOfRowsInSection:indexPath.section] - 1) return 176;
+    if (indexPath.row == [self tableView:tableView numberOfRowsInSection:indexPath.section] - 1) return 196;
     
-    return 168;
+    return 188;
 }
 
 - (IBAction)add:(id)sender {

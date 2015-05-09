@@ -31,8 +31,11 @@
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
     self.firstName = dictionary[@"first_name"];
     self.lastName = dictionary[@"last_name"];
-    self.picture = dictionary[@"picture"];
-    self.pictureData = nil;
+    // if no picture or picture is different - update
+    if (!dictionary[@"picture"] || (dictionary[@"picture"] && (!self.picture || ![self.picture isEqualToString:dictionary[@"picture"]]))) {
+        self.picture = dictionary[@"picture"];
+        self.pictureData = nil;
+    }
     
     for (NSDictionary *cardDict in dictionary[@"cards"]) {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Card"];

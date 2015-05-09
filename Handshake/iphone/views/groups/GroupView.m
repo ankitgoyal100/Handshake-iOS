@@ -14,7 +14,7 @@
 
 @interface GroupView()
 
-@property (nonatomic, strong) NSMutableArray *imageViews;
+@property (nonatomic, strong) UIView *circleView;
 
 @property (nonatomic, strong) UILabel *groupNameLabel;
 @property (nonatomic, strong) UILabel *groupSizeLabel;
@@ -26,15 +26,11 @@
 
 @implementation GroupView
 
-- (NSMutableArray *)imageViews {
-    if (!_imageViews) _imageViews = [[NSMutableArray alloc] init];
-    return _imageViews;
-}
-
 - (UILabel *)groupNameLabel {
     if (!_groupNameLabel) {
         _groupNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _groupNameLabel.font = [UIFont fontWithName:@"Roboto" size:16];
+        _groupNameLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _groupNameLabel;
 }
@@ -44,6 +40,7 @@
         _groupSizeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _groupSizeLabel.font = [UIFont fontWithName:@"Roboto" size:14];
         _groupSizeLabel.textColor = [UIColor grayColor];
+        _groupSizeLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _groupSizeLabel;
 }
@@ -110,12 +107,9 @@
 - (void)setGroup:(Group *)group {
     _group = group;
     
-    // reset all image views
-    for (AsyncImageView *view in self.imageViews) {
-        [view removeFromSuperview];
-    }
-    
-    [self.imageViews removeAllObjects];
+    // remove circleView
+    if (self.circleView)
+        [self.circleView removeFromSuperview];
     
     self.groupSizeLabel.frame = CGRectMake(16, self.frame.size.height - 16 - 16, self.frame.size.width - 32, 18);
     if ([group.members count] == 1)
@@ -130,33 +124,42 @@
         self.codeLabel.hidden = YES;
         [self.loadingView stopAnimating];
         
-        int gridWidth = ((int)self.frame.size.width - 16) / 40;
+        float circleSize = self.groupNameLabel.frame.origin.y - 32;
         
-        for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < gridWidth; x++) {
-                if (y * gridWidth + x >= [group.members count])
-                    break;
-                
-                GroupMember *member = [group.members allObjects][y * gridWidth + x];
-                
-                AsyncImageView *imageView = [[AsyncImageView alloc] initWithFrame:CGRectMake(16 + x * 40, 16 + y * 40, 35, 35)];
-                imageView.layer.masksToBounds = YES;
-                imageView.layer.cornerRadius = 35.0 / 2.0;
-                imageView.showActivityIndicator = NO;
-                imageView.crossfadeDuration = 0;
-                
-                if (member.user.pictureData)
-                    imageView.image = [UIImage imageWithData:member.user.pictureData];
-                else if (member.user.picture && [member.user.picture length] > 0)
-                    imageView.imageURL = [NSURL URLWithString:member.user.picture];
-                else
-                    imageView.image = [UIImage imageNamed:@"default.png"];
-                imageView.userInteractionEnabled = NO;
-                
-                [self.imageViews addObject:imageView];
-                [self addSubview:imageView];
-            }
+        self.circleView = [[UIView alloc] initWithFrame:CGRectMake((self.frame.size.width - circleSize) / 2, 16, circleSize, circleSize)];
+        self.circleView.layer.masksToBounds = YES;
+        self.circleView.layer.cornerRadius = circleSize / 2;
+        self.circleView.userInteractionEnabled = NO;
+        self.circleView.layer.borderWidth = 0.5;
+        self.circleView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
+        
+        if ([group.members count] == 1) {
+            GroupMember *member = [group.members allObjects][0];
+            [self.circleView addSubview:[self createViewWithFrame:self.circleView.bounds user:member.user]];
+        } else if ([group.members count] == 2) {
+            GroupMember *member1 = [group.members allObjects][0];
+            GroupMember *member2 = [group.members allObjects][1];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) user:member1.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, 0, circleSize / 2, circleSize) user:member2.user]];
+        } else if ([group.members count] == 3) {
+            GroupMember *member1 = [group.members allObjects][0];
+            GroupMember *member2 = [group.members allObjects][1];
+            GroupMember *member3 = [group.members allObjects][2];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) user:member1.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) user:member2.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) user:member3.user]];
+        } else {
+            GroupMember *member1 = [group.members allObjects][0];
+            GroupMember *member2 = [group.members allObjects][1];
+            GroupMember *member3 = [group.members allObjects][2];
+            GroupMember *member4 = [group.members allObjects][3];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, -0.5, circleSize / 2, circleSize / 2) user:member1.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) user:member2.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) user:member3.user]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) user:member4.user]];
         }
+        
+        [self addSubview:self.circleView];
     } else {
         self.codeLabel.frame = CGRectMake(16, 16, self.frame.size.width - 32, self.groupNameLabel.frame.origin.y - 32);
         
@@ -172,6 +175,24 @@
     }
     
     self.button.frame = self.bounds;
+}
+
+- (AsyncImageView *)createViewWithFrame:(CGRect)frame user:(User *)user {
+    AsyncImageView *imageView = [[AsyncImageView alloc] initWithFrame:frame];
+    imageView.showActivityIndicator = NO;
+    imageView.crossfadeDuration = 0;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
+    
+    if (user.pictureData)
+        imageView.image = [UIImage imageWithData:user.pictureData];
+    else if (user.picture && [user.picture length] > 0)
+        imageView.imageURL = [NSURL URLWithString:user.picture];
+    else
+        imageView.image = [UIImage imageNamed:@"default.png"];
+    imageView.userInteractionEnabled = NO;
+    
+    return imageView;
 }
 
 @end
