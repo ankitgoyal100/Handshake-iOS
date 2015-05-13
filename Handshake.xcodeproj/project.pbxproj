@@ -148,6 +148,13 @@
 		792803C219C8E5D00075261D /* HandshakeCoreDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C119C8E5D00075261D /* HandshakeCoreDataStore.m */; };
 		792803C519C8EF390075261D /* HandshakeSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C419C8EF390075261D /* HandshakeSyncManager.m */; };
 		792803C819C8F3150075261D /* HandshakeSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C719C8F3150075261D /* HandshakeSession.m */; };
+		7932B7531AFE94B80011A747 /* RequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7521AFE94B80011A747 /* RequestsViewController.m */; };
+		7932B7571AFF01390011A747 /* UserRequestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7561AFF01390011A747 /* UserRequestCell.m */; };
+		7932B75A1B001C6B0011A747 /* Request.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7591B001C6B0011A747 /* Request.m */; };
+		7932B75E1B0159910011A747 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B75D1B0159910011A747 /* SearchViewController.m */; };
+		7932B7651B0189820011A747 /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7641B0189820011A747 /* SearchResultCell.m */; };
+		7932B7681B0288340011A747 /* SearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7671B0288340011A747 /* SearchResult.m */; };
+		7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932B7691B02AD340011A747 /* QuartzCore.framework */; };
 		793451F919CA1BD800746A08 /* NewCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 793451F819CA1BD800746A08 /* NewCardViewController.m */; };
 		795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003B31AE52003003DD9BF /* EmailAddressCell.m */; };
 		795003B71AE52099003DD9BF /* EmailEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 795003B61AE52099003DD9BF /* EmailEditController.m */; };
@@ -569,6 +576,19 @@
 		792803C419C8EF390075261D /* HandshakeSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSyncManager.m; sourceTree = "<group>"; };
 		792803C619C8F3150075261D /* HandshakeSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeSession.h; sourceTree = "<group>"; };
 		792803C719C8F3150075261D /* HandshakeSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSession.m; sourceTree = "<group>"; };
+		7932B7511AFE94B80011A747 /* RequestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestsViewController.h; path = requests/RequestsViewController.h; sourceTree = "<group>"; };
+		7932B7521AFE94B80011A747 /* RequestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RequestsViewController.m; path = requests/RequestsViewController.m; sourceTree = "<group>"; };
+		7932B7551AFF01390011A747 /* UserRequestCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserRequestCell.h; path = requests/UserRequestCell.h; sourceTree = "<group>"; };
+		7932B7561AFF01390011A747 /* UserRequestCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserRequestCell.m; path = requests/UserRequestCell.m; sourceTree = "<group>"; };
+		7932B7581B001C6B0011A747 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
+		7932B7591B001C6B0011A747 /* Request.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Request.m; sourceTree = "<group>"; };
+		7932B75C1B0159910011A747 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchViewController.h; path = search/SearchViewController.h; sourceTree = "<group>"; };
+		7932B75D1B0159910011A747 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchViewController.m; path = search/SearchViewController.m; sourceTree = "<group>"; };
+		7932B7631B0189820011A747 /* SearchResultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchResultCell.h; path = search/SearchResultCell.h; sourceTree = "<group>"; };
+		7932B7641B0189820011A747 /* SearchResultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchResultCell.m; path = search/SearchResultCell.m; sourceTree = "<group>"; };
+		7932B7661B0288340011A747 /* SearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchResult.h; sourceTree = "<group>"; };
+		7932B7671B0288340011A747 /* SearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchResult.m; sourceTree = "<group>"; };
+		7932B7691B02AD340011A747 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		793451F719CA1BD800746A08 /* NewCardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCardViewController.h; sourceTree = "<group>"; };
 		793451F819CA1BD800746A08 /* NewCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewCardViewController.m; sourceTree = "<group>"; };
 		795003B21AE52003003DD9BF /* EmailAddressCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailAddressCell.h; path = "user editor view/edit field view/EmailAddressCell.h"; sourceTree = "<group>"; };
@@ -815,6 +835,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */,
 				7997B7AE19E224E600525550 /* CoreLocation.framework in Frameworks */,
 				79D46C8919D22D5F00C52FEE /* Social.framework in Frameworks */,
 				79D46C8719D22D5B00C52FEE /* Accounts.framework in Frameworks */,
@@ -990,6 +1011,8 @@
 		7928023219C8B3C40075261D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				7932B75B1B0159740011A747 /* search */,
+				7932B7501AFE94930011A747 /* requests */,
 				79B752BF1AF6F49B007660E5 /* groups */,
 				79766C9B1AE039A900C5CA3D /* editor */,
 				7997B7BC19E3093200525550 /* post sign up */,
@@ -1138,6 +1161,8 @@
 		7928028119C8B3C40075261D /* views */ = {
 			isa = PBXGroup;
 			children = (
+				7932B7621B01896F0011A747 /* search */,
+				7932B7541AFF01180011A747 /* requests */,
 				79B752C61AF8152E007660E5 /* groups */,
 				79BD343C1AD4B3CA008079CF /* user editor view */,
 				79BD341A1AD05437008079CF /* user view */,
@@ -1330,6 +1355,8 @@
 				79B752C41AF6FD2E007660E5 /* Group.m */,
 				796866021ACCAC0400CCF0E2 /* GroupMember.h */,
 				796866031ACCAC0400CCF0E2 /* GroupMember.m */,
+				7932B7581B001C6B0011A747 /* Request.h */,
+				7932B7591B001C6B0011A747 /* Request.m */,
 				79B3FEBB19C9150400759F69 /* Social.h */,
 				79B3FEBC19C9150400759F69 /* Social.m */,
 				79B3FEB519C9150300759F69 /* Phone.h */,
@@ -1342,6 +1369,8 @@
 				79B3FEAA19C9150200759F69 /* Contact.m */,
 				79D4AD5619C93F3100F5A154 /* Card.h */,
 				79D4AD5719C93F3100F5A154 /* Card.m */,
+				7932B7661B0288340011A747 /* SearchResult.h */,
+				7932B7671B0288340011A747 /* SearchResult.m */,
 				796866341ACDE91D00CCF0E2 /* Handshake-Bridging-Header.h */,
 			);
 			path = model;
@@ -1488,6 +1517,7 @@
 		792803BD19C8B46C0075261D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7932B7691B02AD340011A747 /* QuartzCore.framework */,
 				7997B7AD19E224E600525550 /* CoreLocation.framework */,
 				79D46C8819D22D5F00C52FEE /* Social.framework */,
 				79D46C8619D22D5B00C52FEE /* Accounts.framework */,
@@ -1496,6 +1526,42 @@
 				792803BA19C8B4580075261D /* Security.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7932B7501AFE94930011A747 /* requests */ = {
+			isa = PBXGroup;
+			children = (
+				7932B7511AFE94B80011A747 /* RequestsViewController.h */,
+				7932B7521AFE94B80011A747 /* RequestsViewController.m */,
+			);
+			name = requests;
+			sourceTree = "<group>";
+		};
+		7932B7541AFF01180011A747 /* requests */ = {
+			isa = PBXGroup;
+			children = (
+				7932B7551AFF01390011A747 /* UserRequestCell.h */,
+				7932B7561AFF01390011A747 /* UserRequestCell.m */,
+			);
+			name = requests;
+			sourceTree = "<group>";
+		};
+		7932B75B1B0159740011A747 /* search */ = {
+			isa = PBXGroup;
+			children = (
+				7932B75C1B0159910011A747 /* SearchViewController.h */,
+				7932B75D1B0159910011A747 /* SearchViewController.m */,
+			);
+			name = search;
+			sourceTree = "<group>";
+		};
+		7932B7621B01896F0011A747 /* search */ = {
+			isa = PBXGroup;
+			children = (
+				7932B7631B0189820011A747 /* SearchResultCell.h */,
+				7932B7641B0189820011A747 /* SearchResultCell.m */,
+			);
+			name = search;
 			sourceTree = "<group>";
 		};
 		796866181ACDA65B00CCF0E2 /* fonts */ = {
@@ -1954,6 +2020,7 @@
 				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
 				795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */,
 				7997B7BF19E309C200525550 /* SocialSetupViewController.m in Sources */,
+				7932B7531AFE94B80011A747 /* RequestsViewController.m in Sources */,
 				7928037519C8B3C40075261D /* CardHeaderTableViewCell.m in Sources */,
 				7928037919C8B3C40075261D /* ContactTableViewCell.m in Sources */,
 				795003BD1AE525E0003DD9BF /* EnterAddressCell.m in Sources */,
@@ -2030,6 +2097,7 @@
 				7928035019C8B3C40075261D /* BasicInfoSection.m in Sources */,
 				7928037F19C8B3C40075261D /* ResendConfirmationTableViewCell.m in Sources */,
 				796866321ACDE7CE00CCF0E2 /* FormTextField.swift in Sources */,
+				7932B7571AFF01390011A747 /* UserRequestCell.m in Sources */,
 				7928032F19C8B3C40075261D /* AFURLConnectionOperation.m in Sources */,
 				79B752CC1AFACF59007660E5 /* GroupViewController.m in Sources */,
 				7928033819C8B3C40075261D /* UIBarButtonItem+DefaultBackButton.m in Sources */,
@@ -2040,6 +2108,7 @@
 				792803B719C8B3C40075261D /* UIWebView+AFNetworking.m in Sources */,
 				7928037C19C8B3C40075261D /* EmailSettingsTableViewCell.m in Sources */,
 				79B752C21AF6F4B9007660E5 /* GroupsViewController.m in Sources */,
+				7932B7681B0288340011A747 /* SearchResult.m in Sources */,
 				79C050DF19CF650D001BB956 /* GKCropBorderView.m in Sources */,
 				79D46C8319D22D4F00C52FEE /* BAVPlistNode.m in Sources */,
 				7928038419C8B3C40075261D /* StartView.m in Sources */,
@@ -2055,6 +2124,7 @@
 				796866361ACE2CBE00CCF0E2 /* OutlineButton.swift in Sources */,
 				7928034B19C8B3C40075261D /* CardHeaderSection.m in Sources */,
 				7997B7D719EF58EF00525550 /* CreateCardTutorialTableViewCell.m in Sources */,
+				7932B7651B0189820011A747 /* SearchResultCell.m in Sources */,
 				7928036019C8B3C40075261D /* MessageTableViewCell.m in Sources */,
 				795003B71AE52099003DD9BF /* EmailEditController.m in Sources */,
 				79D46C7F19D22D4F00C52FEE /* STTwitterHTML.m in Sources */,
@@ -2071,6 +2141,7 @@
 				7928036E19C8B3C40075261D /* NamePictureEditorTableViewCell.m in Sources */,
 				7997B7AC19E2130700525550 /* ShakeView.m in Sources */,
 				7928034119C8B3C40075261D /* AddTwitterSection.m in Sources */,
+				7932B75A1B001C6B0011A747 /* Request.m in Sources */,
 				79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */,
 				79D46C8419D22D4F00C52FEE /* JSONSyntaxHighlight.m in Sources */,
 				7928036219C8B3C40075261D /* SeparatorTableViewCell.m in Sources */,
@@ -2094,6 +2165,7 @@
 				79C050F519D08D7B001BB956 /* SocialAccountTableViewCell.m in Sources */,
 				7997B7CF19EDC70100525550 /* TermsViewController.m in Sources */,
 				7928032C19C8B3C40075261D /* AFHTTPSessionManager.m in Sources */,
+				7932B75E1B0159910011A747 /* SearchViewController.m in Sources */,
 				7928036419C8B3C40075261D /* EmailTableViewCell.m in Sources */,
 				79CCAD421ACC72C4004EEA89 /* Account.m in Sources */,
 				79BD344B1AD84C76008079CF /* EmailEditCell.m in Sources */,

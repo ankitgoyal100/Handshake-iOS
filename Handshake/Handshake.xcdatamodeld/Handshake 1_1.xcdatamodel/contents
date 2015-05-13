@@ -60,6 +60,24 @@
         <attribute name="number" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Card" inverseName="phones" inverseEntity="Card" syncable="YES"/>
     </entity>
+    <entity name="Request" representedClassName="Request" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="mutual" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="requestId" optional="YES" attributeType="Integer 64" indexed="YES" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="SearchResult" representedClassName="SearchResult" syncable="YES">
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mutual" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="picture" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pictureData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="tag" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Contact" syncable="YES"/>
+        <relationship name="request" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Request" syncable="YES"/>
+    </entity>
     <entity name="Social" representedClassName="Social" syncable="YES">
         <attribute name="network" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
@@ -88,5 +106,7 @@
         <element name="Phone" positionX="0" positionY="0" width="128" height="90"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>
         <element name="User" positionX="0" positionY="0" width="128" height="193"/>
+        <element name="Request" positionX="117" positionY="108" width="128" height="118"/>
+        <element name="SearchResult" positionX="126" positionY="117" width="128" height="178"/>
     </elements>
 </model>

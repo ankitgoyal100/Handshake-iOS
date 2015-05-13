@@ -28,6 +28,17 @@
     return sharedInstance;
 }
 
+- (void)deleteAllData {
+    NSPersistentStore *store = self.persistentStoreCoordinator.persistentStores[0];
+    NSError *error;
+    NSURL *storeURL = store.URL;
+    [self.persistentStoreCoordinator removePersistentStore:store error:&error];
+    [[NSFileManager defaultManager] removeItemAtPath:storeURL.path error:&error];
+    
+    self.persistentStoreCoordinator = nil;
+    self.mainManagedObjectContext = nil;
+}
+
 + (NSDictionary *)removeNullsFromDictionary:(id)dictionary {
     if ([dictionary isKindOfClass:[NSNull class]]) return nil;
     

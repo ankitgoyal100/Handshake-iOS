@@ -15,6 +15,7 @@
 #import "Group.h"
 #import "EditGroupViewController.h"
 #import "JoinGroupViewController.h"
+#import "Contact.h"
 
 @interface GroupsViewController () <NSFetchedResultsControllerDelegate, UIActionSheetDelegate, EditGroupViewControllerDelegate, JoinGroupViewControllerDelegate>
 
@@ -158,6 +159,8 @@
     GroupViewController *controller = (GroupViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"GroupViewController"];
     controller.group = group;
     [self.navigationController pushViewController:controller animated:YES];
+    
+    [Contact sync];
 }
 
 @end

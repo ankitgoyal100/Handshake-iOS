@@ -15,6 +15,7 @@
 #import "Card.h"
 #import "Contact.h"
 #import "Group.h"
+#import "Request.h"
 
 static HandshakeSession *session = nil;
 
@@ -80,10 +81,13 @@ static HandshakeSession *session = nil;
             
             [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_RESTORED object:nil];
             
-            [Account sync];
-            [Card sync];
-            [Contact sync];
-            [Group sync];
+            [Account syncWithSuccessBlock:^{
+                [Card sync];
+                [Contact syncWithCompletionBlock:^{
+                    [Group sync];
+                    [Request sync];
+                }];
+            }];
             
             return session;
         }
@@ -98,6 +102,9 @@ static HandshakeSession *session = nil;
     
     // destroy existing session
     [self destroySession];
+    
+    // delete all data
+    [[HandshakeCoreDataStore defaultStore] deleteAllData];
     
     [[HandshakeClient client] POST:@"/tokens" parameters:@{ @"email":email, @"password":password } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self initSession];
@@ -138,10 +145,13 @@ static HandshakeSession *session = nil;
             [session.managedObjectContext save:&error];
         }];
         
-        [Account sync];
-        [Card sync];
-        [Contact sync];
-        [Group sync];
+        [Account syncWithSuccessBlock:^{
+            [Card sync];
+            [Contact syncWithCompletionBlock:^{
+                [Group sync];
+                [Request sync];
+            }];
+        }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401) {
             if (failedBlock) failedBlock(AUTHENTICATION_ERROR);

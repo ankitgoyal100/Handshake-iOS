@@ -11,6 +11,7 @@
 #import "AsyncImageView.h"
 #import "HandshakeCoreDataStore.h"
 #import "User.h"
+#import "SearchResult.h"
 
 @implementation UserPictureCache
 
@@ -29,7 +30,6 @@
         NSString *urlString = [(NSURL *)[notification userInfo][AsyncImageURLKey] absoluteString];
         
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-        //request.fetchLimit = 1;
         request.predicate = [NSPredicate predicateWithFormat:@"picture == %@", urlString];
         
         __block NSArray *results;
@@ -41,13 +41,26 @@
             results = [objectContext executeFetchRequest:request error:&error];
         }];
         
-        if (![results count]) {
-            // error or no matching card - return
-            return;
+        if (results && [results count] > 0) {
+            for (User *user in results) {
+                user.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 0.0);
+               // user.pictureData = UIImagePNGRepresentation([notification userInfo][AsyncImageImageKey]);
+            }
         }
         
-        for (User *user in results) {
-            user.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 1);
+        // search results
+        request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
+        request.predicate = [NSPredicate predicateWithFormat:@"picture == %@", urlString];
+        
+        [objectContext performBlockAndWait:^{
+            NSError *error;
+            results = [objectContext executeFetchRequest:request error:&error];
+        }];
+        
+        if (results && [results count] > 0) {
+            for (SearchResult *result in results) {
+                result.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 1);
+            }
         }
         
         [objectContext performBlockAndWait:^{

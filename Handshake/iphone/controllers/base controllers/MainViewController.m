@@ -28,7 +28,7 @@
     
     // setup view controllers
     
-    UserViewController *userController = (UserViewController *)((UINavigationController *)self.viewControllers[2]).visibleViewController;
+    UserViewController *userController = (UserViewController *)((UINavigationController *)self.viewControllers[3]).visibleViewController;
     userController.user = [[HandshakeSession currentSession] account];
     userController.title = @"You";
     

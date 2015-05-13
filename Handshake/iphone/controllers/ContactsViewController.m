@@ -15,10 +15,13 @@
 #import "Contact.h"
 #import "ContactCell.h"
 #import "UserViewController.h"
+#import "Request.h"
+#import "UserRequestCell.h"
 
 @interface ContactsViewController() <UITextFieldDelegate, NSFetchedResultsControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSFetchedResultsController *requestFetchController;
 
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
@@ -63,9 +66,17 @@
     
     self.fetchedResultsController.delegate = self;
     
+    // requests
+    //request = [[NSFetchRequest alloc] initWithEntityName:@"Request"];
+    //request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]];
+    
+    //self.requestFetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    //self.requestFetchController.delegate = self;
+    
     [self.managedObjectContext performBlockAndWait:^{
         NSError *error = nil;
         [self.fetchedResultsController performFetch:&error];
+        //[self.requestFetchController performFetch:&error];
     }];
 }
 
@@ -226,8 +237,10 @@
     cell.pictureView.image = nil;
     if (contact.user.pictureData)
         cell.pictureView.image = [UIImage imageWithData:contact.user.pictureData];
-    else
+    else if (contact.user.picture)
         cell.pictureView.imageURL = [NSURL URLWithString:contact.user.picture];
+    else
+        cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
     cell.nameLabel.text = [contact.user formattedName];
     
     return cell;

@@ -77,9 +77,6 @@
     
     self.editing = NO;
     
-    self.blurView.tintColor = [UIColor clearColor];
-    self.blurView.updateInterval = 1.0 / 30.0;
-    
     self.pictureView.showActivityIndicator = NO;
     
     self.nameLabelConstraint.constant = self.view.frame.size.width - 70;
@@ -101,16 +98,17 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     //self.pictureView.hidden = NO;
-    self.blurView.blurEnabled = YES;
-    if (self.blurView.blurRadius == 0)
-        self.blurView.hidden = YES;
-    else
-        self.blurView.hidden = NO;
+//    self.blurView.blurEnabled = YES;
+//    if (self.blurView.blurRadius == 0)
+//        self.blurView.hidden = YES;
+//    else
+//        self.blurView.hidden = NO;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.blurView.blurEnabled = NO;
+//    self.blurView.blurEnabled = NO;
+//    self.blurView.dynamic = NO;
 }
 
 - (void)back {
@@ -432,10 +430,16 @@
     self.imageViewHeight.constant = MAX(70, MIN(self.view.frame.size.width - self.tableView.contentOffset.y, self.view.frame.size.width));
     
     self.blurView.blurRadius = MAX(0, MIN(1, (self.tableView.contentOffset.y - (self.view.frame.size.width / 2)) / ((self.view.frame.size.width / 2) - 70.0))) * 30.0;
-    if (self.blurView.blurRadius == 0)
+    if (self.blurView.blurRadius == 0) {
         self.blurView.hidden = YES;
-    else
+        self.blurView.blurEnabled = NO;
+    } else {
         self.blurView.hidden = NO;
+        self.blurView.blurEnabled = YES;
+    }
+    
+    
+    //self.blurView.alpha = MAX(0, MIN(1, (self.tableView.contentOffset.y - (self.view.frame.size.width / 2)) / ((self.view.frame.size.width / 2) - 70.0)));
     
     if (self.editing) {
         if (self.changePictureButton.alpha == 1 && self.tableView.contentOffset.y > 40) {
@@ -453,6 +457,9 @@
 - (void)setUser:(User *)user {
     _user = user;
     
+    if (!self.nameLabel)
+        return; //view not loaded yet
+    
     if ([self.user.cards count] > 0)
         self.card = self.user.cards[0];
     
@@ -462,9 +469,14 @@
     self.nameLabel.text = [_user formattedName];
     
     // set picture
-    if (self.user.pictureData)
-        self.pictureView.image = [UIImage imageWithData:self.user.pictureData];
-    else if (self.user.picture)
+    if (self.user.pictureData) {
+        UIImage *image = [[UIImage alloc] initWithData:self.user.pictureData];
+        UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
+        [image drawAtPoint:CGPointZero];
+        image = UIGraphicsGetImageFromCurrentImageContext(); // huge performance increase - no deferred decompression
+        UIGraphicsEndImageContext();
+        self.pictureView.image = image;
+    } else if (self.user.picture)
         self.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
     else
         self.pictureView.image = [UIImage imageNamed:@"default_picture"];

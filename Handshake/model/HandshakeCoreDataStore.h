@@ -13,6 +13,8 @@
 
 + (HandshakeCoreDataStore *)defaultStore;
 
+- (void)deleteAllData;
+
 - (NSURL *)applicationDocumentsDirectory;
 
 - (NSManagedObjectContext *)mainManagedObjectContext;
