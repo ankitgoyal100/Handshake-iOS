@@ -49,6 +49,12 @@
     [self fetch];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+
 - (void)fetch {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Group"];
     
@@ -132,16 +138,14 @@
         
         [self presentViewController:nav animated:YES completion:nil];
     } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Create Group"]) {
-        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
-        
-        EditGroupViewController *controller = nav.viewControllers[0];
+        EditGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
         controller.delegate = self;
         
         Group *group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
         group.syncStatus = [NSNumber numberWithInt:GroupDeleted]; // don't show in list
         controller.group = group;
         
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController pushViewController:controller animated:YES];
     }
 }
 

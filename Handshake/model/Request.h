@@ -17,7 +17,8 @@
 @property (nonatomic, retain) NSNumber * requestId;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSDate * updatedAt;
-@property (nonatomic, retain) NSNumber * mutual;
+@property (nonatomic, retain) NSNumber *accepted;
+@property (nonatomic, retain) NSNumber *removed;
 @property (nonatomic, retain) User *user;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;

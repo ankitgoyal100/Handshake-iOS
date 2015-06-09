@@ -15,11 +15,14 @@
 #import "GroupMembersViewController.h"
 #import "MembersCell.h"
 #import "EditGroupViewController.h"
+#import "FeedItem.h"
+#import "GroupCodeCell.h"
 
-@interface GroupViewController () <UIActionSheetDelegate, EditGroupViewControllerDelegate>
+@interface GroupViewController () <UIActionSheetDelegate, EditGroupViewControllerDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *picturesView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *picturesViewHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *picturesViewTop;
 @property (weak, nonatomic) IBOutlet UIImageView *shadow;
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -73,8 +76,8 @@
         
         User *user = ((GroupMember *)[group.members allObjects][i]).user;
         
-        if (user.pictureData)
-            imageView.image = [UIImage imageWithData:user.pictureData];
+        if ([user cachedImage])
+            imageView.image = [user cachedImage];
         else if (user.picture)
             imageView.imageURL = [NSURL URLWithString:user.picture];
         else
@@ -88,68 +91,84 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    self.picturesViewHeight.constant = MIN(MAX(100 - scrollView.contentOffset.y, 70), 100);
-    self.nameLabelConstraint.constant = MIN(MAX(46 - scrollView.contentOffset.y, 16), 46);
+    //self.picturesViewHeight.constant = MIN(100 - scrollView.contentOffset.y, 100);
+    self.picturesViewTop.constant = MIN(-scrollView.contentOffset.y, 0);
+    self.nameLabelConstraint.constant = MIN(62 - scrollView.contentOffset.y, 62);
+   // self.picturesViewTop.constant = -scrollView.contentOffset.y;
+    //self.nameLabelConstraint.constant = 62 - scrollView.contentOffset.y;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 100;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 6;
+    return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0 || indexPath.row == 5)
-        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+//    if (indexPath.row == 0 || indexPath.row == 5)
+//        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
-    if (indexPath.row == 1) {
+    if (indexPath.row == 0) {
         MembersCell *cell = (MembersCell *)[tableView dequeueReusableCellWithIdentifier:@"MembersCell"];
         if (self.group)
             cell.membersLabel.text = [NSString stringWithFormat:@"Members (%d)", (int)[self.group.members count]];
         return cell;
     }
     
-    if (indexPath.row == 2)
-        return [tableView dequeueReusableCellWithIdentifier:@"SyncCell"];
+    if (indexPath.row == 1)
+        return [tableView dequeueReusableCellWithIdentifier:@"EditCell"];
     
-    if (indexPath.row == 3)
+    if (indexPath.row == 2) {
+        GroupCodeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"GroupCodeCell"];
+        
+        cell.codeLabel.text = [[NSString stringWithFormat:@"%@-%@-%@", [self.group.code substringToIndex:2], [self.group.code substringWithRange:NSMakeRange(2, 2)], [self.group.code substringFromIndex:4]] uppercaseString];
+        
+        return cell;
+    }
+    
+    if (indexPath.row == 2)
         return [tableView dequeueReusableCellWithIdentifier:@"EditCell"];
     
     return [tableView dequeueReusableCellWithIdentifier:@"LeaveCell"];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) return 108;
+    //if (indexPath.row == 0) return 100 - 35;
     
-    if (indexPath.row == 5) return 8;
+    if (indexPath.row == 0) return 47;
     
-    return 56;
+    if (indexPath.row == 2) return 115;
+    
+    return 46;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row == 1) {
+    if (indexPath.row == 0) {
         // members
         GroupMembersViewController *controller = (GroupMembersViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"GroupMembersViewController"];
         controller.group = self.group;
         [self.navigationController pushViewController:controller animated:YES];
     }
     
-    if (indexPath.row == 3) {
+    if (indexPath.row == 1) {
         // edit name
-        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
         
-        EditGroupViewController *controller = nav.viewControllers[0];
+        EditGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
         controller.group = self.group;
         controller.delegate = self;
         
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController pushViewController:controller animated:YES];
     }
     
-    if (indexPath.row == 4) {
+    if (indexPath.row == 3) {
         // leave group
         [[[UIActionSheet alloc] initWithTitle:@"Are you sure?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Leave Group" otherButtonTitles:nil] showFromTabBar:self.tabBarController.tabBar];
     }
@@ -162,9 +181,21 @@
     [Group sync];
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (IBAction)options:(id)sender {
+    [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Leave Group" otherButtonTitles:nil] showInView:self.view];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Leave Group"]) {
+        [[[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"You won't receive any new contacts from this group." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Leave", nil] show];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Leave"]) {
         self.group.syncStatus = [NSNumber numberWithInt:GroupDeleted];
+        for (FeedItem *item in self.group.feedItems)
+            [self.group.managedObjectContext deleteObject:item];
         [Group sync];
         [self.navigationController popViewControllerAnimated:YES];
     }

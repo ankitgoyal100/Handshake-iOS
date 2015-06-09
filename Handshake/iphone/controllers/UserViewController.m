@@ -12,44 +12,65 @@
 #import "HandshakeSession.h"
 #import "HandshakeCoreDataStore.h"
 #import "PhoneCell.h"
-#import "PhoneEditCell.h"
 #import "EmailCell.h"
-#import "EmailEditCell.h"
 #import "AddressCell.h"
-#import "AddressEditCell.h"
 #import "FacebookCell.h"
-#import "FacebookEditCell.h"
 #import "TwitterCell.h"
-#import "TwitterEditCell.h"
 #import "Phone.h"
 #import "Email.h"
 #import "Address.h"
 #import "Social.h"
 #import "AddCell.h"
 #import "UIControl+Blocks.h"
-#import "PhoneEditController.h"
-#import "EmailEditController.h"
-#import "AddressEditController.h"
-#import "AddSocialController.h"
-#import "TwitterEditController.h"
 #import "GKImagePicker.h"
-#import "NameEditController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "FXBlurView.h"
+#import "Handshake.h"
+#import "ContactsCell.h"
+#import "ContactsViewController.h"
+#import "OptionsCell.h"
+#import "Contact.h"
+#import "AccountOptionsCell.h"
+#import "FeedItem.h"
+#import "AccountEditorViewController.h"
+#import "UserHeaderCell.h"
+#import "MutualContactsViewController.h"
+#import "UserContactsViewController.h"
 
-@interface UserViewController() <NSFetchedResultsControllerDelegate, PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, SocialEditControllerDelegate, GKImagePickerDelegate, NameEditControllerDelegate>
+@interface UserViewController() <NSFetchedResultsControllerDelegate, GKImagePickerDelegate, UIActionSheetDelegate>
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *imageViewHeight;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIView *headerView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *headerTop;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *headerHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelBottom;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelRight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundPictureTop;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pictureViewBottom;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pictureBorderHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *pictureViewHeight;
+
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *nameEditIcon;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet AsyncImageView *pictureView;
+@property (weak, nonatomic) IBOutlet UILabel *detailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *actionButton;
+@property (weak, nonatomic) IBOutlet UIView *editButtonView;
+
+@property (weak, nonatomic) IBOutlet AsyncImageView *pictureView;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundPictureView;
+@property (weak, nonatomic) IBOutlet UIView *pictureViewBorder;
+@property (weak, nonatomic) IBOutlet AsyncImageView *blurBackgroundPictureView;
+
 @property (weak, nonatomic) IBOutlet UIButton *changePictureButton;
-@property (weak, nonatomic) IBOutlet FXBlurView *blurView;
+
+@property (weak, nonatomic) IBOutlet UIView *shadowView;
+
 @property (weak, nonatomic) IBOutlet UIButton *nameEditButton;
+@property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
+@property (weak, nonatomic) IBOutlet FXBlurView *blurView;
 
 @property (nonatomic, strong) NSFetchedResultsController *userFetchController;
 
@@ -77,13 +98,19 @@
     
     self.editing = NO;
     
-    self.pictureView.showActivityIndicator = NO;
+    self.blurView.underlyingView = self.blurBackgroundPictureView;
     
-    self.nameLabelConstraint.constant = self.view.frame.size.width - 70;
-    self.imageViewHeight.constant = self.view.frame.size.width;
+    self.pictureViewBorder.layer.borderColor = [UIColor colorWithWhite:1 alpha:1].CGColor;
     
     if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
-        [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+        [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    
+    //self.tableView.contentInset = UIEdgeInsetsMake(-32, 0, 0, 0);
+    
+    [self.navBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
+    self.navBar.shadowImage = [[UIImage alloc] init];
+     
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, 0.01f)];
     
     if (self.user)
         self.user = self.user;
@@ -91,196 +118,221 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    //self.blurView.hidden = YES;
-    //self.blurView.blurEnabled = YES;
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    //self.pictureView.hidden = NO;
-//    self.blurView.blurEnabled = YES;
-//    if (self.blurView.blurRadius == 0)
-//        self.blurView.hidden = YES;
-//    else
-//        self.blurView.hidden = NO;
+    
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    
+//    self.headerView.backgroundColor = self.navigationController.navigationBar.barTintColor;
+//    
+//    [UIView animateWithDuration:0.2 animations:^{
+//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.235 alpha:1];
+//        self.headerView.backgroundColor = self.navigationController.navigationBar.barTintColor;
+//    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    self.blurView.blurEnabled = NO;
-//    self.blurView.dynamic = NO;
+    
+    if (self != [self.navigationController.viewControllers lastObject] && ![self.navigationController.visibleViewController isKindOfClass:[self class]]) {
+        [self.navigationController setNavigationBarHidden:NO animated:animated];
+//        [UIView animateWithDuration:0.2 animations:^{
+//            self.navigationController.navigationBar.barTintColor = LOGO_COLOR;
+//        }];
+    }
 }
 
 - (void)back {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 4;
+}
+
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+//    if (section == 0) return nil;
+//    
+//    if (section == 1 && [self tableView:tableView numberOfRowsInSection:1] != 0) return @"Contact Information";
+//    
+//    if (section == 2 && [self tableView:tableView numberOfRowsInSection:2] != 0) return @"Linked Accounts";
+//    
+//    return nil;
+//}
+
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//    if (section == 0) return nil;
+//    
+//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
+//    
+//    view.backgroundColor = [UIColor colorWithWhite:0.96 alpha:1];
+//    
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width - 24, view.frame.size.height)];
+//    
+//    //label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
+//    //label.font = [UIFont fontWithName:@"HelveticaNeue-BOLD" size:12];
+//    label.font = [UIFont boldSystemFontOfSize:14];
+//    label.textColor = [UIColor colorWithWhite:0.2 alpha:1];
+//    
+//    if (section == 1) label.text = @"Contact Information";
+//    if (section == 2) label.text = @"Linked Accounts";
+//    
+//    //[view addSubview:label];
+//    
+//    UIView *sep = [[UIView alloc] initWithFrame:CGRectMake(0, view.frame.size.height - 1, view.frame.size.width, 1)];
+//    sep.backgroundColor = [UIColor colorWithWhite:0.94 alpha:1];
+//    [view addSubview:sep];
+//    
+//    return view;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//    if (section == 0 || [self tableView:tableView numberOfRowsInSection:section] == 0) return 0;
+//    
+//    return 20;
+//}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.card == nil) return 1;
+    if (section == 0 && self.user == [[HandshakeSession currentSession] account]) return 1;
     
-    if (self.editing)
-        return 6 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count];
-    else
-        return 2 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count];
+    if (section == 0) return 2;
+    
+    if (self.card == nil) return 0;
+    
+    if (section == 1 && [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] == 0) return 0;
+    
+    if (section == 1) return 1 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count];
+    
+    if (section == 2 && [self.card.socials count] == 0) return 0;
+    
+    if (section == 2) return 1 + [self.card.socials count];
+    
+    if (section == 3) return 1;
+    
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0)
-        return [tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        UserHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
+        
+        cell.nameLabel.text = [self.user formattedName];
+        
+        if (self.user == [[HandshakeSession currentSession] account]) {
+            [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"edit_profile_button"] forState:UIControlStateNormal];
+            
+            [cell.primaryButton addEventHandler:^(id sender) {
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Edit" bundle:nil];
+                [self presentViewController:[storyboard instantiateInitialViewController] animated:YES completion:nil];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"settings_button"] forState:UIControlStateNormal];
+        } else {
+            [cell.primaryButton addEventHandler:^(id sender) {
+                [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Are you sure? You and %@ will no longer be contacts.", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];
+            } forControlEvents:UIControlEventTouchUpInside];
+        }
+        
+        return cell;
+    }
+    
+//    if (indexPath.section == 0 && indexPath.row == 0) {
+//        UserHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
+//        
+//        cell.nameLabel.text = [self.user formattedName];
+//        
+//        if (self.user.pictureData)
+//            cell.pictureView.image = [UIImage imageWithData:self.user.pictureData];
+//        else if (self.user.picture)
+//            cell.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
+//        else
+//            cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
+//        
+//        return cell;
+//    }
+    
+    if (indexPath.section == 0 && indexPath.row == 2) {
+        if (self.user == [[HandshakeSession currentSession] account]) {
+            AccountOptionsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AccountOptionsCell"];
+            
+            [cell.editButton addEventHandler:^(id sender) {
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Edit" bundle:nil];
+                [self.navigationController pushViewController:[storyboard instantiateInitialViewController] animated:YES];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            return cell;
+        } else {
+            OptionsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"OptionsCell"];
+            
+            [cell.contactsButton addEventHandler:^(id sender) {
+                if (self.user.contact) {
+                    [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"You will no longer be contacts with %@", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];
+                }
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            return cell;
+        }
+    }
+    
+    if (indexPath.section == 0 && indexPath.row == 1) {
+        if (self.user == [[HandshakeSession currentSession] account]) {
+            ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AccountContactsCell"];
+            
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:@"300 Contacts"];
+            
+            [string setAttributes:@{ NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Bold" size:15] } range:[@"300 Contacts" rangeOfString:@"300"]];
+            
+            cell.contactsLabel.attributedText = string;
+            
+            return cell;
+        } else {
+            ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactsCell"];
+            
+            NSString *contactsString = [NSString stringWithFormat:@"%d CONTACTS", [self.user.contacts intValue]];
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:contactsString];
+            
+            [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[contactsString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.contacts intValue]]]];
+            [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[contactsString rangeOfString:@"CONTACTS"]];
+            
+            cell.contactsLabel.attributedText = string;
+            
+            [cell.contactsButton addEventHandler:^(id sender) {
+                UserContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserContactsViewController"];
+                controller.user = self.user;
+                [self.navigationController pushViewController:controller animated:YES];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            NSString *mutualString = [NSString stringWithFormat:@"%d MUTUAL", [self.user.mutual intValue]];
+            string = [[NSMutableAttributedString alloc] initWithString:mutualString];
+            
+            [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[mutualString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.mutual intValue]]]];
+            [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[mutualString rangeOfString:@"MUTUAL"]];
+            
+            cell.mutualLabel.attributedText = string;
+            
+            [cell.mutualButton addEventHandler:^(id sender) {
+                MutualContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"MutualContactsViewController"];
+                controller.user = self.user;
+                [self.navigationController pushViewController:controller animated:YES];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            return cell;
+        }
+    }
+    
+    if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0)
+        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+    
+    if (indexPath.section == 3)
+        return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
     
     int row = (int)indexPath.row - 1;
     
-    if (self.editing) {
-        if (row < [self.card.phones count]) {
-            __block Phone *phone = self.card.phones[row];
-            PhoneEditCell *cell = (PhoneEditCell *)[tableView dequeueReusableCellWithIdentifier:@"PhoneEditCell"];
-            
-            cell.numberLabel.text = phone.number;
-            cell.labelLabel.text = phone.label;
-            
-            [cell.deleteButton addEventHandler:^(id sender) {
-                NSIndexPath *ip = [NSIndexPath indexPathForRow:1 + [self.card.phones indexOfObject:phone] inSection:0];
-                [self.card removePhonesObject:phone];
-                [self.card.managedObjectContext deleteObject:phone];
-                [UIView animateWithDuration:0.3 animations:^{
-                    [self.tableView deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationFade];
-                    [self scrollViewDidScroll:self.tableView];
-                    [self.view layoutSubviews];
-                }];
-                
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
-        }
-        
-        if (row == [self.card.phones count]) {
-            AddCell *cell = (AddCell *)[tableView dequeueReusableCellWithIdentifier:@"AddCell"];
-            cell.actionLabel.text = @"ADD PHONE";
-            return cell;
-        }
-        
-        row -= [self.card.phones count] + 1;
-        
-        if (row < [self.card.emails count]) {
-            __block Email *email = self.card.emails[row];
-            EmailEditCell *cell = (EmailEditCell *)[tableView dequeueReusableCellWithIdentifier:@"EmailEditCell"];
-            
-            cell.addressLabel.text = email.address;
-            cell.labelLabel.text = email.label;
-            
-            [cell.deleteButton addEventHandler:^(id sender) {
-                NSIndexPath *ip = [NSIndexPath indexPathForRow:2 + [self.card.phones count] + [self.card.emails indexOfObject:email] inSection:0];
-                [self.card removeEmailsObject:email];
-                [self.card.managedObjectContext deleteObject:email];
-                [UIView animateWithDuration:0.3 animations:^{
-                    [self.tableView deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationFade];
-                    [self scrollViewDidScroll:self.tableView];
-                    [self.view layoutSubviews];
-                }];
-                
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
-        }
-        
-        if (row == [self.card.emails count]) {
-            AddCell *cell = (AddCell *)[tableView dequeueReusableCellWithIdentifier:@"AddCell"];
-            cell.actionLabel.text = @"ADD EMAIL";
-            return cell;
-        }
-        
-        row -= [self.card.emails count] + 1;
-        
-        if (row < [self.card.addresses count]) {
-            __block Address *address = self.card.addresses[row];
-            AddressEditCell *cell = (AddressEditCell *)[tableView dequeueReusableCellWithIdentifier:@"AddressEditCell"];
-            
-            NSString *addressString = [address formattedString];
-            
-            // if address is less than one line don't attribute
-            if (![addressString containsString:@"\n"])
-                cell.addressLabel.text = addressString;
-            else {
-                NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-                [paragrahStyle setMinimumLineHeight:26];
-                
-                cell.addressLabel.attributedText = [[NSAttributedString alloc] initWithString:addressString attributes:@{ NSParagraphStyleAttributeName: paragrahStyle }];
-            }
-            
-            cell.labelLabel.text = address.label;
-            
-            [cell.deleteButton addEventHandler:^(id sender) {
-                NSIndexPath *ip = [NSIndexPath indexPathForRow:3 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses indexOfObject:address] inSection:0];
-                [self.card removeAddressesObject:address];
-                [self.card.managedObjectContext deleteObject:address];
-                [UIView animateWithDuration:0.3 animations:^{
-                    [self.tableView deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationFade];
-                    [self scrollViewDidScroll:self.tableView];
-                    [self.view layoutSubviews];
-                }];
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
-        }
-        
-        if (row == [self.card.addresses count]) {
-            AddCell *cell = (AddCell *)[tableView dequeueReusableCellWithIdentifier:@"AddCell"];
-            cell.actionLabel.text = @"ADD ADDRESS";
-            return cell;
-        }
-        
-        row -= [self.card.addresses count] + 1;
-        
-        if (row < [self.card.socials count]) {
-            __block Social *social = self.card.socials[row];
-            
-            if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
-                FacebookEditCell *cell = (FacebookEditCell *)[tableView dequeueReusableCellWithIdentifier:@"FacebookEditCell"];
-                
-                [cell.deleteButton addEventHandler:^(id sender) {
-                    NSIndexPath *ip = [NSIndexPath indexPathForRow:4 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials indexOfObject:social] inSection:0];
-                    [self.card removeSocialsObject:social];
-                    [self.card.managedObjectContext deleteObject:social];
-                    [UIView animateWithDuration:0.3 animations:^{
-                        [self.tableView deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationFade];
-                        [self scrollViewDidScroll:self.tableView];
-                        [self.view layoutSubviews];
-                    }];
-                } forControlEvents:UIControlEventTouchUpInside];
-                
-                return cell;
-            } else if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
-                TwitterEditCell *cell = (TwitterEditCell *)[tableView dequeueReusableCellWithIdentifier:@"TwitterEditCell"];
-                
-                cell.usernameLabel.text = [@"@" stringByAppendingString:social.username];
-                
-                [cell.deleteButton addEventHandler:^(id sender) {
-                    NSIndexPath *ip = [NSIndexPath indexPathForRow:4 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials indexOfObject:social] inSection:0];
-                    [self.card removeSocialsObject:social];
-                    [self.card.managedObjectContext deleteObject:social];
-                    [UIView animateWithDuration:0.3 animations:^{
-                        [self.tableView deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationFade];
-                        [self scrollViewDidScroll:self.tableView];
-                        [self.view layoutSubviews];
-                    }];
-                } forControlEvents:UIControlEventTouchUpInside];
-                
-                return cell;
-            }
-        }
-        
-        if (row == [self.card.socials count]) {
-            AddCell *cell = (AddCell *)[tableView dequeueReusableCellWithIdentifier:@"AddCell"];
-            cell.actionLabel.text = @"ADD SOCIAL ACCOUNT";
-            return cell;
-        }
-    } else {
+    if (indexPath.section == 1) {
         if (row < [self.card.phones count]) {
             Phone *phone = self.card.phones[row];
             PhoneCell *cell = (PhoneCell *)[tableView dequeueReusableCellWithIdentifier:@"PhoneCell"];
             
             cell.numberLabel.text = phone.number;
-            cell.labelLabel.text = phone.label;
+            cell.labelLabel.text = [[phone.label lowercaseString] capitalizedString];
             
             return cell;
         }
@@ -292,7 +344,12 @@
             EmailCell *cell = (EmailCell *)[tableView dequeueReusableCellWithIdentifier:@"EmailCell"];
             
             cell.addressLabel.text = email.address;
-            cell.labelLabel.text = email.label;
+            cell.labelLabel.text = [[email.label lowercaseString] capitalizedString];
+            
+            if (/*row == [self.card.emails count] - 1 && */indexPath.row != [self tableView:tableView numberOfRowsInSection:0] - 2)
+                cell.separator.hidden = NO;
+            else
+                cell.separator.hidden = YES;
             
             return cell;
         }
@@ -310,18 +367,21 @@
                 cell.addressLabel.text = addressString;
             else {
                 NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-                [paragrahStyle setMinimumLineHeight:26];
+                [paragrahStyle setMinimumLineHeight:18];
                 
                 cell.addressLabel.attributedText = [[NSAttributedString alloc] initWithString:addressString attributes:@{ NSParagraphStyleAttributeName: paragrahStyle }];
             }
             
-            cell.labelLabel.text = address.label;
+            cell.labelLabel.text = [[address.label lowercaseString] capitalizedString];
+            
+            if (/*row == [self.card.addresses count] - 1 && */indexPath.row != [self tableView:tableView numberOfRowsInSection:0] - 2)
+                cell.separator.hidden = NO;
+            else
+                cell.separator.hidden = YES;
             
             return cell;
         }
-        
-        row -= [self.card.addresses count];
-        
+    } else if (indexPath.section == 2) {
         if (row < [self.card.socials count]) {
             Social *social = self.card.socials[row];
             
@@ -341,61 +401,25 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) return self.view.frame.size.width + 31;
+    if (indexPath.section == 0 && indexPath.row == 0) return 201;
+    //if (indexPath.section == 0 && indexPath.row == 1) return 56;
+    if (indexPath.section == 0 && indexPath.row == 1) return 46;
+    
+    if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0) return 20;
+    
+    if (indexPath.section == 3) return 20;
     
     int row = (int)indexPath.row - 1;
     
-    if (self.editing) {
-        if (row < [self.card.phones count])
-            return 72;
-        
-        if (row == [self.card.phones count])
-            return 56;
-        
-        row -= [self.card.phones count] + 1;
-        
-        if (row < [self.card.emails count])
-            return 72;
-        
-        if (row == [self.card.emails count])
-            return 56;
-        
-        row -= [self.card.emails count] + 1;
-        
-        if (row < [self.card.addresses count]) {
-            NSString *address = [self.card.addresses[row] formattedString];
-            
-            // if address is one line return 72
-            if (![address containsString:@"\n"])
-                return 72;
-            
-            NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-            [paragrahStyle setMinimumLineHeight:26];
-            
-            NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont fontWithName:@"Roboto-Regular" size:16], NSParagraphStyleAttributeName: paragrahStyle };
-            CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 142, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
-            return 28 + 22 + frame.size.height + 6;
-        }
-        
-        if (row == [self.card.addresses count])
-            return 56;
-        
-        row -= [self.card.addresses count] + 1;
-        
-        if (row < [self.card.socials count])
-            return 56;
-        
-        if (row == [self.card.socials count])
-            return 56;
-    } else {
+    if (indexPath.section == 1) {
         if (row < [self.card.phones count]) {
-            return 72;
+            return 60;
         }
         
         row -= [self.card.phones count];
         
         if (row < [self.card.emails count]) {
-            return 72;
+            return 60;
         }
         
         row -= [self.card.emails count];
@@ -405,63 +429,69 @@
             
             // if address is one line return 72
             if (![address containsString:@"\n"])
-                return 72;
+                return 60;
             
             NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-            [paragrahStyle setMinimumLineHeight:26];
+            [paragrahStyle setMinimumLineHeight:18];
             
-            NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont fontWithName:@"Roboto-Regular" size:16], NSParagraphStyleAttributeName: paragrahStyle };
-            CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 88, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
-            return 28 + 22 + frame.size.height + 6;
+            NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont systemFontOfSize:14], NSParagraphStyleAttributeName: paragrahStyle };
+            CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 28, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
+            return 24 + 18 + frame.size.height + 3;
         }
-        
-        row -= [self.card.addresses count];
-        
-        if (row < [self.card.socials count]) {
-            return 56;
-        }
+    } else if (indexPath.section == 2) {
+        return 61;
     }
     
-    return 8;
+    return 0;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    self.nameLabelConstraint.constant = MAX(0, MIN(self.view.frame.size.width - self.tableView.contentOffset.y - 70, self.view.frame.size.width - 70));
-    self.imageViewHeight.constant = MAX(70, MIN(self.view.frame.size.width - self.tableView.contentOffset.y, self.view.frame.size.width));
+    //self.headerTop.constant = MAX(-44, MIN(0, -scrollView.contentOffset.y));
+    self.headerTop.constant = MIN(0, -scrollView.contentOffset.y);
+    //self.headerTop.constant = -scrollView.contentOffset.y;
     
-    self.blurView.blurRadius = MAX(0, MIN(1, (self.tableView.contentOffset.y - (self.view.frame.size.width / 2)) / ((self.view.frame.size.width / 2) - 70.0))) * 30.0;
-    if (self.blurView.blurRadius == 0) {
+    //self.pictureViewBottom.constant = MIN(31, 31 - (scrollView.contentOffset.y - 44));
+    
+    self.backgroundPictureTop.constant = MAX(-42, self.headerTop.constant);
+    
+    self.headerHeight.constant = MAX(106, 106 - scrollView.contentOffset.y);
+    //self.pictureView.alpha = MAX(0, MIN(1, 1 - (scrollView.contentOffset.y / 44)));
+    
+    //self.navBar.backgroundColor = [UIColor colorWithRed:242.0/255.0 green:157.0/255.0 blue:82.0/255.0 alpha:MAX(0, MIN(1, (scrollView.contentOffset.y / 20)))];
+    
+//    self.pictureBorderHeight.constant = MIN(80, MAX(48, 80 - (scrollView.contentOffset.y / 42) * 32));
+//    //self.pictureViewBorder.layer.cornerRadius = self.pictureBorderHeight.constant / 2;
+//    
+//    self.pictureViewHeight.constant = self.pictureBorderHeight.constant - 8;
+//    //self.pictureView.layer.cornerRadius = self.pictureViewHeight.constant / 2;
+//    
+    self.blurView.blurRadius = MAX(0, MIN(1, ((scrollView.contentOffset.y) / 20))) * 30.0;
+    if (self.blurView.blurRadius < 2)
         self.blurView.hidden = YES;
-        self.blurView.blurEnabled = NO;
-    } else {
+    else
         self.blurView.hidden = NO;
-        self.blurView.blurEnabled = YES;
-    }
     
+//    if (scrollView.contentOffset.y > 44)
+//        self.blurView.hidden = NO;
+//    else
+//        self.blurView.hidden = YES;
     
-    //self.blurView.alpha = MAX(0, MIN(1, (self.tableView.contentOffset.y - (self.view.frame.size.width / 2)) / ((self.view.frame.size.width / 2) - 70.0)));
+    if (scrollView.contentOffset.y > 44)
+        self.navItem.title = [self.user formattedName];
+    else
+        self.navItem.title = @"";
     
-    if (self.editing) {
-        if (self.changePictureButton.alpha == 1 && self.tableView.contentOffset.y > 40) {
-            [UIView animateWithDuration:0.2 animations:^{
-                self.changePictureButton.alpha = 0;
-            }];
-        } else if (self.changePictureButton.alpha == 0 && self.tableView.contentOffset.y <= 40) {
-            [UIView animateWithDuration:0.2 animations:^{
-                self.changePictureButton.alpha = 1;
-            }];
-        }
-    }
+    //self.blurView.alpha = MAX(0, MIN(1, (scrollView.contentOffset.y / 26)));
 }
 
 - (void)setUser:(User *)user {
     _user = user;
     
-    if (!self.nameLabel)
-        return; //view not loaded yet
-    
     if ([self.user.cards count] > 0)
         self.card = self.user.cards[0];
+    
+//    if (!self.nameLabel)
+//        return;
     
     if (self.userFetchController)
         self.userFetchController.delegate = nil;
@@ -469,16 +499,15 @@
     self.nameLabel.text = [_user formattedName];
     
     // set picture
-    if (self.user.pictureData) {
-        UIImage *image = [[UIImage alloc] initWithData:self.user.pictureData];
-        UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
-        [image drawAtPoint:CGPointZero];
-        image = UIGraphicsGetImageFromCurrentImageContext(); // huge performance increase - no deferred decompression
-        UIGraphicsEndImageContext();
-        self.pictureView.image = image;
-    } else if (self.user.picture)
+    if ([self.user cachedImage]) {
+        self.pictureView.image = [self.user cachedImage];
+        self.backgroundPictureView.image = [self.user cachedImage];
+        self.blurBackgroundPictureView.image = [self.user cachedImage];
+    } else if (self.user.picture) {
         self.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
-    else
+        self.backgroundPictureView.imageURL = self.pictureView.imageURL;
+        self.blurBackgroundPictureView.imageURL = self.pictureView.imageURL;
+    } else
         self.pictureView.image = [UIImage imageNamed:@"default_picture"];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
@@ -496,16 +525,10 @@
     }];
     
     if (_user == [[HandshakeSession currentSession] account]) {
-        // set button to edit
-        
         [self.actionButton setBackgroundImage:[UIImage imageNamed:@"edit_button"] forState:UIControlStateNormal];
         
         self.title = @"You";
     } else {
-        // set button to save
-        
-        [self.actionButton setBackgroundImage:[UIImage imageNamed:@"sync_button"] forState:UIControlStateNormal];
-        
         self.title = @"Contact";
     }
 }
@@ -513,115 +536,19 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    if (indexPath.section == 0 && indexPath.row == 2 && self.user == [[HandshakeSession currentSession] account]) {
+        [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactsViewController"] animated:YES];
+        
+        return;
+    }
+    
     int row = (int)indexPath.row - 1;
     
-    if (self.editing) {
-        if (row <= [self.card.phones count]) {
-            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"PhoneEditController"];
-            
-            PhoneEditController *controller = (PhoneEditController *)nav.viewControllers[0];
-            controller.delegate = self;
-            
-            if (row < [self.card.phones count])
-                controller.phone = self.card.phones[row];
-            else {
-                Phone *phone = [[Phone alloc] initWithEntity:[NSEntityDescription entityForName:@"Phone" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-                [self.card addPhonesObject:phone];
-                controller.phone = phone;
-            }
-            
-            [self presentViewController:nav animated:YES completion:nil];
-            
-            return;
-        }
-        
-        row -= [self.card.phones count] + 1;
-        
-        if (row <= [self.card.emails count]) {
-            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"EmailEditController"];
-            
-            EmailEditController *controller = (EmailEditController *)nav.viewControllers[0];
-            controller.delegate = self;
-            
-            if (row < [self.card.emails count])
-                controller.email = self.card.emails[row];
-            else {
-                Email *email = [[Email alloc] initWithEntity:[NSEntityDescription entityForName:@"Email" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-                [self.card addEmailsObject:email];
-                controller.email = email;
-            }
-            
-            [self presentViewController:nav animated:YES completion:nil];
-            
-            return;
-        }
-        
-        row -= [self.card.emails count] + 1;
-        
-        if (row <= [self.card.addresses count]) {
-            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"AddressEditController"];
-            
-            AddressEditController *controller = (AddressEditController *)nav.viewControllers[0];
-            controller.delegate = self;
-            
-            if (row < [self.card.addresses count])
-                controller.address = self.card.addresses[row];
-            else {
-                Address *address = [[Address alloc] initWithEntity:[NSEntityDescription entityForName:@"Address" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-                [self.card addAddressesObject:address];
-                controller.address = address;
-            }
-            
-            [self presentViewController:nav animated:YES completion:nil];
-            
-            return;
-        }
-        
-        row -= [self.card.addresses count] + 1;
-        
-        if (row <= [self.card.socials count]) {
-            if (row < [self.card.socials count]) {
-                Social *social = self.card.socials[row];
-                
-                if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
-                    
-                } else if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
-                    UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"AddSocialController"];
-                    
-                    TwitterEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"TwitterEditController"];
-                    
-                    nav.viewControllers = @[controller];
-                    
-                    controller.social = social;
-                    controller.delegate = self;
-                    
-                    [self presentViewController:nav animated:YES completion:nil];
-                }
-            } else {
-                UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"AddSocialController"];
-                
-                AddSocialController *controller = (AddSocialController *)nav.viewControllers[0];
-                
-                controller.delegate = self;
-                
-                Social *social = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.card.managedObjectContext] insertIntoManagedObjectContext:self.card.managedObjectContext];
-                [self.card addSocialsObject:social];
-                
-                controller.social = social;
-                
-                [self presentViewController:nav animated:YES completion:nil];
-            }
-            
-            return;
-        }
-    } else {
-        
-    }
+    
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    if ([self.user.cards count] > 0)
-        self.card = self.user.cards[0];
+    self.user = self.user;
     
     [self.tableView reloadData];
 }
@@ -631,9 +558,13 @@
 }
 
 - (IBAction)action:(id)sender {
+    [self presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"AccountEditorViewController"] animated:YES completion:nil];
+    
+    return;
+    
     if (self.editing) {
         self.editing = NO;
-        [self.actionButton setBackgroundImage:[UIImage imageNamed:@"edit_button"] forState:UIControlStateNormal];
+        
         self.nameEditButton.userInteractionEnabled = NO;
         
         [UIView animateWithDuration:0.2 animations:^{
@@ -641,6 +572,7 @@
             self.nameEditIcon.alpha = 0;
         } completion:^(BOOL finished) {
             self.changePictureButton.hidden = YES;
+            self.nameLabelRight.constant = 0;
         }];
         
         // animate out add cells, reload other cells
@@ -662,7 +594,8 @@
             [self scrollViewDidScroll:self.tableView];
             [self.view layoutSubviews];
         } completion:^(BOOL finished) {
-            [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+            if (!self.editing)
+                [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
         }];
         
         ((Account *)self.user).syncStatus = [NSNumber numberWithInt:AccountUpdated];
@@ -682,12 +615,12 @@
         // edit
         self.editing = YES;
         
-        [self.actionButton setBackgroundImage:[UIImage imageNamed:@"save_button"] forState:UIControlStateNormal];
+        // move over for edit icon
+        self.nameLabelRight.constant = 30;
         self.nameEditButton.userInteractionEnabled = YES;
         
         self.changePictureButton.hidden = NO;
         // update button alpha
-        [self scrollViewDidScroll:self.tableView];
         [UIView animateWithDuration:0.2 animations:^{
             self.nameEditIcon.alpha = 1;
         }];
@@ -715,26 +648,14 @@
         [self.tableView insertRowsAtIndexPaths:addIndexPaths withRowAnimation:UITableViewRowAnimationFade];
         
         [CATransaction setCompletionBlock:^{
-            [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+            if (self.editing)
+                [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
         }];
         [self.tableView endUpdates];
         [CATransaction commit];
     } else {
         // save to contacts
     }
-}
-
-- (IBAction)editName:(id)sender {
-    if (!self.editing)
-        return;
-    
-    UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NameEditController"];
-    
-    NameEditController *controller = (NameEditController *)nav.viewControllers[0];
-    controller.delegate = self;
-    controller.user = self.user;
-    
-    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void)nameEdited:(NSString *)first last:(NSString *)last {
@@ -794,6 +715,19 @@
     }
     
     [self.tableView reloadData];
+}
+- (IBAction)asdf:(id)sender {
+    [self action:nil];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Delete Contact"]) {
+        self.user.contact.syncStatus = [NSNumber numberWithInt:ContactDeleted];
+        for (FeedItem *item in self.user.contact.feedItems)
+            [self.user.managedObjectContext deleteObject:item];
+        [self.navigationController popViewControllerAnimated:YES];
+        [Contact sync];
+    }
 }
 
 @end

@@ -12,6 +12,8 @@
 @protocol EmailEditControllerDelegate <NSObject>
 
 - (void)emailEdited:(Email *)email;
+- (void)emailEditCancelled:(Email *)email;
+- (void)emailDeleted:(Email *)email;
 
 @end
 

@@ -55,11 +55,13 @@
 - (IBAction)signUp:(id)sender {
     UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SignUpViewController"];
     [self.navigationController pushViewController:controller animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 - (IBAction)logIn:(id)sender {
     UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"LogInViewController"];
     [self.navigationController pushViewController:controller animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 - (void)signUp {
@@ -70,7 +72,6 @@
     LogInViewController *controller = [[LogInViewController alloc] initWithNibName:nil bundle:nil];
     [self.navigationController pushViewController:controller animated:YES];
     
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {

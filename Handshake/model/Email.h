@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class Card;
 
 @interface Email : NSManagedObject
 
 @property (nonatomic, retain) NSString * address;
 @property (nonatomic, retain) NSString * label;
-@property (nonatomic, retain) NSManagedObject *card;
+@property (nonatomic, retain) Card *card;
 
 @end

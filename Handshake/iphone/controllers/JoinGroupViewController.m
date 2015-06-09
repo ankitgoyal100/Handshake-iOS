@@ -11,12 +11,21 @@
 #import "HandshakeClient.h"
 #import "HandshakeCoreDataStore.h"
 #import "Card.h"
+#import "FeedItem.h"
 
 @interface JoinGroupViewController () <UIAlertViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UITextField *codeField;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *joinButton;
+
+@property (weak, nonatomic) IBOutlet UITextField *field1;
+@property (weak, nonatomic) IBOutlet UITextField *field2;
+@property (weak, nonatomic) IBOutlet UITextField *field3;
+@property (weak, nonatomic) IBOutlet UITextField *field4;
+@property (weak, nonatomic) IBOutlet UITextField *field5;
+@property (weak, nonatomic) IBOutlet UITextField *field6;
+
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
+@property (weak, nonatomic) IBOutlet UIButton *pasteButton;
 
 @end
 
@@ -25,62 +34,169 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    [self checkPasteboard];
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
-
-    [self checkCode];
-    
-    return NO;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if (self.saveButton.enabled)
-        [self save:nil];
-    
-    return NO;
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    self.saveButton.enabled = NO;
-    
-    return YES;
-}
-
-- (NSString *)code {
-    NSCharacterSet *set = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
-    return [[[self.codeField.text componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] lowercaseString];
-}
-
-- (void)checkCode {
-    if ([[self code] length] == 6)
-        self.saveButton.enabled = YES;
-    else
-        self.saveButton.enabled = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkPasteboard) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self.codeField becomeFirstResponder];
+    [self.field1 becomeFirstResponder];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)checkPasteboard {
+    // check for any string of length 6 in the clipboard
+    NSMutableCharacterSet *set = [[[NSCharacterSet alphanumericCharacterSet] invertedSet] mutableCopy];
+    NSString *code = [[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""];
+    
+    if ([code length] != 6) {
+        code = nil;
+        
+        [set removeCharactersInString:@"- "];
+        
+        // try to detect code in text
+        for (NSString *text in [[[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] componentsSeparatedByString:@" "]) {
+            // if 3 components separated by '-' of length 2 consider it a valid code
+            NSArray *comps = [text componentsSeparatedByString:@"-"];
+            if ([comps count] == 3 && [comps[0] length] == 2 && [comps[1] length] == 2 && [comps[2] length] == 2) {
+                code = [comps componentsJoinedByString:@""];
+                break;
+            }
+        }
+    }
+    
+    if (code) {
+        NSString *formattedCode = [[NSString stringWithFormat:@"%@-%@-%@", [code substringToIndex:2], [code substringWithRange:NSMakeRange(2, 2)], [code substringFromIndex:4]] uppercaseString];
+        
+        NSMutableAttributedString *buttonTitle = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Paste Code: %@", formattedCode] attributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:15], NSForegroundColorAttributeName: [UIColor whiteColor] }];
+        [buttonTitle setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:15], NSForegroundColorAttributeName: [UIColor whiteColor] } range:[buttonTitle.string rangeOfString:formattedCode]];
+        
+        [self.pasteButton setAttributedTitle:buttonTitle forState:UIControlStateNormal];
+        self.pasteButton.hidden = NO;
+    } else
+        self.pasteButton.hidden = YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    string = [string uppercaseString];
+    
+    if ([string length] == 0) {
+        textField.text = @"";
+        
+        // shift characters
+        for (int index = [self indexForField:textField]; index < 5; index++)
+            [self fieldForIndex:index].text = [self fieldForIndex:index + 1].text;
+        self.field6.text = @"";
+        
+        [[self fieldForIndex:MAX(0, [self indexForField:textField] - 1)] becomeFirstResponder];
+        
+        // special case for first field
+        if (textField == self.field1)
+            [self.field1 setSelectedTextRange:[self.field1 textRangeFromPosition:[self.field1 positionFromPosition:[self.field1 beginningOfDocument] offset:0] toPosition:[self.field1 positionFromPosition:[self.field1 beginningOfDocument] offset:0]]];
+    } else if ([string length] == 1) {
+        if ([[NSCharacterSet alphanumericCharacterSet] characterIsMember:[string characterAtIndex:0]]) {
+            if ([[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[string characterAtIndex:0]])
+                for (int i = 0; i < 6; i++)
+                    [self fieldForIndex:i].keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+            else
+                for (int i = 0; i < 6; i++)
+                    [self fieldForIndex:i].keyboardType = UIKeyboardTypeDefault;
+            
+            if ([textField.text length] == 0) {
+                textField.text = string;
+            } else if (range.location == 0) { // replacing current field
+                if ([self.field6.text length] == 0) {
+                    // shift characters
+                    for (int index = 5; index > [self indexForField:textField]; index--)
+                        [self fieldForIndex:index].text = [self fieldForIndex:index - 1].text;
+                    textField.text = string;
+                }
+            } else if (textField != self.field6 && [self.field6.text length] == 0) {
+                // shift characters
+                for (int index = 5; index > [self indexForField:textField] + 1; index--)
+                    [self fieldForIndex:index].text = [self fieldForIndex:index - 1].text;
+                
+                UITextField *nextField = [self fieldForIndex:[self indexForField:textField] + 1];
+                nextField.text = string;
+                
+                [nextField becomeFirstResponder];
+            }
+        }
+    }
+    
+    [self checkCode];
+    
+    return NO;
+}
+
+- (int)indexForField:(UITextField *)textField {
+    if (textField == self.field1) return 0;
+    if (textField == self.field2) return 1;
+    if (textField == self.field3) return 2;
+    if (textField == self.field4) return 3;
+    if (textField == self.field5) return 4;
+    return 5;
+}
+
+- (UITextField *)fieldForIndex:(int)index {
+    if (index == 0) return self.field1;
+    if (index == 1) return self.field2;
+    if (index == 2) return self.field3;
+    if (index == 3) return self.field4;
+    if (index == 4) return self.field5;
+    return self.field6;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (self.joinButton.enabled)
+        [self join:nil];
+    
+    return NO;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if ([textField.text length] == 0) {
+        for (int index = 5; index >= 0; index--) {
+            UITextField *field = [self fieldForIndex:index];
+            if ([field.text length] == 1) {
+                [field becomeFirstResponder];
+                return;
+            }
+        }
+        
+        [self.field1 becomeFirstResponder];
+    }
+}
+
+- (NSString *)code {
+    NSCharacterSet *set = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+    NSString *code = [NSString stringWithFormat:@"%@%@%@%@%@%@", self.field1.text, self.field2.text, self.field3.text, self.field4.text, self.field5.text, self.field6.text];
+    return [[[code componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] lowercaseString];
+}
+
+- (void)checkCode {
+    if ([[self code] length] == 6)
+        self.joinButton.enabled = YES;
+    else
+        self.joinButton.enabled = NO;
+}
 - (IBAction)cancel:(id)sender {
     [self.view endEditing:YES];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (IBAction)save:(id)sender {
-    self.codeField.hidden = YES;
+- (IBAction)join:(id)sender {
+    self.joinButton.enabled = NO;
     [self.loadingView startAnimating];
-    self.saveButton.enabled = NO;
+    self.pasteButton.hidden = YES;
     [self.view endEditing:YES];
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
@@ -112,18 +228,18 @@
         [group updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"group"]]];
         group.syncStatus = [NSNumber numberWithInt:GroupSynced];
         
-        [Group sync];
+        [Group syncWithCompletionBlock:^{
+            [FeedItem sync];
+        }];
         
         if (self.delegate && [self.delegate respondsToSelector:@selector(groupJoined:)])
             [self.delegate groupJoined:group];
         
         [self cancel:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        self.codeField.hidden = NO;
+        self.joinButton.enabled = YES;
         [self.loadingView stopAnimating];
-        self.saveButton.enabled = YES;
-        
-        NSLog(@"%@", [operation response]);
+        [self checkPasteboard];
         
         if ([[operation response] statusCode] == 401) {
             // invalidate session
@@ -136,8 +252,23 @@
     }];
 }
 
+- (IBAction)paste:(id)sender {
+    NSCharacterSet *set = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+    NSString *code = [[[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] uppercaseString];
+    
+    self.field1.text = [code substringToIndex:1];
+    self.field2.text = [code substringWithRange:NSMakeRange(1, 1)];
+    self.field3.text = [code substringWithRange:NSMakeRange(2, 1)];
+    self.field4.text = [code substringWithRange:NSMakeRange(3, 1)];
+    self.field5.text = [code substringWithRange:NSMakeRange(4, 1)];
+    self.field6.text = [code substringWithRange:NSMakeRange(5, 1)];
+    
+    [self checkCode];
+    [self.field6 becomeFirstResponder];
+}
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    [self.codeField becomeFirstResponder];
+    [self.field6 becomeFirstResponder];
 }
 
 @end

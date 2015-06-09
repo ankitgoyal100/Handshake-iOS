@@ -26,6 +26,7 @@ static BOOL syncing = NO;
 @dynamic updatedAt;
 @dynamic syncStatus;
 @dynamic members;
+@dynamic feedItems;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
     self.groupId = dictionary[@"id"];

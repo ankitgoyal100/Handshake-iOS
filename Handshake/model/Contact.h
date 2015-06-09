@@ -27,6 +27,7 @@ typedef enum {
 @property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) User *user;
 @property (nonatomic, retain) NSNumber * syncStatus;
+@property (nonatomic, retain) NSSet *feedItems;
 
 + (void)sync;
 + (void)syncWithCompletionBlock:(void (^)())completionBlock;

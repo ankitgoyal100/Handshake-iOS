@@ -48,21 +48,6 @@
             }
         }
         
-        // search results
-        request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-        request.predicate = [NSPredicate predicateWithFormat:@"picture == %@", urlString];
-        
-        [objectContext performBlockAndWait:^{
-            NSError *error;
-            results = [objectContext executeFetchRequest:request error:&error];
-        }];
-        
-        if (results && [results count] > 0) {
-            for (SearchResult *result in results) {
-                result.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 1);
-            }
-        }
-        
         [objectContext performBlockAndWait:^{
             [objectContext save:nil];
         }];

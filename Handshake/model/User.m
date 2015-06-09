@@ -12,6 +12,12 @@
 #import "GroupMember.h"
 #import "DateConverter.h"
 
+@interface User()
+
+@property (nonatomic, strong) UIImage *loadedImage;
+
+@end
+
 @implementation User
 
 @dynamic createdAt;
@@ -21,9 +27,53 @@
 @dynamic pictureData;
 @dynamic updatedAt;
 @dynamic userId;
+@dynamic contacts;
+@dynamic mutual;
 @dynamic cards;
 @dynamic contact;
 @dynamic groups;
+
+@synthesize loadedImage;
+
+- (UIImage *)cachedImage {
+    if (!self.pictureData) return nil;
+    
+    if (!self.loadedImage) {
+        UIImage *image = [[UIImage alloc] initWithData:self.pictureData];
+        UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
+        [image drawAtPoint:CGPointZero];
+        self.loadedImage = UIGraphicsGetImageFromCurrentImageContext(); // huge performance increase - no deferred decompression
+        UIGraphicsEndImageContext();
+    }
+    
+    return self.loadedImage;
+}
+
+- (void)awakeFromInsert {
+    [super awakeFromInsert];
+    [self observePictureData];
+}
+
+- (void)awakeFromFetch {
+    [super awakeFromFetch];
+    [self observePictureData];
+}
+
+- (void)observePictureData {
+    [self addObserver:self forKeyPath:@"pictureData"
+              options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change
+                       context:(void *)context {
+    if ([keyPath isEqualToString:@"pictureData"]) {
+        self.loadedImage = nil;
+    }
+}
+
+- (void)willTurnIntoFault {
+    [self removeObserver:self forKeyPath:@"pictureData"];
+}
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
     self.userId = dictionary[@"id"];
@@ -32,10 +82,12 @@
     self.firstName = dictionary[@"first_name"];
     self.lastName = dictionary[@"last_name"];
     // if no picture or picture is different - update
-    if (!dictionary[@"picture"] || (dictionary[@"picture"] && (!self.picture || ![self.picture isEqualToString:dictionary[@"picture"]]))) {
+    if (!dictionary[@"picture"] || (dictionary[@"picture"] && !self.picture)) {
         self.picture = dictionary[@"picture"];
         self.pictureData = nil;
     }
+    self.contacts = dictionary[@"contacts"];
+    self.mutual = dictionary[@"mutual"];
     
     for (NSDictionary *cardDict in dictionary[@"cards"]) {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Card"];

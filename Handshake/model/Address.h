@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class Card;
 
 @interface Address : NSManagedObject
 
@@ -18,7 +19,7 @@
 @property (nonatomic, retain) NSString * street1;
 @property (nonatomic, retain) NSString * street2;
 @property (nonatomic, retain) NSString * zip;
-@property (nonatomic, retain) NSManagedObject *card;
+@property (nonatomic, retain) Card *card;
 
 - (NSString *)formattedString;
 

@@ -31,8 +31,10 @@
     
     // set navigation bar font
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[[UINavigationBar appearance] titleTextAttributes]];
-    dict[NSFontAttributeName] = [UIFont fontWithName:@"Roboto-Medium" size:17];
+    //dict[NSFontAttributeName] = [UIFont fontWithName:@"Roboto-Medium" size:17];
     dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    //dict[NSFontAttributeName] = [UIFont boldSystemFontOfSize:18];
+    //dict[NSFontAttributeName] = [UIFont systemFontOfSize:20];
     [[UINavigationBar appearance] setTitleTextAttributes:dict];
 //    [[UINavigationBar appearance] setBackgroundImage:[[UIImage alloc] init]
 //                                      forBarPosition:UIBarPositionAny

@@ -65,19 +65,18 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [[self.fetchController fetchedObjects] count] + 2;
+    return [[self.fetchController fetchedObjects] count] + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0 || indexPath.row == [[self.fetchController fetchedObjects] count] + 1)
-        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+    if (indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
     User *user = ((GroupMember *)[self.fetchController fetchedObjects][indexPath.row - 1]).user;
     
     MemberCell *cell = (MemberCell *)[tableView dequeueReusableCellWithIdentifier:@"MemberCell"];
     
-    if (user.pictureData)
-        cell.pictureView.image = [UIImage imageWithData:user.pictureData];
+    if ([user cachedImage])
+        cell.pictureView.image = [user cachedImage];
     else if (user.picture)
         cell.pictureView.imageURL = [NSURL URLWithString:user.picture];
     else
@@ -89,17 +88,15 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0 || indexPath.row == [[self.fetchController fetchedObjects] count] + 1)
-        return 8;
+    if (indexPath.row == 0) return 1;
     
-    return 56;
+    return 57;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row == 0 || indexPath.row == [[self.fetchController fetchedObjects] count] + 1)
-        return;
+    if (indexPath.row == 0) return;
     
     User *user = ((GroupMember *)[self.fetchController fetchedObjects][indexPath.row - 1]).user;
     

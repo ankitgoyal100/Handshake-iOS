@@ -12,5 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *numberLabel;
 @property (weak, nonatomic) IBOutlet UILabel *labelLabel;
+@property (weak, nonatomic) IBOutlet UIView *separator;
+@property (weak, nonatomic) IBOutlet UIImageView *icon;
 
 @end

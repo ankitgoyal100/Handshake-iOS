@@ -35,9 +35,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    self.title = @"Log In";
     
-    
+    [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -56,6 +56,7 @@
 
 - (void)back {
     [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -70,6 +71,13 @@
     }
     
     return NO;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    self.logInButton.enabled = NO;
+    self.logInButton.alpha = 0.5;
+    
+    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -92,7 +100,8 @@
     [self.view endEditing:YES];
     
     [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
-        [self.view.window setRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"MainViewController"]];
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        [self.view.window setRootViewController:[storyboard instantiateInitialViewController]];
     } failedBlock:^(HandshakeSessionError error) {
         self.logInButton.hidden = NO;
         [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];

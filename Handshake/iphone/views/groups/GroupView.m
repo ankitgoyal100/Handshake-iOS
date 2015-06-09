@@ -29,7 +29,8 @@
 - (UILabel *)groupNameLabel {
     if (!_groupNameLabel) {
         _groupNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _groupNameLabel.font = [UIFont fontWithName:@"Roboto" size:16];
+        //_groupNameLabel.font = [UIFont fontWithName:@"Roboto" size:16];
+        _groupNameLabel.font = [UIFont systemFontOfSize:18];
         _groupNameLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _groupNameLabel;
@@ -38,7 +39,8 @@
 - (UILabel *)groupSizeLabel {
     if (!_groupSizeLabel) {
         _groupSizeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _groupSizeLabel.font = [UIFont fontWithName:@"Roboto" size:14];
+        //_groupSizeLabel.font = [UIFont fontWithName:@"Roboto" size:14];
+        _groupSizeLabel.font = [UIFont systemFontOfSize:12];
         _groupSizeLabel.textColor = [UIColor grayColor];
         _groupSizeLabel.textAlignment = NSTextAlignmentCenter;
     }
@@ -48,7 +50,7 @@
 - (UILabel *)codeLabel {
     if (!_codeLabel) {
         _codeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _codeLabel.font = [UIFont fontWithName:@"Roboto" size:15];
+        _codeLabel.font = [UIFont systemFontOfSize:15];
         _codeLabel.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
         _codeLabel.textColor = [UIColor lightGrayColor];
         _codeLabel.textAlignment = NSTextAlignmentCenter;
@@ -111,13 +113,13 @@
     if (self.circleView)
         [self.circleView removeFromSuperview];
     
-    self.groupSizeLabel.frame = CGRectMake(16, self.frame.size.height - 16 - 16, self.frame.size.width - 32, 18);
+    self.groupSizeLabel.frame = CGRectMake(12, self.frame.size.height - 27, self.frame.size.width - 24, 17);
     if ([group.members count] == 1)
         self.groupSizeLabel.text = @"1 member";
     else
         self.groupSizeLabel.text = [NSString stringWithFormat:@"%d members", (int)[group.members count]];
     
-    self.groupNameLabel.frame = CGRectMake(16, self.groupSizeLabel.frame.origin.y - 22, self.groupSizeLabel.frame.size.width, 22);
+    self.groupNameLabel.frame = CGRectMake(12, self.groupSizeLabel.frame.origin.y - 20, self.groupSizeLabel.frame.size.width, 20);
     self.groupNameLabel.text = group.name;
     
     if ([group.members count] > 0) {
@@ -184,8 +186,8 @@
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     
-    if (user.pictureData)
-        imageView.image = [UIImage imageWithData:user.pictureData];
+    if ([user cachedImage])
+        imageView.image = [user cachedImage];
     else if (user.picture && [user.picture length] > 0)
         imageView.imageURL = [NSURL URLWithString:user.picture];
     else

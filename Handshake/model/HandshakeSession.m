@@ -16,6 +16,8 @@
 #import "Contact.h"
 #import "Group.h"
 #import "Request.h"
+#import "SearchResult.h"
+#import "FeedItem.h"
 
 static HandshakeSession *session = nil;
 
@@ -84,7 +86,9 @@ static HandshakeSession *session = nil;
             [Account syncWithSuccessBlock:^{
                 [Card sync];
                 [Contact syncWithCompletionBlock:^{
-                    [Group sync];
+                    [Group syncWithCompletionBlock:^{
+                        [FeedItem sync];
+                    }];
                     [Request sync];
                 }];
             }];
@@ -148,8 +152,11 @@ static HandshakeSession *session = nil;
         [Account syncWithSuccessBlock:^{
             [Card sync];
             [Contact syncWithCompletionBlock:^{
-                [Group sync];
+                [Group syncWithCompletionBlock:^{
+                    [FeedItem sync];
+                }];
                 [Request sync];
+                [SearchResult syncSuggestions];
             }];
         }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

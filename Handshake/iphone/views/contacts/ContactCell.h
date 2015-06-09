@@ -8,10 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import "AsyncImageView.h"
+#import "Contact.h"
+
+typedef void (^ContactDeleteBlock)();
 
 @interface ContactCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet AsyncImageView *pictureView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *detailLabel;
+@property (weak, nonatomic) IBOutlet UIButton *contactsButton;
+
+@property (nonatomic, strong) Contact *contact;
+@property (copy) ContactDeleteBlock deleteBlock;
 
 @end

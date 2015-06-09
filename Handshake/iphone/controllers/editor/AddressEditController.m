@@ -9,15 +9,22 @@
 #import "AddressEditController.h"
 #import "EnterAddressCell.h"
 #import "LabelCell.h"
+#import "UINavigationItem+Additions.h"
+#import "UIBarButtonItem+DefaultBackButton.h"
+#import "Card.h"
 
 @interface AddressEditController ()
 
-@property (nonatomic, strong) EnterAddressCell *addressCell;
+@property (weak, nonatomic) IBOutlet UITextField *street1Field;
+@property (weak, nonatomic) IBOutlet UITextField *street2Field;
+@property (weak, nonatomic) IBOutlet UITextField *cityField;
+@property (weak, nonatomic) IBOutlet UITextField *stateField;
+@property (weak, nonatomic) IBOutlet UITextField *zipField;
 
 @property (nonatomic) int selectedLabel;
-@property (nonatomic, strong) NSArray *labels;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 @end
 
@@ -27,117 +34,106 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.selectedLabel = 0;
-        self.labels = @[ @"home", @"work", @"other" ];
     }
     return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
+        [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    
+    if (self.address)
+        self.address = self.address;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 5 inSection:0]].accessoryType = UITableViewCellAccessoryCheckmark;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self.addressCell.street1Field becomeFirstResponder];
+    if ([self addressEmpty])
+        [self.street1Field becomeFirstResponder];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (BOOL)addressEmpty {
+    return !self.address.street1 && !self.address.street2 && !self.address.city && !self.address.state && !self.address.zip;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4 + [self.labels count];
+- (BOOL)fieldsEmpty {
+    return ([self.street1Field.text length] == 0 && [self.street2Field.text length] == 0 && [self.cityField.text length] == 0 && [self.stateField.text length] == 0 && [self.zipField.text length] == 0);
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0)
-        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+- (void)back {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addressEditCancelled:)])
+        [self.delegate addressEditCancelled:self.address];
     
-    if (indexPath.row == 1) {
-        if (!self.addressCell) {
-            self.addressCell = (EnterAddressCell *)[tableView dequeueReusableCellWithIdentifier:@"EnterAddressCell"];
-            if (self.address) {
-                self.addressCell.street1Field.text = self.address.street1;
-                self.addressCell.street2Field.text = self.address.street2;
-                self.addressCell.cityField.text = self.address.city;
-                self.addressCell.stateField.text = self.address.state;
-                self.addressCell.zipField.text = self.address.zip;
-            }
-        }
-        return self.addressCell;
-    }
-    
-    if (indexPath.row == 2) {
-        return [tableView dequeueReusableCellWithIdentifier:@"LabelHeaderCell"];
-    }
-    
-    if (indexPath.row < 3 + [self.labels count]) {
-        LabelCell *cell = (LabelCell *)[tableView dequeueReusableCellWithIdentifier:@"LabelCell"];
-        
-        cell.labelLabel.text = self.labels[indexPath.row - 3];
-        
-        if (indexPath.row - 3 == self.selectedLabel)
-            cell.checkIcon.hidden = NO;
-        else
-            cell.checkIcon.hidden = YES;
-        
-        return cell;
-    }
-    
-    return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0)
-        return 8;
-    
-    if (indexPath.row == 1)
-        return 224;
-    
-    if (indexPath.row == 2)
-        return 48;
-    
-    if (indexPath.row < 3 + [self.labels count])
-        return 56;
-    
-    return 8;
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row < 3 || indexPath.row - 3 == self.selectedLabel || indexPath.row == 3 + [self.labels count])
-        return;
+    if (indexPath.row < 5 || indexPath.row == 8) return;
     
-    [self.view endEditing:YES];
+    [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 5 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     
-    NSIndexPath *oldSelected = [NSIndexPath indexPathForRow:self.selectedLabel + 3 inSection:0];
+    self.selectedLabel = indexPath.row - 5;
     
-    self.selectedLabel = (int)indexPath.row - 3;
+    [self updateSaveButton];
+}
+
+- (NSString *)labelForIndex:(int)index {
+    if (index == 0) return @"Home";
+    if (index == 1) return @"Work";
+    return @"Other";
+}
+
+- (BOOL)addressChanged {
+    return ![self.street1Field.text isEqualToString:self.address.street1] || ![self.street2Field.text isEqualToString:self.address.street2] || ![self.cityField.text isEqualToString:self.address.city] || ![self.stateField.text isEqualToString:self.address.state] || ![self.zipField.text isEqualToString:self.address.zip];
+}
+
+- (void)updateSaveButton {
+    if (![self fieldsEmpty] && ([self addressChanged] || ![[self.address.label lowercaseString] isEqualToString:[[self labelForIndex:self.selectedLabel] lowercaseString]]))
+        self.saveButton.enabled = YES;
+    else
+        self.saveButton.enabled = NO;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.street1Field)
+        [self.street2Field becomeFirstResponder];
+
+    if (textField == self.street2Field)
+        [self.cityField becomeFirstResponder];
     
-    [self.tableView reloadRowsAtIndexPaths:@[ oldSelected, indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (textField == self.cityField)
+        [self.stateField becomeFirstResponder];
+    
+    if (textField == self.stateField)
+        [self.zipField becomeFirstResponder];
+    
+    return NO;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    textField.text = @"";
+    
+    [self updateSaveButton];
+    
+    return NO;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     
-    if ([self.addressCell.street1Field.text length] == 0 && [self.addressCell.street2Field.text length] == 0 && [self.addressCell.cityField.text length] == 0 && [self.addressCell.stateField.text length] == 0 && [self.addressCell.zipField.text length] == 0)
-        self.saveButton.enabled = NO;
-    else
-        self.saveButton.enabled = YES;
-    
-    return NO;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if (textField == self.addressCell.street1Field)
-        [self.addressCell.street2Field becomeFirstResponder];
-
-    if (textField == self.addressCell.street2Field)
-        [self.addressCell.cityField becomeFirstResponder];
-    
-    if (textField == self.addressCell.cityField)
-        [self.addressCell.stateField becomeFirstResponder];
-    
-    if (textField == self.addressCell.stateField)
-        [self.addressCell.zipField becomeFirstResponder];
+    [self updateSaveButton];
     
     return NO;
 }
@@ -145,54 +141,54 @@
 - (void)setAddress:(Address *)address {
     _address = address;
     
+    if (!self.street1Field) return;
+    
     if (!address.street1 && !address.street2 && !address.city && !address.state && !address.zip) {
         // new address
         self.title = @"Add Address";
-        self.saveButton.enabled = NO;
-        return;
+        self.deleteButton.hidden = YES;
+    } else {
+        self.title = @"Edit Address";
+        self.street1Field.text = address.street1;
+        self.street2Field.text = address.street2;
+        self.cityField.text = address.city;
+        self.stateField.text = address.state;
+        self.zipField.text = address.zip;
+        
+        if ([[address.label lowercaseString] isEqualToString:@"home"])
+            self.selectedLabel = 0;
+        else if ([[address.label lowercaseString] isEqualToString:@"work"])
+            self.selectedLabel = 1;
+        else
+            self.selectedLabel = 2;
     }
-    
-    if (self.addressCell) {
-        self.addressCell.street1Field.text = address.street1;
-        self.addressCell.street2Field.text = address.street2;
-        self.addressCell.cityField.text = address.city;
-        self.addressCell.stateField.text = address.state;
-        self.addressCell.zipField.text = address.zip;
-    }
-    
-    for (NSString *label in self.labels) {
-        if ([label isEqualToString:address.label]) {
-            self.selectedLabel = (int)[self.labels indexOfObject:label];
-            [self.tableView reloadData];
-            break;
-        }
-    }
-}
-
-- (IBAction)cancel:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(addressEdited:)]) {
-        [self.delegate addressEdited:self.address];
-    }
-    
-    [self.view endEditing:YES];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)save:(id)sender {
+    self.address.street1 = self.street1Field.text;
+    self.address.street2 = self.street2Field.text;
+    self.address.city = self.cityField.text;
+    self.address.state = self.stateField.text;
+    self.address.zip = self.zipField.text;
+    self.address.label = [self labelForIndex:self.selectedLabel];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addressEdited:)])
+        [self.delegate addressEdited:self.address];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)delete:(id)sender {
     if (self.address) {
-        if (self.addressCell) {
-            self.address.street1 = self.addressCell.street1Field.text;
-            self.address.street2 = self.addressCell.street2Field.text;
-            self.address.city = self.addressCell.cityField.text;
-            self.address.state = self.addressCell.stateField.text;
-            self.address.zip = self.addressCell.zipField.text;
-        }
+        [self.address.card removeAddressesObject:self.address];
+        [self.address.managedObjectContext deleteObject:self.address];
         
-        self.address.label = self.labels[self.selectedLabel];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(addressDeleted:)])
+            [self.delegate addressDeleted:self.address];
     }
     
-    [self cancel:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
+
 
 @end

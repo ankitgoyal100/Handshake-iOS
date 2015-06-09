@@ -20,11 +20,14 @@
 #import "Contact.h"
 #import "UserViewController.h"
 #import "LocationManager.h"
+#import "SearchViewController.h"
 
 @implementation MainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.delegate = self;
     
     // setup view controllers
     
@@ -73,6 +76,20 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
+}
+
+// override for search views
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
+    if ([viewController isKindOfClass:[UINavigationController class]] && viewController == tabBarController.selectedViewController) {
+        UINavigationController *nav = (UINavigationController *)viewController;
+        
+        if ([nav.visibleViewController isKindOfClass:[SearchViewController class]]) {
+            [nav popToRootViewControllerAnimated:NO];
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 @end

@@ -26,8 +26,11 @@ static BOOL syncing = NO;
     self.email = dictionary[@"email"];
     self.firstName = dictionary[@"first_name"];
     self.lastName = dictionary[@"last_name"];
-    self.picture = dictionary[@"picture"];
-    self.pictureData = nil;
+    // if no picture or picture is different - update
+    if (!dictionary[@"picture"] || (dictionary[@"picture"] && !self.picture)) {
+        self.picture = dictionary[@"picture"];
+        self.pictureData = nil;
+    }
 }
 
 - (NSDictionary *)dictionary {
@@ -105,7 +108,6 @@ static BOOL syncing = NO;
                     operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer multipartFormRequestWithMethod:@"PUT" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/account"] absoluteString] parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
                         [formData appendPartWithFileData:account.pictureData name:@"picture" fileName:@"picture.jpg" mimeType:@"image/jpg"];
                     } error:nil]];
-                    NSLog(@"uploading picture");
                 } else {
                     operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"PUT" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"/account"] absoluteString] parameters:params error:nil]];
                 }

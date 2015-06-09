@@ -227,6 +227,7 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     self.connection = nil;
     self.data = nil;
+    NSLog(@"%@", error);
     [self loadFailedWithError:error];
 }
 

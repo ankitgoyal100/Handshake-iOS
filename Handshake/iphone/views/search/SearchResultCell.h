@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AsyncImageView.h"
+#import "SearchResult.h"
 
 @interface SearchResultCell : UITableViewCell
 
@@ -16,5 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *mutualLabel;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIButton *sentButton;
+
+@property (nonatomic, strong) SearchResult *result;
 
 @end

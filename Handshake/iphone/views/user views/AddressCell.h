@@ -12,5 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
 @property (weak, nonatomic) IBOutlet UILabel *labelLabel;
+@property (weak, nonatomic) IBOutlet UIView *separator;
 
 @end

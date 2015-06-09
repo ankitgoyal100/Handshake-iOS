@@ -9,15 +9,18 @@
 #import "EmailEditController.h"
 #import "EmailAddressCell.h"
 #import "LabelCell.h"
+#import "Card.h"
+#import "UINavigationItem+Additions.h"
+#import "UIBarButtonItem+DefaultBackButton.h"
 
 @interface EmailEditController ()
 
-@property (nonatomic, strong) EmailAddressCell *addressCell;
+@property (nonatomic, strong) IBOutlet UITextField *addressField;
 
 @property (nonatomic) int selectedLabel;
-@property (nonatomic, strong) NSArray *labels;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 @end
 
@@ -27,145 +30,129 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.selectedLabel = 0;
-        self.labels = @[ @"home", @"work", @"other" ];
     }
     return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
+        [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    
+    if (self.email)
+        self.email = self.email;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 2 inSection:0]].accessoryType = UITableViewCellAccessoryCheckmark;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self.addressCell.addressField becomeFirstResponder];
+    if (!self.email.address || [self.email.address isEqualToString:@""])
+        [self.addressField becomeFirstResponder];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4 + [self.labels count];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0)
-        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+- (void)back {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(emailEditCancelled:)])
+        [self.delegate emailEditCancelled:self.email];
     
-    if (indexPath.row == 1) {
-        if (!self.addressCell) {
-            self.addressCell = (EmailAddressCell *)[tableView dequeueReusableCellWithIdentifier:@"EmailAddressCell"];
-            if (self.email)
-                self.addressCell.addressField.text = self.email.address;
-        }
-        return self.addressCell;
-    }
-    
-    if (indexPath.row == 2) {
-        return [tableView dequeueReusableCellWithIdentifier:@"LabelHeaderCell"];
-    }
-    
-    if (indexPath.row < 3 + [self.labels count]) {
-        LabelCell *cell = (LabelCell *)[tableView dequeueReusableCellWithIdentifier:@"LabelCell"];
-        
-        cell.labelLabel.text = self.labels[indexPath.row - 3];
-        
-        if (indexPath.row - 3 == self.selectedLabel)
-            cell.checkIcon.hidden = NO;
-        else
-            cell.checkIcon.hidden = YES;
-        
-        return cell;
-    }
-    
-    return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0)
-        return 8;
-    
-    if (indexPath.row == 1)
-        return 56;
-    
-    if (indexPath.row == 2)
-        return 48;
-    
-    if (indexPath.row < 3 + [self.labels count])
-        return 56;
-    
-    return 8;
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row < 3 || indexPath.row - 3 == self.selectedLabel || indexPath.row == 3 + [self.labels count])
-        return;
+    if (indexPath.row < 2 || indexPath.row == 5) return;
     
-    [self.view endEditing:YES];
+    [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 2 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     
-    NSIndexPath *oldSelected = [NSIndexPath indexPathForRow:self.selectedLabel + 3 inSection:0];
+    self.selectedLabel = indexPath.row - 2;
     
-    self.selectedLabel = (int)indexPath.row - 3;
+    [self updateSaveButton];
+}
+
+- (NSString *)labelForIndex:(int)index {
+    if (index == 0) return @"Home";
+    if (index == 1) return @"Work";
+    return @"Other";
+}
+
+- (void)updateSaveButton {
+    if ([self.addressField.text length] > 0 && (![self.email.address isEqualToString:self.addressField.text] || ![[self.email.label lowercaseString] isEqualToString:[[self labelForIndex:self.selectedLabel] lowercaseString]]))
+        self.saveButton.enabled = YES;
+    else
+        self.saveButton.enabled = NO;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (self.saveButton.enabled)
+        [self save:nil];
     
-    [self.tableView reloadRowsAtIndexPaths:@[ oldSelected, indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    return NO;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    self.saveButton.enabled = NO;
+    
+    return YES;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     
-    if ([textField.text length] == 0)
-        self.saveButton.enabled = NO;
-    else
-        self.saveButton.enabled = YES;
+    [self updateSaveButton];
     
-    return NO;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     return NO;
 }
 
 - (void)setEmail:(Email *)email {
     _email = email;
     
+    if (!self.addressField) return;
+    
     if (!email.address || [email.address isEqualToString:@""]) {
         // new email
         self.title = @"Add Email";
-        self.saveButton.enabled = NO;
-        return;
+        self.deleteButton.hidden = YES;
+    } else {
+        self.title = @"Edit Email";
+        self.addressField.text = email.address;
+        
+        if ([[email.label lowercaseString] isEqualToString:@"home"])
+            self.selectedLabel = 0;
+        else if ([[email.label lowercaseString] isEqualToString:@"work"])
+            self.selectedLabel = 1;
+        else
+            self.selectedLabel = 2;
     }
-    
-    if (self.addressCell)
-        self.addressCell.addressField.text = email.address;
-    
-    for (NSString *label in self.labels) {
-        if ([label isEqualToString:email.label]) {
-            self.selectedLabel = (int)[self.labels indexOfObject:label];
-            [self.tableView reloadData];
-            break;
-        }
-    }
-}
-
-- (IBAction)cancel:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(emailEdited:)]) {
-        [self.delegate emailEdited:self.email];
-    }
-    
-    [self.view endEditing:YES];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)save:(id)sender {
+    self.email.address = self.addressField.text;
+    self.email.label = [self labelForIndex:self.selectedLabel];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(emailEdited:)])
+        [self.delegate emailEdited:self.email];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)delete:(id)sender {
     if (self.email) {
-        if (self.addressCell)
-            self.email.address = self.addressCell.addressField.text;
+        [self.email.card removeEmailsObject:self.email];
+        [self.email.managedObjectContext deleteObject:self.email];
         
-        self.email.label = self.labels[self.selectedLabel];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(emailDeleted:)])
+            [self.delegate emailDeleted:self.email];
     }
     
-    [self cancel:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

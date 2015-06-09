@@ -17,6 +17,9 @@
 #import "UserViewController.h"
 #import "Request.h"
 #import "UserRequestCell.h"
+#import "UINavigationItem+Additions.h"
+#import "UIBarButtonItem+DefaultBackButton.h"
+#import "SectionHeaderCell.h"
 
 @interface ContactsViewController() <UITextFieldDelegate, NSFetchedResultsControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
@@ -44,15 +47,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"Contacts";
+    
     CGRect rect = self.searchView.frame;
-    rect.size.height = 64;
+    rect.size.height = 0;//48;
     self.searchView.frame = rect;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidMove:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     self.managedObjectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
     
+    if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
+        [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+    
     [self fetch];
+}
+
+- (void)back {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)fetch {
@@ -94,13 +106,16 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 26)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
     
-    view.backgroundColor = [UIColor colorWithWhite:1 alpha:0.95];
+    view.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(16, 0, self.view.frame.size.width - 32, view.frame.size.height)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width - 24, view.frame.size.height)];
     
-    label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
+    //label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
+    //label.font = [UIFont fontWithName:@"HelveticaNeue-BOLD" size:12];
+    label.font = [UIFont boldSystemFontOfSize:14];
+    label.textColor = [UIColor colorWithWhite:0.64 alpha:1];
     
     NSArray *sections = [self.fetchedResultsController sections];
     // if there is a '#' section
@@ -115,13 +130,19 @@
     
     [view addSubview:label];
     
+    //if (section != 0) {
+        UIView *sep = [[UIView alloc] initWithFrame:CGRectMake(0, view.frame.size.height - 1, view.frame.size.width, 1)];
+        sep.backgroundColor = [UIColor colorWithWhite:0.94 alpha:1];
+        [view addSubview:sep];
+    //}
+    
     return view;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if ([self.searchField.text length] > 0) return 0;
     
-    return 26;
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -131,9 +152,11 @@
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-    if ([self.searchField.text length] > 0) return nil;
+    return nil;
     
-    return @[UITableViewIndexSearch, @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J", @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U", @"V", @"W", @"X", @"Y", @"Z", @"#"];
+    //    if ([self.searchField.text length] > 0) return nil;
+    //
+    //    return @[UITableViewIndexSearch, @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J", @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U", @"V", @"W", @"X", @"Y", @"Z", @"#"];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
@@ -159,7 +182,7 @@
     for (NSObject <NSFetchedResultsSectionInfo> *section in sections) {
         if ([[section name] isEqualToString:@"#"])
             continue;
-    
+        
         char sectionChar = [[section name] characterAtIndex:0];
         int distance = ABS((int)sectionChar - (int)titleChar);
         
@@ -188,113 +211,105 @@
     if ([[sections[0] name] isEqualToString:@"#"]) {
         // if last section return '#', else add 1
         if (section == [sections count] - 1)
-            return [((id<NSFetchedResultsSectionInfo>)sections[0]) numberOfObjects] + 1; // add 1 for spacer
+            return [((id<NSFetchedResultsSectionInfo>)sections[0]) numberOfObjects] + 1;
+        //else if (section == 0)
+            //return [((id<NSFetchedResultsSectionInfo>)sections[section + 1]) numberOfObjects] + 1;
         else
-            return [((id<NSFetchedResultsSectionInfo>)sections[section + 1]) numberOfObjects];
-    } else {
-        // if last section add spacer row
+            return [((id<NSFetchedResultsSectionInfo>)sections[section + 1]) numberOfObjects] + 1;
+    //} else if (section == 0) {
+       // return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects] + 1;
+    } else
+        return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects] + 1;
+}
+
+- (NSString *)titleForSection:(int)section {
+    NSArray *sections = [self.fetchedResultsController sections];
+    // if there is a '#' section
+    if ([[sections[0] name] isEqualToString:@"#"]) {
+        // if last section return '#', else add 1
         if (section == [sections count] - 1)
-            return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects] + 1;
+            return @"#";
         else
-            return [((id<NSFetchedResultsSectionInfo>)sections[section]) numberOfObjects];
-    }
+            return [[[self.fetchedResultsController sections][section + 1] name] uppercaseString];
+    } else
+        return [[[self.fetchedResultsController sections][section] name] uppercaseString];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
+    
+    if (indexPath.row == 0) {
+        SectionHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SectionHeaderCell"];
+        cell.label.text = [self titleForSection:indexPath.section];
+        return cell;
+    }
+    
     ContactCell *cell = (ContactCell *)[tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
+    
+    if (!cell) {
+        [tableView registerNib:[UINib nibWithNibName:@"ContactCell" bundle:nil] forCellReuseIdentifier:@"ContactCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
+    }
     
     Contact *contact;
     
     if ([self.searchField.text length] > 0) {
-        if (indexPath.row == [self.searchResults count])
-            return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
-        
         contact = self.searchResults[indexPath.row];
     } else {
         NSArray *sections = [self.fetchedResultsController sections];
         
-        // if last section and last row return a spacer
-        if (indexPath.section == [sections count] - 1) {
-            if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
-                return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
-            else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
-                return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
-        }
-        
         // if there is a '#' section add 1 to indexPath
         if ([[sections[0] name] isEqualToString:@"#"]) {
             if (indexPath.section == [sections count] - 1)
-                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:0]];
+           // else if (indexPath.section == 0)
+              //  contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section + 1]];
             else
-                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section + 1]];
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section + 1]];
+       // } else if (indexPath.section == 0)
+          //  contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
         } else
-            contact = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
     }
     
-    cell.pictureView.crossfadeDuration = 0;
-    cell.pictureView.showActivityIndicator = NO;
-    
-    cell.pictureView.image = nil;
-    if (contact.user.pictureData)
-        cell.pictureView.image = [UIImage imageWithData:contact.user.pictureData];
-    else if (contact.user.picture)
-        cell.pictureView.imageURL = [NSURL URLWithString:contact.user.picture];
-    else
-        cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
-    cell.nameLabel.text = [contact.user formattedName];
-    
+    cell.contact = contact;
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSArray *sections = [self.fetchedResultsController sections];
+    //if (indexPath.section == 0 && indexPath.row == 0) return 1;
     
-    // if searching and last row return 8
-    if ([self.searchField.text length] > 0 && indexPath.row == [self.searchResults count])
-        return 8;
-    else if ([self.searchField.text length] > 0)
-        return 56;
+    if (indexPath.row == 0) return 30;
     
-    // if last section and last row return 8
-    if (indexPath.section == [sections count] - 1) {
-        if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
-            return 8;
-        else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
-            return 8;
-    }
-    
-    return 56;
+    return 57;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    ////if (indexPath.section == 0 && indexPath.row == 0) return;
+    
+    if (indexPath.row == 0) return;
+    
     Contact *contact;
     
     if ([self.searchField.text length] > 0) {
-        if (indexPath.row == [self.searchResults count])
-            return; // do nothing
-        
         contact = self.searchResults[indexPath.row];
     } else {
         NSArray *sections = [self.fetchedResultsController sections];
         
-        // if last section and last row don't do anything
-        if (indexPath.section == [sections count] - 1) {
-            if ([[sections[0] name] isEqualToString:@"#"] && indexPath.row == [sections[0] numberOfObjects])
-                return;
-            else if (indexPath.row == [sections[indexPath.section] numberOfObjects])
-                return;
-        }
-        
         // if there is a '#' section add 1 to indexPath
         if ([[sections[0] name] isEqualToString:@"#"]) {
             if (indexPath.section == [sections count] - 1)
-                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:0]];
+            //else if (indexPath.section == 0)
+              //  contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section + 1]];
             else
-                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section + 1]];
-        } else
-            contact = [self.fetchedResultsController objectAtIndexPath:indexPath];
+                contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section + 1]];
+       // } else if (indexPath.section == 0)
+          //  contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
+        }else
+            contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
     }
     
     UserViewController *controller = (UserViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];

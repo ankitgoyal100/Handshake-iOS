@@ -8,14 +8,10 @@
 
 #import "ForgotPasswordViewController.h"
 #import "ForgotPasswordView.h"
-#import "UINavigationItem+Additions.h"
-#import "UIBarButtonItem+DefaultBackButton.h"
 #import "Handshake.h"
 #import "HandshakeClient.h"
 
 @interface ForgotPasswordViewController () <UITextFieldDelegate>
-
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
@@ -25,18 +21,20 @@
 
 @implementation ForgotPasswordViewController
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"Forgot Password?";
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
     [self.emailField becomeFirstResponder];
 }
 
-- (IBAction)exit:(id)sender {
+- (IBAction)cancel:(id)sender {
     [self.view endEditing:YES];
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)cancel {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -60,6 +58,13 @@
     return NO;
 }
 
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    self.sendButton.enabled = NO;
+    self.sendButton.alpha = 0.5;
+    
+    return YES;
+}
+
 - (IBAction)send:(id)sender {
     if ([self.emailField.text length] == 0)
         return;
@@ -69,7 +74,7 @@
     [self.activityView startAnimating];
     
     [[HandshakeClient client] POST:@"/password" parameters:@{ @"user": @{ @"email":self.emailField.text } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self cancel:nil];
         [[[UIAlertView alloc] initWithTitle:@"Reset Instructions Sent" message:[@"Instruction to reset your password were sent to " stringByAppendingString:self.emailField.text] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         self.sendButton.hidden = NO;

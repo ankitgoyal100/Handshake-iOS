@@ -21,6 +21,7 @@ static BOOL syncing = NO;
 @dynamic updatedAt;
 @dynamic user;
 @dynamic syncStatus;
+@dynamic feedItems;
 
 + (void)sync {
     [self syncWithCompletionBlock:nil];

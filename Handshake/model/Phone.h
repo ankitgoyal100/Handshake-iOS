@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class Card;
 
 @interface Phone : NSManagedObject
 
 @property (nonatomic, retain) NSString * label;
 @property (nonatomic, retain) NSString * number;
-@property (nonatomic, retain) NSManagedObject *card;
+@property (nonatomic, retain) Card *card;
 
 @end

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import <UIKit/UIKit.h>
 
 @class Card, Contact, GroupMember;
 
@@ -20,6 +21,8 @@
 @property (nonatomic, retain) NSData * pictureData;
 @property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSNumber * userId;
+@property (nonatomic, retain) NSNumber *contacts;
+@property (nonatomic, retain) NSNumber *mutual;
 @property (nonatomic, retain) NSOrderedSet *cards;
 @property (nonatomic, retain) Contact *contact;
 @property (nonatomic, retain) NSSet *groups;
@@ -30,6 +33,8 @@
 - (NSString *)formattedName;
 
 - (NSString *)firstLetterOfName;
+
+- (UIImage *)cachedImage;
 
 @end
 

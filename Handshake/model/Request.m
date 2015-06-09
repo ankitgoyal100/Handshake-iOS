@@ -13,6 +13,7 @@
 #import "HandshakeClient.h"
 #import "HandshakeSession.h"
 #import "Card.h"
+#import "FeedItem.h"
 
 static BOOL syncing = NO;
 
@@ -21,14 +22,14 @@ static BOOL syncing = NO;
 @dynamic requestId;
 @dynamic createdAt;
 @dynamic updatedAt;
-@dynamic mutual;
+@dynamic accepted;
+@dynamic removed;
 @dynamic user;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
     self.requestId = dictionary[@"id"];
     self.createdAt = [DateConverter convertToDate:dictionary[@"created_at"]];
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
-    self.mutual = dictionary[@"mutual"];
     
     // create/find user
     
@@ -93,7 +94,7 @@ static BOOL syncing = NO;
         [[HandshakeClient client] GET:@"/requests" parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
             for (NSDictionary *requestDict in responseObject[@"requests"]) {
                 Request *request = [[Request alloc] initWithEntity:[NSEntityDescription entityForName:@"Request" inManagedObjectContext:objectContext] insertIntoManagedObjectContext:objectContext];
-                [request updateFromDictionary:requestDict];
+                [request updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:requestDict]];
             }
             
             // save
@@ -126,6 +127,8 @@ static BOOL syncing = NO;
 - (void)acceptWithSuccessBlock:(void (^)(Contact *))successBlock failedBlock:(void (^)())failedBlock {
     if (self.user.userId == [[HandshakeSession currentSession] account].userId) return; // can't accept own request
     
+    self.accepted = @(YES);
+    
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
     params[@"card_ids"] = @[((Card *)[[HandshakeSession currentSession] account].cards[0]).cardId];
     [[HandshakeClient client] POST:[NSString stringWithFormat:@"/requests/%d", [self.requestId intValue]] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -154,10 +157,15 @@ static BOOL syncing = NO;
         [contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"contact"]]];
         contact.syncStatus = [NSNumber numberWithInt:ContactSynced];
         
-        [self.managedObjectContext deleteObject:self];
+        self.requestId = nil;
+        
+        [FeedItem sync];
+        
+        //[self.managedObjectContext deleteObject:self];
         
         if (successBlock) successBlock(contact);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        self.accepted = @(NO);
         if ([[operation response] statusCode] == 401)
             [[HandshakeSession currentSession] invalidate];
         else
@@ -166,11 +174,17 @@ static BOOL syncing = NO;
 }
 
 - (void)deleteWithSuccessBlock:(void (^)())successBlock failedBlock:(void (^)())failedBlock {
+    self.removed = @(YES);
+    
     [[HandshakeClient client] DELETE:[NSString stringWithFormat:@"/requests/%d", [self.requestId intValue]] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.managedObjectContext deleteObject:self];
+        //[self.managedObjectContext deleteObject:self];
+        
+        self.requestId = nil;
         
         if (successBlock) successBlock();
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        self.removed = @(NO);
+        
         if ([[operation response] statusCode] == 401)
             [[HandshakeSession currentSession] invalidate];
         else
