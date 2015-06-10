@@ -5926,7 +5926,9 @@
                                             </variation>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="callButton" destination="w0N-ff-SSz" id="ATf-dK-28y"/>
                                             <outlet property="labelLabel" destination="O3Q-KK-irA" id="q3D-Kv-f61"/>
+                                            <outlet property="messageButton" destination="Z3d-cA-cZa" id="wnh-bC-Tm6"/>
                                             <outlet property="numberLabel" destination="dNq-6E-T1G" id="BZq-ED-75l"/>
                                         </connections>
                                     </tableViewCell>
@@ -6127,6 +6129,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="addressLabel" destination="bpe-xu-ORU" id="doh-O8-nI9"/>
+                                            <outlet property="emailButton" destination="5UG-9a-taK" id="Qwr-G7-jd8"/>
                                             <outlet property="labelLabel" destination="2We-Ca-WWW" id="vXC-Z4-8Wk"/>
                                         </connections>
                                     </tableViewCell>
@@ -6341,6 +6344,7 @@ Fairfax, VA 22030</string>
                                         <connections>
                                             <outlet property="addressLabel" destination="2B2-sD-WJN" id="y43-nx-mGq"/>
                                             <outlet property="labelLabel" destination="ZWY-Jt-Cqd" id="xyG-e1-g13"/>
+                                            <outlet property="mapsButton" destination="bzd-5n-HZm" id="gw6-Ke-DgD"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SocialCell" rowHeight="53" id="ZNH-0m-XuD" customClass="SocialCell">

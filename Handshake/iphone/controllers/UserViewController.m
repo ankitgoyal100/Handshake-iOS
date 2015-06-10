@@ -333,6 +333,14 @@
             cell.numberLabel.text = phone.number;
             cell.labelLabel.text = [[phone.label lowercaseString] capitalizedString];
             
+            [cell.callButton addEventHandler:^(id sender) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.messageButton addEventHandler:^(id sender) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"sms://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
             return cell;
         }
         
@@ -345,10 +353,9 @@
             cell.addressLabel.text = email.address;
             cell.labelLabel.text = [[email.label lowercaseString] capitalizedString];
             
-            if (/*row == [self.card.emails count] - 1 && */indexPath.row != [self tableView:tableView numberOfRowsInSection:0] - 2)
-                cell.separator.hidden = NO;
-            else
-                cell.separator.hidden = YES;
+            [cell.emailButton addEventHandler:^(id sender) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"mailto://%@", email.address]]];
+            } forControlEvents:UIControlEventTouchUpInside];
             
             return cell;
         }
@@ -373,10 +380,10 @@
             
             cell.labelLabel.text = [[address.label lowercaseString] capitalizedString];
             
-            if (/*row == [self.card.addresses count] - 1 && */indexPath.row != [self tableView:tableView numberOfRowsInSection:0] - 2)
-                cell.separator.hidden = NO;
-            else
-                cell.separator.hidden = YES;
+            [cell.mapsButton addEventHandler:^(id sender) {
+                NSString *addressString = [[[address formattedString] stringByReplacingOccurrencesOfString:@"\n" withString:@""] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/?q=%@", addressString]]];
+            } forControlEvents:UIControlEventTouchUpInside];
             
             return cell;
         }
@@ -459,6 +466,68 @@
     }
     
     return 0;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (indexPath.row == 0) return;
+    
+    int row = (int)indexPath.row - 1;
+    
+    if (indexPath.section == 1) {
+        if (row < [self.card.phones count]) {
+            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Message", @"Call", nil];
+            sheet.tag = row;
+            [sheet showInView:self.view];
+        }
+        
+        row -= [self.card.phones count];
+        
+        if (row < [self.card.emails count]) {
+            Email *email = self.card.emails[row];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"mailto://%@", email.address]]];
+        }
+        
+        row -= [self.card.emails count];
+        
+        if (row < [self.card.addresses count]) {
+            Address *address = self.card.addresses[row];
+            NSString *addressString = [[[address formattedString] stringByReplacingOccurrencesOfString:@"\n" withString:@""] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/?q=%@", addressString]]];
+        }
+    }
+    
+    if (indexPath.section == 2) {
+        Social *social = self.card.socials[row];
+        
+        if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
+            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"fb://profile/%@", social.username]];
+            if ([[UIApplication sharedApplication] canOpenURL:url])
+                [[UIApplication sharedApplication] openURL:url];
+            else
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://facebook.com/%@", social.username]]];
+        } else if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
+            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"twitter://user?screen_name=%@", social.username]];
+            if ([[UIApplication sharedApplication] canOpenURL:url])
+                [[UIApplication sharedApplication] openURL:url];
+            else
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://twitter.com/%@", social.username]]];
+        } else if ([[social.network lowercaseString] isEqualToString:@"instagram"]) {
+            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://user?username=%@", social.username]];
+            if ([[UIApplication sharedApplication] canOpenURL:url])
+                [[UIApplication sharedApplication] openURL:url];
+            else
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://instagram.com/%@", social.username]]];
+        } else if ([[social.network lowercaseString] isEqualToString:@"snapchat"]) {
+            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"snapchat://?u=%@", social.username]];
+            if ([[UIApplication sharedApplication] canOpenURL:url])
+                [[UIApplication sharedApplication] openURL:url];
+            else {
+                // maybe direct to download snapchat?
+            }
+        }
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -547,20 +616,6 @@
     } else {
         self.title = @"Contact";
     }
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    if (indexPath.section == 0 && indexPath.row == 2 && self.user == [[HandshakeSession currentSession] account]) {
-        [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactsViewController"] animated:YES];
-        
-        return;
-    }
-    
-    int row = (int)indexPath.row - 1;
-    
-    
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
@@ -732,9 +787,6 @@
     
     [self.tableView reloadData];
 }
-- (IBAction)asdf:(id)sender {
-    [self action:nil];
-}
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Delete Contact"]) {
@@ -743,6 +795,12 @@
             [self.user.managedObjectContext deleteObject:item];
         [self.navigationController popViewControllerAnimated:YES];
         [Contact sync];
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Call"]) {
+        Phone *phone = self.card.phones[actionSheet.tag];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Message"]) {
+        Phone *phone = self.card.phones[actionSheet.tag];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"sms://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
     }
 }
 
