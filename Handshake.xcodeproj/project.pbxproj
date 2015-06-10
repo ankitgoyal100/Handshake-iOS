@@ -249,6 +249,9 @@
 		799DD1F21B27CC160077044C /* SocialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F11B27CC160077044C /* SocialCell.m */; };
 		799DD1F51B27DB070077044C /* InstagramEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F41B27DB070077044C /* InstagramEditController.m */; };
 		799DD1F81B27DB180077044C /* SnapchatEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F71B27DB180077044C /* SnapchatEditController.m */; };
+		799DD1FA1B28A8700077044C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 799DD1F91B28A8700077044C /* Settings.storyboard */; };
+		799DD1FD1B28B56A0077044C /* ChangeEmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1FC1B28B56A0077044C /* ChangeEmailViewController.m */; };
+		799DD2001B28C6E30077044C /* ContactSyncSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1FF1B28C6E30077044C /* ContactSyncSettingsViewController.m */; };
 		79B3FEAB19C9150200759F69 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAA19C9150200759F69 /* Contact.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
@@ -738,6 +741,11 @@
 		799DD1F41B27DB070077044C /* InstagramEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InstagramEditController.m; path = editor/InstagramEditController.m; sourceTree = "<group>"; };
 		799DD1F61B27DB180077044C /* SnapchatEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SnapchatEditController.h; path = editor/SnapchatEditController.h; sourceTree = "<group>"; };
 		799DD1F71B27DB180077044C /* SnapchatEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SnapchatEditController.m; path = editor/SnapchatEditController.m; sourceTree = "<group>"; };
+		799DD1F91B28A8700077044C /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		799DD1FB1B28B56A0077044C /* ChangeEmailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeEmailViewController.h; sourceTree = "<group>"; };
+		799DD1FC1B28B56A0077044C /* ChangeEmailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangeEmailViewController.m; sourceTree = "<group>"; };
+		799DD1FE1B28C6E30077044C /* ContactSyncSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactSyncSettingsViewController.h; sourceTree = "<group>"; };
+		799DD1FF1B28C6E30077044C /* ContactSyncSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactSyncSettingsViewController.m; sourceTree = "<group>"; };
 		79B3FEA919C9150200759F69 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		79B3FEAA19C9150200759F69 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
@@ -956,6 +964,7 @@
 				7997B7B219E2BC7E00525550 /* Launch.xib */,
 				792801E519C8B36B0075261D /* Supporting Files */,
 				7968660A1ACCB58300CCF0E2 /* Main.storyboard */,
+				799DD1F91B28A8700077044C /* Settings.storyboard */,
 				794692281B23B6400093045E /* Start.storyboard */,
 				79C751A71B1DFD8F00DB221C /* Edit.storyboard */,
 			);
@@ -1216,6 +1225,10 @@
 				7928027C19C8B3C40075261D /* SettingsViewController.m */,
 				79C050F019D07505001BB956 /* SocialAccountsSection.h */,
 				79C050F119D07505001BB956 /* SocialAccountsSection.m */,
+				799DD1FB1B28B56A0077044C /* ChangeEmailViewController.h */,
+				799DD1FC1B28B56A0077044C /* ChangeEmailViewController.m */,
+				799DD1FE1B28C6E30077044C /* ContactSyncSettingsViewController.h */,
+				799DD1FF1B28C6E30077044C /* ContactSyncSettingsViewController.m */,
 			);
 			path = settings;
 			sourceTree = "<group>";
@@ -2031,6 +2044,7 @@
 				7997B7EB19EF862600525550 /* contacts@3x.png in Resources */,
 				7928039019C8B3C40075261D /* card_name@2x.png in Resources */,
 				7928039319C8B3C40075261D /* checked@2x.png in Resources */,
+				799DD1FA1B28A8700077044C /* Settings.storyboard in Resources */,
 				7997B80F19EF889100525550 /* time@3x.png in Resources */,
 				7928038E19C8B3C40075261D /* add@2x.png in Resources */,
 				7997B7F519EF86B200525550 /* email@3x.png in Resources */,
@@ -2225,6 +2239,7 @@
 				792803B119C8B3C40075261D /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				79766C9E1AE039C600C5CA3D /* PhoneEditController.m in Sources */,
 				7997B7C919E35A8700525550 /* CardSetupViewController.m in Sources */,
+				799DD1FD1B28B56A0077044C /* ChangeEmailViewController.m in Sources */,
 				79C050E019CF650D001BB956 /* GKImageCropOverlayView.m in Sources */,
 				7928035B19C8B3C40075261D /* SettingsViewController.m in Sources */,
 				7928035019C8B3C40075261D /* BasicInfoSection.m in Sources */,
@@ -2240,6 +2255,7 @@
 				792803B319C8B3C40075261D /* UIButton+AFNetworking.m in Sources */,
 				792803B719C8B3C40075261D /* UIWebView+AFNetworking.m in Sources */,
 				7928037C19C8B3C40075261D /* EmailSettingsTableViewCell.m in Sources */,
+				799DD2001B28C6E30077044C /* ContactSyncSettingsViewController.m in Sources */,
 				79B752C21AF6F4B9007660E5 /* GroupsViewController.m in Sources */,
 				7932B7681B0288340011A747 /* SearchResult.m in Sources */,
 				79C050DF19CF650D001BB956 /* GKCropBorderView.m in Sources */,

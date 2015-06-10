@@ -29,6 +29,9 @@
     
     self.delegate = self;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(forceLogout:) name:SESSION_INVALID object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logout:) name:SESSION_ENDED object:nil];
+    
     // setup view controllers
     
     UserViewController *userController = (UserViewController *)((UINavigationController *)self.viewControllers[3]).visibleViewController;
@@ -46,32 +49,17 @@
     //[[LocationManager sharedManager] startUpdating];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)logout:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(forceLogout:) name:SESSION_INVALID object:nil];
-    
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:SESSION_INVALID object:nil];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Start" bundle:nil];
+    [[[[UIApplication sharedApplication] delegate] window] setRootViewController:[storyboard instantiateInitialViewController]];
 }
 
 - (void)forceLogout:(NSNotification *)notification {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:SESSION_INVALID object:nil];
+    [self logout:notification];
     
-    UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[StartViewController alloc] initWithNibName:nil bundle:nil]];
-    controller.navigationBarHidden = YES;
-    controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentViewController:controller animated:YES completion:nil];
-    
-    if ([notification.object[@"confirmation_error"] boolValue])
-        [[[UIAlertView alloc] initWithTitle:@"Confirmation Required" message:[NSString stringWithFormat:@"You need to confirm your account before you can login. Please check %@ for a confirmation message.", notification.object[@"email"]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-    else
-        [[[UIAlertView alloc] initWithTitle:@"Not Logged In" message:@"You have been logged out." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:@"Not Logged In" message:@"You have been logged out." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {

@@ -7,12 +7,19 @@
 //
 
 #import "SettingsViewController.h"
-#import "EmailSettingsSection.h"
-#import "ResetPasswordSection.h"
-#import "LogoutSection.h"
 #import "HandshakeCoreDataStore.h"
-#import <CoreData/CoreData.h>
-#import "SocialAccountsSection.h"
+#import "HandshakeSession.h"
+#import "HandshakeCoreDataStore.h"
+#import "HandshakeClient.h"
+#import "FacebookHelper.h"
+
+@interface SettingsViewController() <UIAlertViewDelegate, UIActionSheetDelegate>
+
+@property (weak, nonatomic) IBOutlet UILabel *emailField;
+@property (weak, nonatomic) IBOutlet UILabel *facebookLabel;
+@property (weak, nonatomic) IBOutlet UILabel *autoSyncLabel;
+
+@end
 
 @implementation SettingsViewController
 
@@ -21,17 +28,67 @@
     
     self.navigationItem.title = @"Settings";
     
-    [self.sections addObject:[[EmailSettingsSection alloc] initWithViewController:self]];
-    [self.sections addObject:[[ResetPasswordSection alloc] initWithViewController:self]];
-    [self.sections addObject:[[SocialAccountsSection alloc] initWithViewController:self]];
-    [self.sections addObject:[[LogoutSection alloc] initWithViewController:self]];
-    [self.sections addObject:[[Section alloc] init]];
+    if ([FacebookHelper sharedHelper].username)
+        self.facebookLabel.text = [FacebookHelper sharedHelper].name;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
-    [self.tableView reloadData];
+    self.emailField.text = [[HandshakeSession currentSession] account].email;
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue])
+        self.autoSyncLabel.text = @"On";
+    else
+        self.autoSyncLabel.text = @"Off";
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (indexPath.row == 1) {
+        // email
+        [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ChangeEmailViewController"] animated:YES];
+    }
+    
+    if (indexPath.row == 4) {
+        // autosync
+        [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactSyncSettingsViewController"] animated:YES];
+    }
+    
+    if (indexPath.row == 7) {
+        // facebook
+        if ([FacebookHelper sharedHelper].username) {
+            [[[UIActionSheet alloc] initWithTitle:@"Facebook Account" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Disconnect" otherButtonTitles:nil] showInView:self.view];
+        } else {
+            [[FacebookHelper sharedHelper] loginWithSuccessBlock:^(NSString *username, NSString *name) {
+                self.facebookLabel.text = name;
+            } errorBlock:^(NSError *error) {
+                [[[UIAlertView alloc] initWithTitle:@"" message:@"Couldn't connect to Facebook" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            }];
+        }
+    }
+}
+
+- (IBAction)logout:(id)sender {
+    [[[UIAlertView alloc] initWithTitle:nil message:@"Are you sure?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Log Out", nil] show];
+}
+
+- (IBAction)done:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Log Out"]) {
+        [[HandshakeSession currentSession] logout];
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Disconnect"]) {
+        [[FacebookHelper sharedHelper] logout];
+        self.facebookLabel.text = @"Not Connected";
+    }
+}
+
 
 @end

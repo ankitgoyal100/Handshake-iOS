@@ -44,6 +44,14 @@
 //    [[UITabBar appearance] setBackgroundImage:[[UIImage alloc] init]];
 //    [[UITabBar appearance] setShadowImage:[[UIImage alloc] init]];
     
+    // set initial settings
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults objectForKey:@"auto_sync"]) {
+        [defaults setObject:@{ @"enabled": @(YES), @"names": @(NO), @"pictures": @(NO) } forKey:@"auto_sync"];
+        
+        [defaults synchronize];
+    }
+    
     [SSKeychain setAccessibilityType:kSecAttrAccessibleAlways];
     
     [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;

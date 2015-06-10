@@ -225,6 +225,11 @@
             } forControlEvents:UIControlEventTouchUpInside];
             
             [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"settings_button"] forState:UIControlStateNormal];
+            
+            [cell.secondaryButton addEventHandler:^(id sender) {
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
+                [self presentViewController:[storyboard instantiateInitialViewController] animated:YES completion:nil];
+            } forControlEvents:UIControlEventTouchUpInside];
         } else {
             [cell.primaryButton addEventHandler:^(id sender) {
                 [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Are you sure? You and %@ will no longer be contacts.", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];

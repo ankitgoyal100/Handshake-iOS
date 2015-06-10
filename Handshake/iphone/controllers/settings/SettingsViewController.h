@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Handshake. All rights reserved.
 //
 
-#import "SectionBasedTableViewController.h"
+#import <UIKit/UIKit.h>
 
-@interface SettingsViewController : SectionBasedTableViewController
+@interface SettingsViewController : UITableViewController
 
 @end
