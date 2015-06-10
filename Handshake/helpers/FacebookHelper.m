@@ -38,6 +38,7 @@
 - (void)loginWithSuccessBlock:(AccountLoadedBlock)successBlock errorBlock:(AccountErrorBlock)errorBlock {
     if (FBSession.activeSession.state == FBSessionStateOpen) {
         [self loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
+            self.nameCache[username] = name;
             if (successBlock) successBlock(username, name);
         } errorBlock:^(NSError *error) {
             if (errorBlock) errorBlock(error);
@@ -46,6 +47,7 @@
         [FBSession openActiveSessionWithReadPermissions:nil allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             if (!error) {
                 [self loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
+                    self.nameCache[username] = name;
                     if (successBlock) successBlock(username, name);
                 } errorBlock:^(NSError *error) {
                     if (errorBlock) errorBlock(error);
@@ -59,10 +61,13 @@
         [FBSession openActiveSessionWithReadPermissions:nil allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             if (!error) {
                 [self loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
+                    self.nameCache[username] = name;
                     if (self.loadedBlock) self.loadedBlock(username, name);
                 } errorBlock:^(NSError *error) {
                     if (self.errorBlock) self.errorBlock(error);
                 }];
+            } else {
+                if (self.errorBlock) self.errorBlock(error);
             }
         }];
     }
@@ -78,11 +83,16 @@
         if (!error) {
             self.username = result[@"id"];
             self.name = result[@"name"];
+            self.nameCache[self.username] = self.name;
             successBlock(self.username, self.name);
         } else {
             if (errorBlock) errorBlock(error);
         }
     }];
+}
+
+- (NSString *)nameForUsername:(NSString *)username {
+    return self.nameCache[username];
 }
 
 - (void)nameForUsername:(NSString *)username successBlock:(void (^)(NSString *))successBlock errorBlock:(void (^)(NSError *))errorBlock {

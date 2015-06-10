@@ -36,6 +36,7 @@
 #import "SocialCell.h"
 #import "InstagramEditController.h"
 #import "SnapchatEditController.h"
+#import "FacebookHelper.h"
 
 @interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate>
 
@@ -291,7 +292,10 @@
         SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
         cell.icon.image = [UIImage imageNamed:@"facebook_icon"];
         if (facebook) {
-            cell.label.text = @"Remove Facebook";
+            if ([[FacebookHelper sharedHelper] nameForUsername:facebook.username])
+                cell.label.text = [NSString stringWithFormat:@"Remove %@", [[FacebookHelper sharedHelper] nameForUsername:facebook.username]];
+            else
+                cell.label.text = @"Remove Facebook";
         } else {
             cell.label.text = @"Add Facebook";
         }
@@ -485,6 +489,49 @@
         controller.delegate = self;
         
         [self.navigationController pushViewController:controller animated:YES];
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 0) {
+        Social *facebook = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
+                facebook = social;
+                break;
+            }
+        }
+        
+        if (!facebook) {
+            SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
+            cell.label.text = @"Loading...";
+            
+            [[FacebookHelper sharedHelper] loadFacebookAccountWithSuccessBlock:^(NSString *username, NSString *name) {
+                Social *social = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+                social.username = username;
+                social.network = @"facebook";
+                [self.card addSocialsObject:social];
+                self.saveButton.enabled = YES;
+                cell.label.text = [NSString stringWithFormat:@"Remove %@", name];
+            } errorBlock:^(NSError *error) {
+                [[FacebookHelper sharedHelper] loginWithSuccessBlock:^(NSString *username, NSString *name) {
+                    Social *social = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+                    social.username = username;
+                    social.network = @"facebook";
+                    [self.card addSocialsObject:social];
+                    self.saveButton.enabled = YES;
+                    cell.label.text = [NSString stringWithFormat:@"Remove %@", name];
+                } errorBlock:^(NSError *error) {
+                    cell.label.text = @"Add Facebook";
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not connect to Facebook account." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }];
+            }];
+        } else {
+            [self.card removeSocialsObject:facebook];
+            [self.objectContext deleteObject:facebook];
+            self.saveButton.enabled = YES;
+            SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
+            cell.label.text = @"Add Facebook";
+        }
     }
     
     if (indexPath.section == 4 && indexPath.row == 1) {

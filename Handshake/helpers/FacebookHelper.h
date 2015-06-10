@@ -19,6 +19,7 @@ typedef void (^AccountErrorBlock)(NSError *error);
 
 - (void)loadFacebookAccountWithSuccessBlock:(AccountLoadedBlock)successBlock errorBlock:(AccountErrorBlock)errorBlock;
 
+- (NSString *)nameForUsername:(NSString *)username;
 - (void)nameForUsername:(NSString *)username successBlock:(void (^)(NSString *name))successBlock errorBlock:(void (^)(NSError *error))errorBlock;
 
 - (void)logout;

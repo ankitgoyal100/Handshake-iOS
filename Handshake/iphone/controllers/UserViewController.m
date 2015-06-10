@@ -35,6 +35,7 @@
 #import "UserHeaderCell.h"
 #import "MutualContactsViewController.h"
 #import "UserContactsViewController.h"
+#import "FacebookHelper.h"
 
 @interface UserViewController() <NSFetchedResultsControllerDelegate, GKImagePickerDelegate, UIActionSheetDelegate>
 
@@ -392,7 +393,21 @@
             Social *social = self.card.socials[row];
             
             if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
-                return [tableView dequeueReusableCellWithIdentifier:@"FacebookCell"];
+                SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+                
+                cell.icon.image = [UIImage imageNamed:@"facebook_icon"];
+                if ([[FacebookHelper sharedHelper] nameForUsername:social.username])
+                    cell.label.text = [[FacebookHelper sharedHelper] nameForUsername:social.username];
+                else {
+                    cell.label.text = @"Facebook";
+                    [[FacebookHelper sharedHelper] nameForUsername:social.username successBlock:^(NSString *name) {
+                        [self.tableView reloadData];
+                    } errorBlock:^(NSError *error) {
+                        
+                    }];
+                }
+                
+                return cell;
             } else if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
                 SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
                 
