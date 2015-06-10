@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "Social.h"
 
-@protocol SocialEditControllerDelegate <NSObject>
+@protocol SocialEditDelegate <NSObject>
 
+@optional
 - (void)socialEdited:(Social *)social;
+- (void)socialEditCancelled:(Social *)social;
+- (void)socialDeleted:(Social *)social;
 
 @end
 
@@ -19,6 +22,6 @@
 
 @property (nonatomic, strong) Social *social;
 
-@property (nonatomic, strong) id <SocialEditControllerDelegate> delegate;
+@property (nonatomic, strong) id <SocialEditDelegate> delegate;
 
 @end

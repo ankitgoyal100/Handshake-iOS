@@ -14,8 +14,7 @@
 #import "PhoneCell.h"
 #import "EmailCell.h"
 #import "AddressCell.h"
-#import "FacebookCell.h"
-#import "TwitterCell.h"
+#import "SocialCell.h"
 #import "Phone.h"
 #import "Email.h"
 #import "Address.h"
@@ -388,12 +387,29 @@
             if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
                 return [tableView dequeueReusableCellWithIdentifier:@"FacebookCell"];
             } else if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
-                TwitterCell *cell = (TwitterCell *)[tableView dequeueReusableCellWithIdentifier:@"TwitterCell"];
+                SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
                 
-                cell.usernameLabel.text = [@"@" stringByAppendingString:social.username];
+                cell.icon.image = [UIImage imageNamed:@"twitter_icon"];
+                cell.label.text = [@"@" stringByAppendingString:social.username];
+                
+                return cell;
+            } else if ([[social.network lowercaseString] isEqualToString:@"instagram"]) {
+                SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+                
+                cell.icon.image = [UIImage imageNamed:@"instagram_icon"];
+                cell.label.text = [@"@" stringByAppendingString:social.username];
+                
+                return cell;
+            } else if ([[social.network lowercaseString] isEqualToString:@"snapchat"]) {
+                SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+                
+                cell.icon.image = [UIImage imageNamed:@"snapchat_icon"];
+                cell.label.text = social.username;
                 
                 return cell;
             }
+            
+            return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
         }
     }
     
@@ -439,7 +455,7 @@
             return 24 + 18 + frame.size.height + 3;
         }
     } else if (indexPath.section == 2) {
-        return 61;
+        return 53;
     }
     
     return 0;

@@ -30,8 +30,14 @@
 #import "NameEditCell.h"
 #import "PictureEditCell.h"
 #import "GKImagePicker.h"
+#import "AddSocialController.h"
+#import "Social.h"
+#import "TwitterEditController.h"
+#import "SocialCell.h"
+#import "InstagramEditController.h"
+#import "SnapchatEditController.h"
 
-@interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, GKImagePickerDelegate>
+@interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -125,7 +131,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4;
+    return 5;
 }
 
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -148,6 +154,8 @@
     if (section == 2) return 2 + [self.card.emails count];
     
     if (section == 3) return 2 + [self.card.addresses count];
+    
+    if (section == 4) return 5;
     
     return 0;
 }
@@ -269,6 +277,102 @@
         return cell;
     }
     
+    if (indexPath.section == 4 && indexPath.row == 0) {
+        // facebook
+        Social *facebook = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"facebook"]) {
+                facebook = social;
+                break;
+            }
+        }
+        
+        SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+        cell.icon.image = [UIImage imageNamed:@"facebook_icon"];
+        if (facebook) {
+            cell.label.text = @"Remove Facebook";
+        } else {
+            cell.label.text = @"Add Facebook";
+        }
+        
+        return cell;
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 1) {
+        // twitter
+        Social *twitter = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
+                twitter = social;
+                break;
+            }
+        }
+        
+        SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+        cell.icon.image = [UIImage imageNamed:@"twitter_icon"];
+        if (twitter) {
+            cell.label.text = [NSString stringWithFormat:@"Remove @%@", twitter.username];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        } else {
+            cell.label.text = @"Add Twitter";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        
+       
+        return cell;
+    }
+    if (indexPath.section == 4 && indexPath.row == 2) {
+        // instagram
+        Social *instagram = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"instagram"]) {
+                instagram = social;
+                break;
+            }
+        }
+        
+        SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+        cell.icon.image = [UIImage imageNamed:@"instagram_icon"];
+        if (instagram) {
+            cell.label.text = [NSString stringWithFormat:@"Remove @%@", instagram.username];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        } else {
+            cell.label.text = @"Add Instagram";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        
+        return cell;
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 3) {
+        // snapchat
+        Social *snapchat = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"snapchat"]) {
+                snapchat = social;
+                break;
+            }
+        }
+        
+        SocialCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SocialCell"];
+        cell.icon.image = [UIImage imageNamed:@"snapchat_icon"];
+        if (snapchat) {
+            cell.label.text = [NSString stringWithFormat:@"Remove %@", snapchat.username];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        } else {
+            cell.label.text = @"Add Snapchat";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        
+        return cell;
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 4) return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
+    
     return nil;
 }
 
@@ -306,6 +410,11 @@
 //        NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont systemFontOfSize:15], NSParagraphStyleAttributeName: paragrahStyle };
 //        CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 66, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
 //        return 30 + 18 + frame.size.height + 3;
+    }
+    
+    if (indexPath.section == 4) {
+        if (indexPath.row == 4) return 20;
+        return 46;
     }
     
     return 0;
@@ -376,6 +485,84 @@
         controller.delegate = self;
         
         [self.navigationController pushViewController:controller animated:YES];
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 1) {
+        Social *twitter = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"twitter"]) {
+                twitter = social;
+                break;
+            }
+        }
+        
+        if (!twitter) {
+            twitter = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            TwitterEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"TwitterEditController"];
+            controller.delegate = self;
+            controller.social = twitter;
+            [self.navigationController pushViewController:controller animated:YES];
+        } else {
+            [self.card removeSocialsObject:twitter];
+            [self.objectContext deleteObject:twitter];
+            self.saveButton.enabled = YES;
+            SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
+            cell.label.text = @"Add Twitter";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 2) {
+        Social *instagram = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"instagram"]) {
+                instagram = social;
+                break;
+            }
+        }
+        
+        if (!instagram) {
+            instagram = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            InstagramEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"InstagramEditController"];
+            controller.delegate = self;
+            controller.social = instagram;
+            [self.navigationController pushViewController:controller animated:YES];
+        } else {
+            [self.card removeSocialsObject:instagram];
+            [self.objectContext deleteObject:instagram];
+            self.saveButton.enabled = YES;
+            SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
+            cell.label.text = @"Add Instagram";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+    }
+    
+    if (indexPath.section == 4 && indexPath.row == 3) {
+        Social *snapchat = nil;
+        
+        for (Social *social in self.card.socials) {
+            if ([[social.network lowercaseString] isEqualToString:@"snapchat"]) {
+                snapchat = social;
+                break;
+            }
+        }
+        
+        if (!snapchat) {
+            snapchat = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            SnapchatEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SnapchatEditController"];
+            controller.delegate = self;
+            controller.social = snapchat;
+            [self.navigationController pushViewController:controller animated:YES];
+        } else {
+            [self.card removeSocialsObject:snapchat];
+            [self.objectContext deleteObject:snapchat];
+            self.saveButton.enabled = YES;
+            SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
+            cell.label.text = @"Add Snapchat";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
     }
 }
 
@@ -451,6 +638,26 @@
         // empty address - delete
         [self.card removeAddressesObject:address];
         [self.card.managedObjectContext deleteObject:address];
+        [self.tableView reloadData];
+    }
+}
+
+- (void)socialEdited:(Social *)social {
+    if (!social.card)
+        [self.card addSocialsObject:social];
+    
+    self.saveButton.enabled = YES;
+    [self.tableView reloadData];
+}
+
+- (void)socialDeleted:(Social *)social {
+    self.saveButton.enabled = YES;
+    [self.tableView reloadData];
+}
+
+- (void)socialEditCancelled:(Social *)social {
+    if (!social.username || !social.network) {
+        [self.objectContext deleteObject:social];
         [self.tableView reloadData];
     }
 }

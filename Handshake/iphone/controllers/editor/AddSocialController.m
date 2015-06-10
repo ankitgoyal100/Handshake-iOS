@@ -8,8 +8,10 @@
 
 #import "AddSocialController.h"
 #import "TwitterEditController.h"
+#import "UINavigationItem+Additions.h"
+#import "UIBarButtonItem+DefaultBackButton.h"
 
-@interface AddSocialController () <SocialEditControllerDelegate>
+@interface AddSocialController () <SocialEditDelegate>
 
 @end
 
@@ -18,11 +20,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
+        [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
+}
+
+- (void)back {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(socialEditCancelled:)])
+        [self.delegate socialEditCancelled:self.social];
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -31,7 +37,7 @@
     if (indexPath.row == 0 || indexPath.row == 3)
         return;
     
-    if (indexPath.row == 2 && self.social) {
+    if (indexPath.row == 1 && self.social) {
         // twitter
         TwitterEditController *controller = (TwitterEditController *)[self.storyboard instantiateViewControllerWithIdentifier:@"TwitterEditController"];
         controller.delegate = self;
@@ -51,6 +57,8 @@
 - (void)socialEdited:(Social *)social {
     if (self.delegate && [self.delegate respondsToSelector:@selector(socialEdited:)])
         [self.delegate socialEdited:social];
+    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

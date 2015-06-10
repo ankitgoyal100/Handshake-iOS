@@ -1,16 +1,16 @@
 //
-//  TwitterEditController.m
+//  InstagramEditController.m
 //  Handshake
 //
-//  Created by Sam Ober on 4/20/15.
+//  Created by Sam Ober on 6/9/15.
 //  Copyright (c) 2015 Handshake. All rights reserved.
 //
 
-#import "TwitterEditController.h"
+#import "InstagramEditController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
 
-@interface TwitterEditController ()
+@interface InstagramEditController ()
 
 @property (weak, nonatomic) IBOutlet UITextField *usernameLabel;
 
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation TwitterEditController
+@implementation InstagramEditController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -67,7 +67,7 @@
     self.usernameLabel.text = social.username;
     
     if (!social.username) {
-        self.title = @"Add Twitter";
+        self.title = @"Add Instagram";
     }
 }
 
@@ -81,7 +81,7 @@
 - (IBAction)save:(id)sender {
     if (self.social) {
         self.social.username = self.usernameLabel.text;
-        self.social.network = @"twitter";
+        self.social.network = @"instagram";
     }
     
     [self.navigationController popViewControllerAnimated:YES];

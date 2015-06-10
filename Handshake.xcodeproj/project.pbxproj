@@ -246,6 +246,9 @@
 		799DD1E91B263A130077044C /* MutualContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1E81B263A130077044C /* MutualContactsViewController.m */; };
 		799DD1EC1B2640B90077044C /* UserContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1EB1B2640B90077044C /* UserContactsViewController.m */; };
 		799DD1EF1B2792910077044C /* SectionHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1EE1B2792910077044C /* SectionHeaderCell.m */; };
+		799DD1F21B27CC160077044C /* SocialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F11B27CC160077044C /* SocialCell.m */; };
+		799DD1F51B27DB070077044C /* InstagramEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F41B27DB070077044C /* InstagramEditController.m */; };
+		799DD1F81B27DB180077044C /* SnapchatEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1F71B27DB180077044C /* SnapchatEditController.m */; };
 		79B3FEAB19C9150200759F69 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAA19C9150200759F69 /* Contact.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
@@ -729,6 +732,12 @@
 		799DD1EB1B2640B90077044C /* UserContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserContactsViewController.m; path = users/UserContactsViewController.m; sourceTree = "<group>"; };
 		799DD1ED1B2792910077044C /* SectionHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SectionHeaderCell.h; sourceTree = "<group>"; };
 		799DD1EE1B2792910077044C /* SectionHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SectionHeaderCell.m; sourceTree = "<group>"; };
+		799DD1F01B27CC160077044C /* SocialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocialCell.h; path = "user views/SocialCell.h"; sourceTree = "<group>"; };
+		799DD1F11B27CC160077044C /* SocialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SocialCell.m; path = "user views/SocialCell.m"; sourceTree = "<group>"; };
+		799DD1F31B27DB070077044C /* InstagramEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstagramEditController.h; path = editor/InstagramEditController.h; sourceTree = "<group>"; };
+		799DD1F41B27DB070077044C /* InstagramEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InstagramEditController.m; path = editor/InstagramEditController.m; sourceTree = "<group>"; };
+		799DD1F61B27DB180077044C /* SnapchatEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SnapchatEditController.h; path = editor/SnapchatEditController.h; sourceTree = "<group>"; };
+		799DD1F71B27DB180077044C /* SnapchatEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SnapchatEditController.m; path = editor/SnapchatEditController.m; sourceTree = "<group>"; };
 		79B3FEA919C9150200759F69 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		79B3FEAA19C9150200759F69 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
@@ -1673,6 +1682,10 @@
 				795003C51AEA6C7A003DD9BF /* NameEditController.m */,
 				79C7517D1B0FAD9F00DB221C /* AccountEditorViewController.h */,
 				79C7517E1B0FAD9F00DB221C /* AccountEditorViewController.m */,
+				799DD1F31B27DB070077044C /* InstagramEditController.h */,
+				799DD1F41B27DB070077044C /* InstagramEditController.m */,
+				799DD1F61B27DB180077044C /* SnapchatEditController.h */,
+				799DD1F71B27DB180077044C /* SnapchatEditController.m */,
 			);
 			name = editor;
 			sourceTree = "<group>";
@@ -1777,6 +1790,8 @@
 				79C751871B194F0500DB221C /* OptionsCell.m */,
 				79C751A11B1CC0A200DB221C /* AccountOptionsCell.h */,
 				79C751A21B1CC0A200DB221C /* AccountOptionsCell.m */,
+				799DD1F01B27CC160077044C /* SocialCell.h */,
+				799DD1F11B27CC160077044C /* SocialCell.m */,
 			);
 			name = "user view";
 			sourceTree = "<group>";
@@ -2119,8 +2134,10 @@
 				79C050E119CF650D001BB956 /* GKImageCropView.m in Sources */,
 				792803B219C8B3C40075261D /* UIAlertView+AFNetworking.m in Sources */,
 				79D46C7B19D22D4F00C52FEE /* NSString+STTwitter.m in Sources */,
+				799DD1F51B27DB070077044C /* InstagramEditController.m in Sources */,
 				79D4AD5819C93F3100F5A154 /* Card.m in Sources */,
 				79D46C7E19D22D4F00C52FEE /* STTwitterAppOnly.m in Sources */,
+				799DD1F81B27DB180077044C /* SnapchatEditController.m in Sources */,
 				7928034219C8B3C40075261D /* CardEditorViewController.m in Sources */,
 				7928036A19C8B3C40075261D /* EditableTableViewCell.m in Sources */,
 				79C751851B1394B800DB221C /* ContactsCell.m in Sources */,
@@ -2154,6 +2171,7 @@
 				7928033F19C8B3C40075261D /* AddressEditorSection.m in Sources */,
 				799DD1E91B263A130077044C /* MutualContactsViewController.m in Sources */,
 				79C050F219D07505001BB956 /* SocialAccountsSection.m in Sources */,
+				799DD1F21B27CC160077044C /* SocialCell.m in Sources */,
 				7928036519C8B3C40075261D /* PhoneTableViewCell.m in Sources */,
 				7928034719C8B3C40075261D /* NamePictureEditorSection.m in Sources */,
 				79766C971AE038AC00C5CA3D /* PhoneNumberCell.m in Sources */,

@@ -6343,7 +6343,7 @@ Fairfax, VA 22030</string>
                                             <outlet property="labelLabel" destination="ZWY-Jt-Cqd" id="xyG-e1-g13"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TwitterCell" rowHeight="72" id="ZNH-0m-XuD" customClass="TwitterCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SocialCell" rowHeight="53" id="ZNH-0m-XuD" customClass="SocialCell">
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZNH-0m-XuD" id="NEd-Hg-XQ2">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -6363,8 +6363,7 @@ Fairfax, VA 22030</string>
                                                             <exclude reference="8S7-Rl-eFx"/>
                                                         </mask>
                                                     </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                        <rect key="frame" x="0.0" y="71" width="320" height="1"/>
+                                                    <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
                                                             <include reference="6aT-LB-TyO"/>
                                                             <exclude reference="8S7-Rl-eFx"/>
@@ -6375,7 +6374,9 @@ Fairfax, VA 22030</string>
                                                     <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="PD4-iH-npb"/>
-                                                        <constraint firstAttribute="width" constant="30" id="qLd-jB-81l"/>
+                                                        <constraint firstAttribute="width" constant="30" id="qLd-jB-81l">
+                                                            <variation key="heightClass=regular-widthClass=compact" constant="20"/>
+                                                        </constraint>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
@@ -6385,7 +6386,7 @@ Fairfax, VA 22030</string>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="PD4-iH-npb"/>
+                                                            <exclude reference="PD4-iH-npb"/>
                                                             <include reference="qLd-jB-81l"/>
                                                         </mask>
                                                     </variation>
@@ -6405,8 +6406,7 @@ Fairfax, VA 22030</string>
                                                             <exclude reference="zJ1-U1-7N6"/>
                                                         </mask>
                                                     </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                        <rect key="frame" x="38" y="0.0" width="270" height="72"/>
+                                                    <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
                                                             <exclude reference="zJ1-U1-7N6"/>
                                                         </mask>
@@ -6416,21 +6416,24 @@ Fairfax, VA 22030</string>
                                             <constraints>
                                                 <constraint firstItem="XFv-L0-y84" firstAttribute="leading" secondItem="NEd-Hg-XQ2" secondAttribute="leading" constant="15" id="16O-Ja-tpS"/>
                                                 <constraint firstAttribute="bottom" secondItem="XFv-L0-y84" secondAttribute="bottom" id="4kV-nf-qo6"/>
+                                                <constraint firstItem="QSF-Eh-Yuc" firstAttribute="top" secondItem="vBH-Cj-Yc9" secondAttribute="bottom" id="EF7-Ak-BcC"/>
+                                                <constraint firstItem="vBH-Cj-Yc9" firstAttribute="top" secondItem="NEd-Hg-XQ2" secondAttribute="top" id="eeg-h9-T3Y"/>
                                                 <constraint firstAttribute="trailing" secondItem="XFv-L0-y84" secondAttribute="trailing" constant="15" id="gx5-kc-aSR">
                                                     <variation key="heightClass=regular-widthClass=compact" constant="12"/>
                                                 </constraint>
+                                                <constraint firstItem="QSF-Eh-Yuc" firstAttribute="top" secondItem="XFv-L0-y84" secondAttribute="bottom" id="h32-CK-Sg7"/>
                                                 <constraint firstItem="XFv-L0-y84" firstAttribute="top" secondItem="NEd-Hg-XQ2" secondAttribute="top" constant="12" id="k3w-Wf-Kj9">
                                                     <variation key="heightClass=regular-widthClass=compact" constant="0.0"/>
                                                 </constraint>
                                                 <constraint firstItem="XFv-L0-y84" firstAttribute="leading" secondItem="vBH-Cj-Yc9" secondAttribute="trailing" constant="20" id="nNI-e0-get">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="4"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                                                 </constraint>
                                                 <constraint firstItem="QSF-Eh-Yuc" firstAttribute="leading" secondItem="NEd-Hg-XQ2" secondAttribute="leading" id="pCG-Fp-gyB"/>
                                                 <constraint firstAttribute="bottom" secondItem="QSF-Eh-Yuc" secondAttribute="bottom" id="r0y-KW-qGf"/>
                                                 <constraint firstAttribute="trailing" secondItem="QSF-Eh-Yuc" secondAttribute="trailing" id="ran-9W-FOo"/>
                                                 <constraint firstAttribute="centerY" secondItem="vBH-Cj-Yc9" secondAttribute="centerY" id="tw9-y8-Sci"/>
                                                 <constraint firstItem="vBH-Cj-Yc9" firstAttribute="leading" secondItem="NEd-Hg-XQ2" secondAttribute="leading" constant="20" id="wHF-We-gdG">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="4"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" constant="12"/>
                                                 </constraint>
                                             </constraints>
                                             <variation key="default">
@@ -6440,13 +6443,16 @@ Fairfax, VA 22030</string>
                                                     <exclude reference="XFv-L0-y84"/>
                                                 </mask>
                                                 <mask key="constraints">
+                                                    <exclude reference="eeg-h9-T3Y"/>
+                                                    <exclude reference="tw9-y8-Sci"/>
+                                                    <exclude reference="wHF-We-gdG"/>
                                                     <exclude reference="16O-Ja-tpS"/>
                                                     <exclude reference="4kV-nf-qo6"/>
                                                     <exclude reference="gx5-kc-aSR"/>
                                                     <exclude reference="k3w-Wf-Kj9"/>
                                                     <exclude reference="nNI-e0-get"/>
-                                                    <exclude reference="tw9-y8-Sci"/>
-                                                    <exclude reference="wHF-We-gdG"/>
+                                                    <exclude reference="EF7-Ak-BcC"/>
+                                                    <exclude reference="h32-CK-Sg7"/>
                                                     <exclude reference="pCG-Fp-gyB"/>
                                                     <exclude reference="r0y-KW-qGf"/>
                                                     <exclude reference="ran-9W-FOo"/>
@@ -6459,13 +6465,16 @@ Fairfax, VA 22030</string>
                                                     <include reference="XFv-L0-y84"/>
                                                 </mask>
                                                 <mask key="constraints">
+                                                    <include reference="eeg-h9-T3Y"/>
+                                                    <exclude reference="tw9-y8-Sci"/>
+                                                    <include reference="wHF-We-gdG"/>
                                                     <exclude reference="16O-Ja-tpS"/>
-                                                    <include reference="4kV-nf-qo6"/>
+                                                    <exclude reference="4kV-nf-qo6"/>
                                                     <include reference="gx5-kc-aSR"/>
                                                     <include reference="k3w-Wf-Kj9"/>
                                                     <include reference="nNI-e0-get"/>
-                                                    <include reference="tw9-y8-Sci"/>
-                                                    <include reference="wHF-We-gdG"/>
+                                                    <include reference="EF7-Ak-BcC"/>
+                                                    <include reference="h32-CK-Sg7"/>
                                                     <include reference="pCG-Fp-gyB"/>
                                                     <include reference="r0y-KW-qGf"/>
                                                     <include reference="ran-9W-FOo"/>
@@ -6473,140 +6482,8 @@ Fairfax, VA 22030</string>
                                             </variation>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="usernameLabel" destination="XFv-L0-y84" id="4mH-h8-4xJ"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="FacebookCell" rowHeight="72" id="OPW-71-X1M" customClass="FacebookCell">
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OPW-71-X1M" id="Z5X-7a-4xY">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sam Ober" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XLl-kO-XVR">
-                                                    <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="hMz-j1-Jgt">
-                                                            <variation key="heightClass=regular-widthClass=compact" constant="19"/>
-                                                        </constraint>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
-                                                    <color key="textColor" red="0.1505631506" green="0.1505586505" blue="0.15056121350000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                    <variation key="default">
-                                                        <mask key="constraints">
-                                                            <exclude reference="hMz-j1-Jgt"/>
-                                                        </mask>
-                                                    </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                        <rect key="frame" x="38" y="0.0" width="270" height="72"/>
-                                                        <mask key="constraints">
-                                                            <exclude reference="hMz-j1-Jgt"/>
-                                                        </mask>
-                                                    </variation>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2t8-vY-3bM">
-                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                                    <color key="backgroundColor" red="0.92490267749999999" green="0.92487502099999996" blue="0.92489069700000004" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="0.5" id="iDm-O7-Si7">
-                                                            <variation key="heightClass=regular-widthClass=compact" constant="1"/>
-                                                        </constraint>
-                                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="0.5" id="yeT-ou-wV8"/>
-                                                    </constraints>
-                                                    <variation key="default">
-                                                        <mask key="constraints">
-                                                            <exclude reference="iDm-O7-Si7"/>
-                                                            <exclude reference="yeT-ou-wV8"/>
-                                                        </mask>
-                                                    </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                        <rect key="frame" x="0.0" y="71" width="320" height="1"/>
-                                                        <mask key="constraints">
-                                                            <include reference="iDm-O7-Si7"/>
-                                                            <exclude reference="yeT-ou-wV8"/>
-                                                        </mask>
-                                                    </variation>
-                                                </view>
-                                                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="facebook_icon" translatesAutoresizingMaskIntoConstraints="NO" id="XSH-Ra-1t5">
-                                                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="30" id="AEm-N3-any"/>
-                                                        <constraint firstAttribute="width" constant="30" id="tfU-Bt-I39"/>
-                                                    </constraints>
-                                                    <variation key="default">
-                                                        <mask key="constraints">
-                                                            <exclude reference="AEm-N3-any"/>
-                                                            <exclude reference="tfU-Bt-I39"/>
-                                                        </mask>
-                                                    </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact">
-                                                        <mask key="constraints">
-                                                            <include reference="AEm-N3-any"/>
-                                                            <include reference="tfU-Bt-I39"/>
-                                                        </mask>
-                                                    </variation>
-                                                </imageView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="XLl-kO-XVR" firstAttribute="leading" secondItem="Z5X-7a-4xY" secondAttribute="leading" constant="15" id="1ra-OH-5vJ"/>
-                                                <constraint firstAttribute="centerY" secondItem="XSH-Ra-1t5" secondAttribute="centerY" id="33y-3F-myD"/>
-                                                <constraint firstItem="XLl-kO-XVR" firstAttribute="leading" secondItem="XSH-Ra-1t5" secondAttribute="trailing" constant="20" id="6Q3-1F-KkC">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="4"/>
-                                                </constraint>
-                                                <constraint firstItem="2t8-vY-3bM" firstAttribute="leading" secondItem="Z5X-7a-4xY" secondAttribute="leading" id="C16-aa-4ao"/>
-                                                <constraint firstAttribute="trailing" secondItem="2t8-vY-3bM" secondAttribute="trailing" id="Dbc-D2-bRv"/>
-                                                <constraint firstAttribute="bottom" secondItem="XLl-kO-XVR" secondAttribute="bottom" id="M0P-NS-eCB"/>
-                                                <constraint firstItem="XLl-kO-XVR" firstAttribute="top" secondItem="Z5X-7a-4xY" secondAttribute="top" constant="12" id="O9q-9F-ZPT">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="0.0"/>
-                                                </constraint>
-                                                <constraint firstItem="XSH-Ra-1t5" firstAttribute="leading" secondItem="Z5X-7a-4xY" secondAttribute="leading" constant="20" id="d9q-PV-EFD">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="4"/>
-                                                </constraint>
-                                                <constraint firstAttribute="trailing" secondItem="XLl-kO-XVR" secondAttribute="trailing" constant="15" id="fRT-gg-dz5">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="12"/>
-                                                </constraint>
-                                                <constraint firstAttribute="bottom" secondItem="2t8-vY-3bM" secondAttribute="bottom" id="liH-85-qzJ"/>
-                                            </constraints>
-                                            <variation key="default">
-                                                <mask key="subviews">
-                                                    <exclude reference="XLl-kO-XVR"/>
-                                                    <exclude reference="2t8-vY-3bM"/>
-                                                    <exclude reference="XSH-Ra-1t5"/>
-                                                </mask>
-                                                <mask key="constraints">
-                                                    <exclude reference="1ra-OH-5vJ"/>
-                                                    <exclude reference="6Q3-1F-KkC"/>
-                                                    <exclude reference="M0P-NS-eCB"/>
-                                                    <exclude reference="O9q-9F-ZPT"/>
-                                                    <exclude reference="fRT-gg-dz5"/>
-                                                    <exclude reference="33y-3F-myD"/>
-                                                    <exclude reference="d9q-PV-EFD"/>
-                                                    <exclude reference="C16-aa-4ao"/>
-                                                    <exclude reference="Dbc-D2-bRv"/>
-                                                    <exclude reference="liH-85-qzJ"/>
-                                                </mask>
-                                            </variation>
-                                            <variation key="heightClass=regular-widthClass=compact">
-                                                <mask key="subviews">
-                                                    <include reference="XLl-kO-XVR"/>
-                                                    <include reference="2t8-vY-3bM"/>
-                                                    <include reference="XSH-Ra-1t5"/>
-                                                </mask>
-                                                <mask key="constraints">
-                                                    <exclude reference="1ra-OH-5vJ"/>
-                                                    <include reference="6Q3-1F-KkC"/>
-                                                    <include reference="M0P-NS-eCB"/>
-                                                    <include reference="O9q-9F-ZPT"/>
-                                                    <include reference="fRT-gg-dz5"/>
-                                                    <include reference="33y-3F-myD"/>
-                                                    <include reference="d9q-PV-EFD"/>
-                                                    <include reference="C16-aa-4ao"/>
-                                                    <include reference="Dbc-D2-bRv"/>
-                                                    <include reference="liH-85-qzJ"/>
-                                                </mask>
-                                            </variation>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="nameLabel" destination="XLl-kO-XVR" id="rbI-b3-dZC"/>
+                                            <outlet property="icon" destination="vBH-Cj-Yc9" id="3mH-G2-2c8"/>
+                                            <outlet property="label" destination="XFv-L0-y84" id="A8d-kG-nuU"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Spacer" rowHeight="60" id="279-m1-c1D">
@@ -8564,7 +8441,6 @@ Fairfax, VA 22030</string>
         <image name="decline_button" width="48" height="30"/>
         <image name="edit_profile_button" width="103" height="30"/>
         <image name="email_button" width="21" height="17"/>
-        <image name="facebook_icon" width="19" height="19"/>
         <image name="groups_icon" width="35" height="19"/>
         <image name="inbox_tab" width="24" height="23"/>
         <image name="maps_button" width="18" height="25"/>
@@ -8575,6 +8451,6 @@ Fairfax, VA 22030</string>
         <image name="requested_button" width="48" height="30"/>
         <image name="search_icon" width="23" height="23"/>
         <image name="settings_button" width="48" height="30"/>
-        <image name="twitter_icon" width="19" height="20"/>
+        <image name="twitter_icon" width="20" height="20"/>
     </resources>
 </document>

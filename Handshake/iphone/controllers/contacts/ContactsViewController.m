@@ -240,7 +240,7 @@
     
     if (indexPath.row == 0) {
         SectionHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SectionHeaderCell"];
-        cell.label.text = [self titleForSection:indexPath.section];
+        cell.label.text = [self titleForSection:(int)indexPath.section];
         return cell;
     }
     

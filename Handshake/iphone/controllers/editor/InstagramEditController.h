@@ -1,8 +1,8 @@
 //
-//  TwitterEditController.h
+//  InstagramEditController.h
 //  Handshake
 //
-//  Created by Sam Ober on 4/20/15.
+//  Created by Sam Ober on 6/9/15.
 //  Copyright (c) 2015 Handshake. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import "Social.h"
 #import "AddSocialController.h"
 
-@interface TwitterEditController : UITableViewController <UITextFieldDelegate>
+@interface InstagramEditController : UITableViewController <UITextFieldDelegate>
 
 @property (nonatomic, strong) Social *social;
 
