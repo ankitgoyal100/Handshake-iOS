@@ -50,6 +50,11 @@
         [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ChangeEmailViewController"] animated:YES];
     }
     
+    if (indexPath.row == 2) {
+        // reset password
+        [[[UIAlertView alloc] initWithTitle:@"Reset Password?" message:@"You will be sent an email with reset instructions." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Reset", nil] show];
+    }
+    
     if (indexPath.row == 4) {
         // autosync
         [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactSyncSettingsViewController"] animated:YES];
@@ -80,6 +85,24 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Log Out"]) {
         [[HandshakeSession currentSession] logout];
+    } else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Reset"]) {
+        UIActivityIndicatorView *loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        loadingView.frame = CGRectMake(0, 0, 120, 120);
+        loadingView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
+        loadingView.layer.cornerRadius = 8;
+        
+        UIWindow *window = [[UIApplication sharedApplication] delegate].window;
+        loadingView.center = window.center;
+        [window addSubview:loadingView];
+        [loadingView startAnimating];
+        
+        [[HandshakeClient client] POST:@"/password" parameters:@{ @"user": @{ @"email": [[HandshakeSession currentSession] account].email } } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [loadingView removeFromSuperview];
+            [[[UIAlertView alloc] initWithTitle:@"Instructions Sent" message:@"Please check your email." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [loadingView removeFromSuperview];
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not send reset instructions at this time." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        }];
     }
 }
 
