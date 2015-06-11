@@ -10,7 +10,8 @@
 #import "HandshakeSession.h"
 #import "HandshakeClient.h"
 #import "HandshakeCoreDataStore.h"
-#import "DateConverter.h"
+#import "DateConverter.h" 
+#import "ContactSync.h"
 
 static BOOL syncing = NO;
 
@@ -22,6 +23,8 @@ static BOOL syncing = NO;
 @dynamic user;
 @dynamic syncStatus;
 @dynamic feedItems;
+@dynamic saved;
+@dynamic savesToPhone;
 
 + (void)sync {
     [self syncWithCompletionBlock:nil];
@@ -110,6 +113,8 @@ static BOOL syncing = NO;
                         [objectContext save:nil];
                     }];
                     [[HandshakeCoreDataStore defaultStore] saveMainContext];
+                    
+                    [ContactSync sync];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         // end sync
@@ -250,6 +255,8 @@ static BOOL syncing = NO;
             self.user = user;
         }
     }
+    
+    self.saved = @(NO);
     
     [self didChangeValueForKey:@"firstLetter"];
 }

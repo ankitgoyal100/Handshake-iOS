@@ -9,6 +9,7 @@
 #import "ContactSyncSettingsViewController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
+#import "ContactSync.h"
 
 @interface ContactSyncSettingsViewController ()
 
@@ -18,6 +19,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary *settings;
 
+@property (nonatomic) BOOL changed;
+
 @end
 
 @implementation ContactSyncSettingsViewController
@@ -26,6 +29,7 @@
     [super viewDidLoad];
     
     self.title = @"AutoSync";
+    self.changed = NO;
     
     if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
         [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
@@ -48,10 +52,13 @@
     [[NSUserDefaults standardUserDefaults] setObject:self.settings forKey:@"auto_sync"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    if (self.changed) [ContactSync syncAll];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)autoSwitchChanged:(id)sender {
+    self.changed = YES;
     if (self.autoSyncSwitch.on) {
         self.settings[@"enabled"] = @(YES);
         self.namesSwitch.enabled = YES;
@@ -64,10 +71,12 @@
 }
 
 - (IBAction)namesChanged:(id)sender {
+    self.changed = YES;
     self.settings[@"names"] = @(self.namesSwitch.on);
 }
 
 - (IBAction)picturesChanged:(id)sender {
+    self.changed = YES;
     self.settings[@"pictures"] = @(self.picturesSwitch.on);
 }
 

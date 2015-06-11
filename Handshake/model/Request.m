@@ -14,6 +14,7 @@
 #import "HandshakeSession.h"
 #import "Card.h"
 #import "FeedItem.h"
+#import "ContactSync.h"
 
 static BOOL syncing = NO;
 
@@ -156,6 +157,8 @@ static BOOL syncing = NO;
         
         [contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"contact"]]];
         contact.syncStatus = [NSNumber numberWithInt:ContactSynced];
+        
+        [ContactSync sync];
         
         self.requestId = nil;
         

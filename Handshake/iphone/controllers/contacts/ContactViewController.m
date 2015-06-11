@@ -112,17 +112,17 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 CFErrorRef error = NULL;
                 
-                ABRecordRef contact = ABPersonCreate();
-                
-                UIImage *picture = [[AsyncImageLoader defaultCache] objectForKey:[NSURL URLWithString:self.contact.user.picture]];
-                if (picture)
-                    ABPersonSetImageData(contact, (__bridge CFDataRef)(UIImagePNGRepresentation(picture)), &error);
-                else
-                    ABPersonSetImageData(contact, (__bridge CFDataRef)(UIImagePNGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:self.contact.user.picture]]])), &error);
-                
-                if ([self.contact.user.firstName length] > 0) ABRecordSetValue(contact, kABPersonFirstNameProperty, (__bridge CFTypeRef)(self.contact.user.firstName), &error);
-                if ([self.contact.user.lastName length] > 0) ABRecordSetValue(contact, kABPersonLastNameProperty, (__bridge CFTypeRef)(self.contact.user.lastName), &error);
-                
+//                ABRecordRef contact = ABPersonCreate();
+//                
+//                UIImage *picture = [[AsyncImageLoader defaultCache] objectForKey:[NSURL URLWithString:self.contact.user.picture]];
+//                if (picture)
+//                    ABPersonSetImageData(contact, (__bridge CFDataRef)(UIImagePNGRepresentation(picture)), &error);
+//                else
+//                    ABPersonSetImageData(contact, (__bridge CFDataRef)(UIImagePNGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:self.contact.user.picture]]])), &error);
+//                
+//                if ([self.contact.user.firstName length] > 0) ABRecordSetValue(contact, kABPersonFirstNameProperty, (__bridge CFTypeRef)(self.contact.user.firstName), &error);
+//                if ([self.contact.user.lastName length] > 0) ABRecordSetValue(contact, kABPersonLastNameProperty, (__bridge CFTypeRef)(self.contact.user.lastName), &error);
+//                
 //                if ([self.contact.card.phones count] > 0) {
 //                    ABMutableMultiValueRef phones = ABMultiValueCreateMutable(kABMultiStringPropertyType);
 //                    // loop through phones
@@ -201,9 +201,9 @@
 //                    ABRecordSetValue(contact, kABPersonAddressProperty, addresses, &error);
 //                    CFRelease(addresses);
 //                }
-                
-                ABAddressBookAddRecord(book, contact, &error);
-                ABAddressBookSave(book, &error);
+//                
+//                ABAddressBookAddRecord(book, contact, &error);
+//                ABAddressBookSave(book, &error);
                 
                 if (error != NULL) {
                     dispatch_async(dispatch_get_main_queue(), ^{

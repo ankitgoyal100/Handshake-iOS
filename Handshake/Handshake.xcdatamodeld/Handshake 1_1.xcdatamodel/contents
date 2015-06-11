@@ -29,6 +29,8 @@
     <entity name="Contact" representedClassName="Contact" syncable="YES">
         <attribute name="contactId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="saved" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="savesToPhone" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Card" inverseName="contact" inverseEntity="Card" syncable="YES"/>
@@ -107,7 +109,7 @@
         <element name="Account" positionX="0" positionY="0" width="128" height="75"/>
         <element name="Address" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Card" positionX="0" positionY="0" width="128" height="210"/>
-        <element name="Contact" positionX="0" positionY="0" width="128" height="150"/>
+        <element name="Contact" positionX="0" positionY="0" width="128" height="180"/>
         <element name="Email" positionX="0" positionY="0" width="128" height="90"/>
         <element name="FeedItem" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Group" positionX="0" positionY="0" width="128" height="165"/>

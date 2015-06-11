@@ -36,6 +36,8 @@
 #import "MutualContactsViewController.h"
 #import "UserContactsViewController.h"
 #import "FacebookHelper.h"
+#import "SaveCell.h"
+#import "ContactSync.h"
 
 @interface UserViewController() <NSFetchedResultsControllerDelegate, GKImagePickerDelegate, UIActionSheetDelegate>
 
@@ -127,6 +129,8 @@
 //        self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.235 alpha:1];
 //        self.headerView.backgroundColor = self.navigationController.navigationBar.barTintColor;
 //    }];
+    
+    [self.tableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -141,6 +145,8 @@
 }
 
 - (void)back {
+    [ContactSync sync];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -193,6 +199,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0 && self.user == [[HandshakeSession currentSession] account]) return 1;
     
+    if (section == 0 && ![[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue] && self.user.contact) return 3;
     if (section == 0) return 2;
     
     if (self.card == nil) return 0;
@@ -253,6 +260,19 @@
 //        
 //        return cell;
 //    }
+    
+    if (indexPath.section == 0 && indexPath.row == 2) {
+        SaveCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SaveCell"];
+        
+        cell.saveSwitch.on = [self.user.contact.savesToPhone boolValue];
+        
+        [cell.saveSwitch addEventHandler:^(id sender) {
+            UISwitch *saveSwitch = sender;
+            self.user.contact.savesToPhone = @(saveSwitch.on);
+        } forControlEvents:UIControlEventValueChanged];
+        
+        return cell;
+    }
     
     if (indexPath.section == 0 && indexPath.row == 2) {
         if (self.user == [[HandshakeSession currentSession] account]) {
@@ -447,6 +467,7 @@
     if (indexPath.section == 0 && indexPath.row == 0) return 201;
     //if (indexPath.section == 0 && indexPath.row == 1) return 56;
     if (indexPath.section == 0 && indexPath.row == 1) return 46;
+    if (indexPath.section == 0 && indexPath.row == 2) return 46;
     
     if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0) return 20;
     

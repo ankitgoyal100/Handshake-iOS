@@ -28,6 +28,8 @@ typedef enum {
 @property (nonatomic, retain) User *user;
 @property (nonatomic, retain) NSNumber * syncStatus;
 @property (nonatomic, retain) NSSet *feedItems;
+@property (nonatomic, retain) NSNumber *saved;
+@property (nonatomic, retain) NSNumber *savesToPhone;
 
 + (void)sync;
 + (void)syncWithCompletionBlock:(void (^)())completionBlock;

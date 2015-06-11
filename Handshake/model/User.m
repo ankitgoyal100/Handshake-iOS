@@ -129,10 +129,9 @@
 }
 
 - (NSString *)formattedName {
-    if (self.firstName && self.lastName)
+    if ([self.lastName length] > 0)
         return [self.firstName stringByAppendingString:[@" " stringByAppendingString:self.lastName]];
-    if (self.firstName) return self.firstName;
-    return self.lastName;
+    return self.firstName;
 }
 
 - (NSString *)firstLetterOfName {
