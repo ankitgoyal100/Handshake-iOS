@@ -16,6 +16,7 @@
 #import "StartViewController.h"
 #import "MainViewController.h"
 #import "HandshakeSession.h"
+#import "LocationUpdater.h"
 
 @interface AppDelegate ()
 
@@ -63,6 +64,7 @@
     }
     
     self.pictureCache = [[UserPictureCache alloc] init];
+    
     /*
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     

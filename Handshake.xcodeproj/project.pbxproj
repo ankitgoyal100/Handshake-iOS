@@ -254,6 +254,7 @@
 		799DD2001B28C6E30077044C /* ContactSyncSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD1FF1B28C6E30077044C /* ContactSyncSettingsViewController.m */; };
 		799DD2031B28EB6A0077044C /* ContactSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2021B28EB6A0077044C /* ContactSync.m */; };
 		799DD2061B290D170077044C /* SaveCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2051B290D170077044C /* SaveCell.m */; };
+		799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2081B29D78C0077044C /* LocationUpdater.m */; };
 		79B3FEAB19C9150200759F69 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAA19C9150200759F69 /* Contact.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
@@ -752,6 +753,8 @@
 		799DD2021B28EB6A0077044C /* ContactSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactSync.m; sourceTree = "<group>"; };
 		799DD2041B290D170077044C /* SaveCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SaveCell.h; path = "user views/SaveCell.h"; sourceTree = "<group>"; };
 		799DD2051B290D170077044C /* SaveCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SaveCell.m; path = "user views/SaveCell.m"; sourceTree = "<group>"; };
+		799DD2071B29D78C0077044C /* LocationUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationUpdater.h; sourceTree = "<group>"; };
+		799DD2081B29D78C0077044C /* LocationUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationUpdater.m; sourceTree = "<group>"; };
 		79B3FEA919C9150200759F69 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		79B3FEAA19C9150200759F69 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
@@ -1058,6 +1061,8 @@
 				79D46C8B19D22D9E00C52FEE /* TwitterHelper.m */,
 				799DD2011B28EB6A0077044C /* ContactSync.h */,
 				799DD2021B28EB6A0077044C /* ContactSync.m */,
+				799DD2071B29D78C0077044C /* LocationUpdater.h */,
+				799DD2081B29D78C0077044C /* LocationUpdater.m */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -2001,7 +2006,7 @@
 						DevelopmentTeam = 59G34X7E6F;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -2166,6 +2171,7 @@
 				7928036A19C8B3C40075261D /* EditableTableViewCell.m in Sources */,
 				79C751851B1394B800DB221C /* ContactsCell.m in Sources */,
 				7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */,
+				799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */,
 				79C751881B194F0500DB221C /* OptionsCell.m in Sources */,
 				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
 				795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */,

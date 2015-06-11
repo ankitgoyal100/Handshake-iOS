@@ -19,7 +19,7 @@
 #import "Card.h"
 #import "Contact.h"
 #import "UserViewController.h"
-#import "LocationManager.h"
+#import "LocationUpdater.h"
 #import "SearchViewController.h"
 
 @implementation MainViewController
@@ -39,6 +39,8 @@
     userController.title = @"You";
     
     self.tabBar.tintColor = LOGO_COLOR;
+    
+    [[LocationUpdater sharedUpdater] updateLocation];
     
 //    self.tabBar.layer.masksToBounds = NO;
 //    self.tabBar.layer.shadowOffset = CGSizeMake(0, 1);
