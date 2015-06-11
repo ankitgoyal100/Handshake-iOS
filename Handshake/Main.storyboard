@@ -8535,7 +8535,7 @@ Fairfax, VA 22030</string>
         <image name="add_button" width="48" height="30"/>
         <image name="call_button" width="23" height="23"/>
         <image name="contacts_button" width="48" height="30"/>
-        <image name="contacts_icon" width="26" height="19"/>
+        <image name="contacts_icon" width="30" height="23"/>
         <image name="decline_button" width="48" height="30"/>
         <image name="edit_profile_button" width="103" height="30"/>
         <image name="email_button" width="21" height="17"/>

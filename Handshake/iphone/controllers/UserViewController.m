@@ -654,6 +654,10 @@
         [self.actionButton setBackgroundImage:[UIImage imageNamed:@"edit_button"] forState:UIControlStateNormal];
         
         self.title = @"You";
+        
+        UIBarButtonItem *contactsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"contacts_icon"] style:UIBarButtonItemStylePlain target:self action:@selector(contacts)];
+        contactsButton.tintColor = [UIColor whiteColor];
+        self.navItem.rightBarButtonItem = contactsButton;
     } else {
         self.title = @"Contact";
     }
@@ -843,6 +847,10 @@
         Phone *phone = self.card.phones[actionSheet.tag];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"sms://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
     }
+}
+
+- (void)contacts {
+    [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactsViewController"] animated:YES];
 }
 
 @end
