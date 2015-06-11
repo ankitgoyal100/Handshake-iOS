@@ -55,7 +55,7 @@
         params[@"lat"] = @(loc.coordinate.latitude);
         params[@"lng"] = @(loc.coordinate.longitude);
         [[HandshakeClient client] POST:@"/account/location" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSLog(@"location updated");
+            
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             if ([[operation response] statusCode] == 401)
                 [[HandshakeSession currentSession] invalidate];

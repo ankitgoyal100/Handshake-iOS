@@ -86,8 +86,6 @@
 + (void)syncContact:(Contact *)contact toAddressBook:(ABAddressBookRef)addressBook {
     if ([contact.user.cards count] == 0) return;
     
-    NSLog(@"starting sync: %@", [contact.user formattedName]);
-    
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
     Card *card = contact.user.cards[0];
@@ -322,8 +320,6 @@
     }
     
     contact.saved = @(YES);
-    
-    NSLog(@"ended sync: %@", [contact.user formattedName]);
 }
 
 @end

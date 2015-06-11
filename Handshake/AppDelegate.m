@@ -65,6 +65,12 @@
     
     self.pictureCache = [[UserPictureCache alloc] init];
     
+    // check for current session
+    if ([HandshakeSession currentSession]) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        self.window.rootViewController = [storyboard instantiateInitialViewController];
+    }
+    
     /*
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
