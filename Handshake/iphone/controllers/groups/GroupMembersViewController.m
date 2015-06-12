@@ -75,10 +75,10 @@
     
     MemberCell *cell = (MemberCell *)[tableView dequeueReusableCellWithIdentifier:@"MemberCell"];
     
-    if ([user cachedImage])
-        cell.pictureView.image = [user cachedImage];
-    else if (user.picture)
-        cell.pictureView.imageURL = [NSURL URLWithString:user.picture];
+    if ([user cachedThumb])
+        cell.pictureView.image = [user cachedThumb];
+    else if (user.thumb)
+        cell.pictureView.imageURL = [NSURL URLWithString:user.thumb];
     else
         cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
     
