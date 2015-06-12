@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *field6;
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
+@property (strong, nonatomic) NSString *pasteCode;
 @property (weak, nonatomic) IBOutlet UIButton *pasteButton;
 
 @end
@@ -82,8 +83,11 @@
         
         [self.pasteButton setAttributedTitle:buttonTitle forState:UIControlStateNormal];
         self.pasteButton.hidden = NO;
-    } else
+        self.pasteCode = code;
+    } else {
+        self.pasteCode = nil;
         self.pasteButton.hidden = YES;
+    }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -255,15 +259,12 @@
 }
 
 - (IBAction)paste:(id)sender {
-    NSCharacterSet *set = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
-    NSString *code = [[[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] uppercaseString];
-    
-    self.field1.text = [code substringToIndex:1];
-    self.field2.text = [code substringWithRange:NSMakeRange(1, 1)];
-    self.field3.text = [code substringWithRange:NSMakeRange(2, 1)];
-    self.field4.text = [code substringWithRange:NSMakeRange(3, 1)];
-    self.field5.text = [code substringWithRange:NSMakeRange(4, 1)];
-    self.field6.text = [code substringWithRange:NSMakeRange(5, 1)];
+    self.field1.text = [self.pasteCode substringToIndex:1];
+    self.field2.text = [self.pasteCode substringWithRange:NSMakeRange(1, 1)];
+    self.field3.text = [self.pasteCode substringWithRange:NSMakeRange(2, 1)];
+    self.field4.text = [self.pasteCode substringWithRange:NSMakeRange(3, 1)];
+    self.field5.text = [self.pasteCode substringWithRange:NSMakeRange(4, 1)];
+    self.field6.text = [self.pasteCode substringWithRange:NSMakeRange(5, 1)];
     
     [self checkCode];
     [self.field6 becomeFirstResponder];
