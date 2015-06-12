@@ -12,7 +12,7 @@
 #import "HandshakeClient.h"
 #import "FeedItemCell.h"
 #import "FeedItem.h"
-#import "Contact.h"
+#import "User.h"
 #import "Group.h"
 #import "UserViewController.h"
 #import "GroupViewController.h"
@@ -117,16 +117,16 @@
     FeedItem *item = [self.fetchController fetchedObjects][indexPath.row - 1];
     
     if ([item.itemType isEqualToString:@"new_contact"] || [item.itemType isEqualToString:@"card_updated"] || [item.itemType isEqualToString:@"new_group_member"])
-        if (!item.contact) return cell;
+        if (!item.user) return cell;
     if ([item.itemType isEqualToString:@"group_joined"] || [item.itemType isEqualToString:@"new_group_member"])
         if (!item.group) return cell;
     
     cell.pictureView.image = nil;
-    if (item.contact) {
-        if ([item.contact.user cachedImage])
-            cell.pictureView.image = [item.contact.user cachedImage];
-        else if (item.contact.user.picture)
-            cell.pictureView.imageURL = [NSURL URLWithString:item.contact.user.picture];
+    if (item.user) {
+        if ([item.user cachedImage])
+            cell.pictureView.image = [item.user cachedImage];
+        else if (item.user.picture)
+            cell.pictureView.imageURL = [NSURL URLWithString:item.user.picture];
         else
             cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
     } else {
@@ -211,7 +211,7 @@
     FeedItem *item = [self.fetchController fetchedObjects][indexPath.row - 1];
     
     if ([item.itemType isEqualToString:@"new_contact"] || [item.itemType isEqualToString:@"card_updated"] || [item.itemType isEqualToString:@"new_group_member"])
-        if (!item.contact) return 0;
+        if (!item.user) return 0;
     if ([item.itemType isEqualToString:@"group_joined"] || [item.itemType isEqualToString:@"new_group_member"])
         if (!item.group) return 0;
     
@@ -233,15 +233,15 @@
     NSDictionary *boldAttrs = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSParagraphStyleAttributeName: paragraphStyle };
     
     if ([item.itemType isEqualToString:@"new_contact"]) {
-        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ added you!", [item.contact.user formattedName]] attributes:attrs];
+        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ added you!", [item.user formattedName]] attributes:attrs];
         
-        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.contact.user formattedName]]];
+        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.user formattedName]]];
         
         return messageString;
     } else if ([item.itemType isEqualToString:@"card_updated"]) {
-        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ got new contact information.", [item.contact.user formattedName]] attributes:attrs];
+        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ got new contact information.", [item.user formattedName]] attributes:attrs];
         
-        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.contact.user formattedName]]];
+        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.user formattedName]]];
         
         return messageString;
     } else if ([item.itemType isEqualToString:@"group_joined"]) {
@@ -251,9 +251,9 @@
         
         return messageString;
     } else if ([item.itemType isEqualToString:@"new_group_member"]) {
-        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ joined %@.", [item.contact.user formattedName], item.group.name] attributes:attrs];
+        NSMutableAttributedString *messageString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ joined %@.", [item.user formattedName], item.group.name] attributes:attrs];
         
-        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.contact.user formattedName]]];
+        [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:[item.user formattedName]]];
         [messageString setAttributes:boldAttrs range:[messageString.string rangeOfString:item.group.name]];
         
         return messageString;
@@ -269,10 +269,10 @@
     
     FeedItem *item = [self.fetchController fetchedObjects][indexPath.row - 1];
     
-    if (item.contact) {
+    if (item.user) {
         UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
         
-        controller.user = item.contact.user;
+        controller.user = item.user;
         
         [self.navigationController pushViewController:controller animated:YES];
     } else if (item.group) {

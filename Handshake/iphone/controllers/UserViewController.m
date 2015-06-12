@@ -27,9 +27,6 @@
 #import "Handshake.h"
 #import "ContactsCell.h"
 #import "ContactsViewController.h"
-#import "OptionsCell.h"
-#import "Contact.h"
-#import "AccountOptionsCell.h"
 #import "FeedItem.h"
 #import "AccountEditorViewController.h"
 #import "UserHeaderCell.h"
@@ -38,6 +35,10 @@
 #import "FacebookHelper.h"
 #import "SaveCell.h"
 #import "ContactSync.h"
+#import "MessageCell.h"
+#import "HandshakeClient.h"
+#import "ContactServerSync.h"
+#import "RequestServerSync.h"
 
 @interface UserViewController() <NSFetchedResultsControllerDelegate, GKImagePickerDelegate, UIActionSheetDelegate>
 
@@ -46,8 +47,6 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *headerTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *headerHeight;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelBottom;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameLabelRight;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundPictureTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pictureViewBottom;
 
@@ -55,24 +54,18 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *pictureViewHeight;
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *nameEditIcon;
-@property (weak, nonatomic) IBOutlet UILabel *detailLabel;
-@property (weak, nonatomic) IBOutlet UIButton *actionButton;
-@property (weak, nonatomic) IBOutlet UIView *editButtonView;
 
 @property (weak, nonatomic) IBOutlet AsyncImageView *pictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundPictureView;
 @property (weak, nonatomic) IBOutlet UIView *pictureViewBorder;
 @property (weak, nonatomic) IBOutlet AsyncImageView *blurBackgroundPictureView;
 
-@property (weak, nonatomic) IBOutlet UIButton *changePictureButton;
-
-@property (weak, nonatomic) IBOutlet UIView *shadowView;
-
-@property (weak, nonatomic) IBOutlet UIButton *nameEditButton;
 @property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
 @property (weak, nonatomic) IBOutlet FXBlurView *blurView;
+
+@property (weak, nonatomic) IBOutlet UIView *shadowView;
+@property (weak, nonatomic) IBOutlet UIView *blurShadowView;
 
 @property (nonatomic, strong) NSFetchedResultsController *userFetchController;
 
@@ -107,12 +100,12 @@
     if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
         [self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
-    //self.tableView.contentInset = UIEdgeInsetsMake(-32, 0, 0, 0);
-    
     [self.navBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
     self.navBar.shadowImage = [[UIImage alloc] init];
      
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, 0.01f)];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageLoaded:) name:AsyncImageLoadDidFinish object:nil];
     
     if (self.user)
         self.user = self.user;
@@ -123,13 +116,6 @@
     
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     
-//    self.headerView.backgroundColor = self.navigationController.navigationBar.barTintColor;
-//    
-//    [UIView animateWithDuration:0.2 animations:^{
-//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithWhite:0.235 alpha:1];
-//        self.headerView.backgroundColor = self.navigationController.navigationBar.barTintColor;
-//    }];
-    
     [self.tableView reloadData];
 }
 
@@ -138,9 +124,6 @@
     
     if (self != [self.navigationController.viewControllers lastObject] && ![self.navigationController.visibleViewController isKindOfClass:[self class]]) {
         [self.navigationController setNavigationBarHidden:NO animated:animated];
-//        [UIView animateWithDuration:0.2 animations:^{
-//            self.navigationController.navigationBar.barTintColor = LOGO_COLOR;
-//        }];
     }
 }
 
@@ -154,55 +137,13 @@
     return 4;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//    if (section == 0) return nil;
-//    
-//    if (section == 1 && [self tableView:tableView numberOfRowsInSection:1] != 0) return @"Contact Information";
-//    
-//    if (section == 2 && [self tableView:tableView numberOfRowsInSection:2] != 0) return @"Linked Accounts";
-//    
-//    return nil;
-//}
-
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//    if (section == 0) return nil;
-//    
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
-//    
-//    view.backgroundColor = [UIColor colorWithWhite:0.96 alpha:1];
-//    
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width - 24, view.frame.size.height)];
-//    
-//    //label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
-//    //label.font = [UIFont fontWithName:@"HelveticaNeue-BOLD" size:12];
-//    label.font = [UIFont boldSystemFontOfSize:14];
-//    label.textColor = [UIColor colorWithWhite:0.2 alpha:1];
-//    
-//    if (section == 1) label.text = @"Contact Information";
-//    if (section == 2) label.text = @"Linked Accounts";
-//    
-//    //[view addSubview:label];
-//    
-//    UIView *sep = [[UIView alloc] initWithFrame:CGRectMake(0, view.frame.size.height - 1, view.frame.size.width, 1)];
-//    sep.backgroundColor = [UIColor colorWithWhite:0.94 alpha:1];
-//    [view addSubview:sep];
-//    
-//    return view;
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-//    if (section == 0 || [self tableView:tableView numberOfRowsInSection:section] == 0) return 0;
-//    
-//    return 20;
-//}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0 && self.user == [[HandshakeSession currentSession] account]) return 1;
     
-    if (section == 0 && ![[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue] && self.user.contact) return 3;
+    if (section == 0 && (![[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue] || ![self.user.isContact boolValue])) return 3;
     if (section == 0) return 2;
     
-    if (self.card == nil) return 0;
+    if (self.user != [[HandshakeSession currentSession] account] && ![self.user.isContact boolValue]) return 0;
     
     if (section == 1 && [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] == 0) return 0;
     
@@ -223,6 +164,9 @@
         
         cell.nameLabel.text = [self.user formattedName];
         
+        cell.primaryButton.hidden = NO;
+        cell.secondaryButton.hidden = NO;
+        
         if (self.user == [[HandshakeSession currentSession] account]) {
             [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"edit_profile_button"] forState:UIControlStateNormal];
             
@@ -237,7 +181,66 @@
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
                 [self presentViewController:[storyboard instantiateInitialViewController] animated:YES completion:nil];
             } forControlEvents:UIControlEventTouchUpInside];
+        } else if ([self.user.requestReceived boolValue]) {
+            [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"accept_button"] forState:UIControlStateNormal];
+            
+            [cell.primaryButton addEventHandler:^(id sender) {
+                cell.primaryButton.hidden = YES;
+                cell.secondaryButton.hidden = YES;
+                
+                [RequestServerSync acceptRequest:self.user successBlock:^(User *user) {
+                    [self.tableView reloadData];
+                } failedBlock:^{
+                    [self.tableView reloadData];
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not accept request at this time. Please try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }];
+            } forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"decline_button"] forState:UIControlStateNormal];
+            
+            [cell.secondaryButton addEventHandler:^(id sender) {
+                cell.primaryButton.hidden = YES;
+                cell.secondaryButton.hidden = YES;
+                
+                [RequestServerSync declineRequest:self.user successBlock:^(User *user) {
+                    [self.tableView reloadData];
+                } failedBlock:^{
+                    [self.tableView reloadData];
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Could not decline request at this time. Please try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }];
+            } forControlEvents:UIControlEventTouchUpInside];
+        } else if ([self.user.requestSent boolValue]) {
+            cell.secondaryButton.hidden = YES;
+            
+            [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"requested_button"] forState:UIControlStateNormal];
+            
+            [cell.primaryButton addEventHandler:^(id sender) {
+                [RequestServerSync deleteRequest:self.user successBlock:^(User *user) {
+                    
+                } failedBlock:^{
+                    [self.tableView reloadData];
+                }];
+                
+                [self.tableView reloadData];
+            } forControlEvents:UIControlEventTouchUpInside];
+        } else if (![self.user.isContact boolValue]) {
+            cell.secondaryButton.hidden = YES;
+            
+            [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"add_button"] forState:UIControlStateNormal];
+            
+            [cell.primaryButton addEventHandler:^(id sender) {
+                [RequestServerSync sendRequest:self.user successBlock:^(User *user) {
+                    
+                } failedBlock:^{
+                    [self.tableView reloadData];
+                }];
+                
+                [self.tableView reloadData];
+            } forControlEvents:UIControlEventTouchUpInside];
         } else {
+            [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"contacts_button"] forState:UIControlStateNormal];
+            [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"notifications_button"] forState:UIControlStateNormal];
+            
             [cell.primaryButton addEventHandler:^(id sender) {
                 [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Are you sure? You and %@ will no longer be contacts.", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];
             } forControlEvents:UIControlEventTouchUpInside];
@@ -246,101 +249,65 @@
         return cell;
     }
     
-//    if (indexPath.section == 0 && indexPath.row == 0) {
-//        UserHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
-//        
-//        cell.nameLabel.text = [self.user formattedName];
-//        
-//        if (self.user.pictureData)
-//            cell.pictureView.image = [UIImage imageWithData:self.user.pictureData];
-//        else if (self.user.picture)
-//            cell.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
-//        else
-//            cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
-//        
-//        return cell;
-//    }
+    if (indexPath.section == 0 && indexPath.row == 1) {
+        ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactsCell"];
+        
+        NSString *contactsString = [NSString stringWithFormat:@"%d CONTACTS", [self.user.contacts intValue]];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:contactsString];
+        
+        [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[contactsString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.contacts intValue]]]];
+        [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[contactsString rangeOfString:@"CONTACTS"]];
+        
+        cell.contactsLabel.attributedText = string;
+        
+        [cell.contactsButton addEventHandler:^(id sender) {
+            UserContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserContactsViewController"];
+            controller.user = self.user;
+            [self.navigationController pushViewController:controller animated:YES];
+        } forControlEvents:UIControlEventTouchUpInside];
+        
+        NSString *mutualString = [NSString stringWithFormat:@"%d MUTUAL", [self.user.mutual intValue]];
+        string = [[NSMutableAttributedString alloc] initWithString:mutualString];
+        
+        [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[mutualString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.mutual intValue]]]];
+        [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[mutualString rangeOfString:@"MUTUAL"]];
+        
+        cell.mutualLabel.attributedText = string;
+        
+        [cell.mutualButton addEventHandler:^(id sender) {
+            MutualContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"MutualContactsViewController"];
+            controller.user = self.user;
+            [self.navigationController pushViewController:controller animated:YES];
+        } forControlEvents:UIControlEventTouchUpInside];
+        
+        return cell;
+    }
     
-    if (indexPath.section == 0 && indexPath.row == 2) {
+    if (indexPath.section == 0 && indexPath.row == 2 && [self.user.isContact boolValue]) {
         SaveCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SaveCell"];
         
-        cell.saveSwitch.on = [self.user.contact.savesToPhone boolValue];
+        cell.saveSwitch.on = [self.user.savesToPhone boolValue];
         
         [cell.saveSwitch addEventHandler:^(id sender) {
             UISwitch *saveSwitch = sender;
-            self.user.contact.savesToPhone = @(saveSwitch.on);
+            self.user.savesToPhone = @(saveSwitch.on);
         } forControlEvents:UIControlEventValueChanged];
         
         return cell;
     }
     
     if (indexPath.section == 0 && indexPath.row == 2) {
-        if (self.user == [[HandshakeSession currentSession] account]) {
-            AccountOptionsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AccountOptionsCell"];
-            
-            [cell.editButton addEventHandler:^(id sender) {
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Edit" bundle:nil];
-                [self.navigationController pushViewController:[storyboard instantiateInitialViewController] animated:YES];
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
+        MessageCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell"];
+        
+        if ([self.user.requestReceived boolValue]) {
+            cell.messageLabel.text = [NSString stringWithFormat:@"Know %@? Accept the request!", self.user.firstName];
+        } else if ([self.user.requestSent boolValue]) {
+            cell.messageLabel.text = @"Your request is pending.";
         } else {
-            OptionsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"OptionsCell"];
-            
-            [cell.contactsButton addEventHandler:^(id sender) {
-                if (self.user.contact) {
-                    [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"You will no longer be contacts with %@", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];
-                }
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
+            cell.messageLabel.text = [NSString stringWithFormat:@"Know %@? Send a request!", self.user.firstName];
         }
-    }
-    
-    if (indexPath.section == 0 && indexPath.row == 1) {
-        if (self.user == [[HandshakeSession currentSession] account]) {
-            ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AccountContactsCell"];
-            
-            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:@"300 Contacts"];
-            
-            [string setAttributes:@{ NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Bold" size:15] } range:[@"300 Contacts" rangeOfString:@"300"]];
-            
-            cell.contactsLabel.attributedText = string;
-            
-            return cell;
-        } else {
-            ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactsCell"];
-            
-            NSString *contactsString = [NSString stringWithFormat:@"%d CONTACTS", [self.user.contacts intValue]];
-            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:contactsString];
-            
-            [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[contactsString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.contacts intValue]]]];
-            [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[contactsString rangeOfString:@"CONTACTS"]];
-            
-            cell.contactsLabel.attributedText = string;
-            
-            [cell.contactsButton addEventHandler:^(id sender) {
-                UserContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserContactsViewController"];
-                controller.user = self.user;
-                [self.navigationController pushViewController:controller animated:YES];
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            NSString *mutualString = [NSString stringWithFormat:@"%d MUTUAL", [self.user.mutual intValue]];
-            string = [[NSMutableAttributedString alloc] initWithString:mutualString];
-            
-            [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[mutualString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.mutual intValue]]]];
-            [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[mutualString rangeOfString:@"MUTUAL"]];
-            
-            cell.mutualLabel.attributedText = string;
-            
-            [cell.mutualButton addEventHandler:^(id sender) {
-                MutualContactsViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"MutualContactsViewController"];
-                controller.user = self.user;
-                [self.navigationController pushViewController:controller animated:YES];
-            } forControlEvents:UIControlEventTouchUpInside];
-            
-            return cell;
-        }
+        
+        return cell;
     }
     
     if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0)
@@ -467,7 +434,8 @@
     if (indexPath.section == 0 && indexPath.row == 0) return 201;
     //if (indexPath.section == 0 && indexPath.row == 1) return 56;
     if (indexPath.section == 0 && indexPath.row == 1) return 46;
-    if (indexPath.section == 0 && indexPath.row == 2) return 46;
+    if (indexPath.section == 0 && indexPath.row == 2 && [self.user.isContact boolValue]) return 46;
+    if (indexPath.section == 0 && indexPath.row == 2) return 100;
     
     if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0) return 20;
     
@@ -592,7 +560,7 @@
 //    //self.pictureView.layer.cornerRadius = self.pictureViewHeight.constant / 2;
 //    
     self.blurView.blurRadius = MAX(0, MIN(1, ((scrollView.contentOffset.y) / 20))) * 30.0;
-    if (self.blurView.blurRadius < 2)
+    if (self.blurView.blurRadius < 2 || !self.backgroundPictureView.image)
         self.blurView.hidden = YES;
     else
         self.blurView.hidden = NO;
@@ -629,12 +597,26 @@
         self.pictureView.image = [self.user cachedImage];
         self.backgroundPictureView.image = [self.user cachedImage];
         self.blurBackgroundPictureView.image = [self.user cachedImage];
-    } else if (self.user.picture) {
-        self.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
-        self.backgroundPictureView.imageURL = self.pictureView.imageURL;
-        self.blurBackgroundPictureView.imageURL = self.pictureView.imageURL;
-    } else
-        self.pictureView.image = [UIImage imageNamed:@"default_picture"];
+        
+        self.shadowView.hidden = NO;
+        self.blurShadowView.hidden = NO;
+        self.navBar.backgroundColor = [UIColor clearColor];
+    } else {
+        if (!self.backgroundPictureView.image) {
+            self.shadowView.hidden = YES;
+            self.blurShadowView.hidden = YES;
+            self.navBar.backgroundColor = self.navigationController.navigationBar.barTintColor;
+        }
+        
+        if (self.user.picture) {
+            self.pictureView.imageURL = [NSURL URLWithString:self.user.picture];
+            self.backgroundPictureView.imageURL = [NSURL URLWithString:self.user.picture];
+            self.blurBackgroundPictureView.imageURL = [NSURL URLWithString:self.user.picture];
+            
+            [[AsyncImageLoader sharedLoader] loadImageWithURL:[NSURL URLWithString:self.user.picture] target:self success:@selector(imageDidLoad:withURL:) failure:nil];
+        } else
+            self.pictureView.image = [UIImage imageNamed:@"default_picture"];
+    }
     
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
     
@@ -651,8 +633,6 @@
     }];
     
     if (_user == [[HandshakeSession currentSession] account]) {
-        [self.actionButton setBackgroundImage:[UIImage imageNamed:@"edit_button"] forState:UIControlStateNormal];
-        
         self.title = @"You";
         
         UIBarButtonItem *contactsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"contacts_icon"] style:UIBarButtonItemStylePlain target:self action:@selector(contacts)];
@@ -673,173 +653,10 @@
     return UIStatusBarStyleLightContent;
 }
 
-- (IBAction)action:(id)sender {
-    [self presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"AccountEditorViewController"] animated:YES completion:nil];
-    
-    return;
-    
-    if (self.editing) {
-        self.editing = NO;
-        
-        self.nameEditButton.userInteractionEnabled = NO;
-        
-        [UIView animateWithDuration:0.2 animations:^{
-            self.changePictureButton.alpha = 0;
-            self.nameEditIcon.alpha = 0;
-        } completion:^(BOOL finished) {
-            self.changePictureButton.hidden = YES;
-            self.nameLabelRight.constant = 0;
-        }];
-        
-        // animate out add cells, reload other cells
-        
-        [self.tableView setContentOffset:self.tableView.contentOffset animated:NO];
-        
-        NSArray *removeIndexPaths = @[[NSIndexPath indexPathForRow:1 + [self.card.phones count] inSection:0], [NSIndexPath indexPathForRow:2 + [self.card.phones count] + [self.card.emails count] inSection:0], [NSIndexPath indexPathForRow:3 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] inSection:0], [NSIndexPath indexPathForRow:4 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] inSection:0]];
-        
-        NSMutableArray *updateIndexPaths = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count]; i++) {
-            [updateIndexPaths addObject:[NSIndexPath indexPathForRow:i + 1 inSection:0]];
-        }
-        
-        [UIView animateWithDuration:0.2 animations:^{
-            [self.tableView beginUpdates];
-            [self.tableView deleteRowsAtIndexPaths:removeIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-            
-            [self.tableView endUpdates];
-            [self scrollViewDidScroll:self.tableView];
-            [self.view layoutSubviews];
-        } completion:^(BOOL finished) {
-            if (!self.editing)
-                [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-        }];
-        
-        ((Account *)self.user).syncStatus = [NSNumber numberWithInt:AccountUpdated];
-        self.card.syncStatus = [NSNumber numberWithInteger:CardUpdated];
-        
-        // save context
-        [[HandshakeCoreDataStore defaultStore] saveMainContext];
-        
-        // sync
-        [Account sync];
-        [Card sync];
-        
-        return;
-    }
-    
-    if (self.user == [[HandshakeSession currentSession] account]) {
-        // edit
-        self.editing = YES;
-        
-        // move over for edit icon
-        self.nameLabelRight.constant = 30;
-        self.nameEditButton.userInteractionEnabled = YES;
-        
-        self.changePictureButton.hidden = NO;
-        // update button alpha
-        [UIView animateWithDuration:0.2 animations:^{
-            self.nameEditIcon.alpha = 1;
-        }];
-        
-        // animate in add cells, reload current cells
-        
-        NSArray *addIndexPaths = @[[NSIndexPath indexPathForRow:1 + [self.card.phones count] inSection:0], [NSIndexPath indexPathForRow:2 + [self.card.phones count] + [self.card.emails count] inSection:0], [NSIndexPath indexPathForRow:3 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] inSection:0], [NSIndexPath indexPathForRow:4 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] inSection:0]];
-        
-        NSMutableArray *updateIndexPaths = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [self.card.phones count]; i++) {
-            [updateIndexPaths addObject:[NSIndexPath indexPathForRow:1 + i inSection:0]];
-        }
-        for (int i = 0; i < [self.card.emails count]; i++) {
-            [updateIndexPaths addObject:[NSIndexPath indexPathForRow:2 + [self.card.phones count] + i inSection:0]];
-        }
-        for (int i = 0; i < [self.card.addresses count]; i++) {
-            [updateIndexPaths addObject:[NSIndexPath indexPathForRow:3 + [self.card.phones count] + [self.card.emails count] + i inSection:0]];
-        }
-        for (int i = 0; i < [self.card.socials count]; i++) {
-            [updateIndexPaths addObject:[NSIndexPath indexPathForRow:4 + [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + i inSection:0]];
-        }
-        
-        [CATransaction begin];
-        [self.tableView beginUpdates];
-        [self.tableView insertRowsAtIndexPaths:addIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-        
-        [CATransaction setCompletionBlock:^{
-            if (self.editing)
-                [self.tableView reloadRowsAtIndexPaths:updateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-        }];
-        [self.tableView endUpdates];
-        [CATransaction commit];
-    } else {
-        // save to contacts
-    }
-}
-
-- (void)nameEdited:(NSString *)first last:(NSString *)last {
-    self.nameLabel.text = [self.user formattedName];
-    //[self.nameLabel sizeToFit];
-}
-
-- (IBAction)changePicture:(id)sender {
-    [self.imagePicker showActionSheetOnViewController:self onPopoverFromView:nil];
-}
-
-- (void)imagePicker:(GKImagePicker *)imagePicker pickedImage:(UIImage *)image {
-    self.user.picture = nil;
-    self.user.pictureData = UIImageJPEGRepresentation(image, 1);
-    self.pictureView.image = image;
-}
-
-- (void)imagePickerDidCancel:(GKImagePicker *)imagePicker {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)phoneEdited:(Phone *)phone {
-    if (!phone.number || [phone.number isEqualToString:@""]) {
-        // empty phone - delete
-        [self.card removePhonesObject:phone];
-        [self.card.managedObjectContext deleteObject:phone];
-    }
-    
-    [self.tableView reloadData];
-}
-
-- (void)emailEdited:(Email *)email {
-    if (!email.address || [email.address isEqualToString:@""]) {
-        // empty email - delete
-        [self.card removeEmailsObject:email];
-        [self.card.managedObjectContext deleteObject:email];
-    }
-    
-    [self.tableView reloadData];
-}
-
-- (void)addressEdited:(Address *)address {
-    if (!address.street1 && !address.street2 && !address.city && !address.state && !address.zip) {
-        // empty address - delete
-        [self.card removeAddressesObject:address];
-        [self.card.managedObjectContext deleteObject:address];
-    }
-    
-    [self.tableView reloadData];
-}
-
-- (void)socialEdited:(Social *)social {
-    if (!social.username || !social.network) {
-        // empty social - delete
-        [self.card removeSocialsObject:social];
-        [self.card.managedObjectContext deleteObject:social];
-    }
-    
-    [self.tableView reloadData];
-}
-
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Delete Contact"]) {
-        self.user.contact.syncStatus = [NSNumber numberWithInt:ContactDeleted];
-        for (FeedItem *item in self.user.contact.feedItems)
-            [self.user.managedObjectContext deleteObject:item];
+        [ContactServerSync deleteContact:self.user];
         [self.navigationController popViewControllerAnimated:YES];
-        [Contact sync];
     } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Call"]) {
         Phone *phone = self.card.phones[actionSheet.tag];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel://%@", [[phone.number componentsSeparatedByString:@" "] componentsJoinedByString:@""]]]];
@@ -853,4 +670,9 @@
     [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactsViewController"] animated:YES];
 }
 
+- (void)imageDidLoad:(UIImage *)image withURL:(NSURL *)url {
+    self.shadowView.hidden = NO;
+    self.blurShadowView.hidden = NO;
+    self.navBar.backgroundColor = [UIColor clearColor];
+}
 @end

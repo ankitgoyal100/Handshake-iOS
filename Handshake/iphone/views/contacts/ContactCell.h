@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AsyncImageView.h"
-#import "Contact.h"
+#import "User.h"
 
 typedef void (^ContactDeleteBlock)();
 
@@ -19,7 +19,7 @@ typedef void (^ContactDeleteBlock)();
 @property (weak, nonatomic) IBOutlet UILabel *detailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *contactsButton;
 
-@property (nonatomic, strong) Contact *contact;
+@property (nonatomic, strong) User *user;
 @property (copy) ContactDeleteBlock deleteBlock;
 
 @end

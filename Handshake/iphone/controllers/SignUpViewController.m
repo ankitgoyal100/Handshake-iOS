@@ -7,13 +7,10 @@
 //
 
 #import "SignUpViewController.h"
-#import "SignUpView.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "MainViewController.h"
 #import "HandshakeClient.h"
 #import "HandshakeSession.h"
-#import "SocialSetupViewController.h"
 #import "TermsViewController.h"
 #import "Handshake.h"
 #import "BaseNavigationController.h"

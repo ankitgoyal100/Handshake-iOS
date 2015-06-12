@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Address, Contact, Email, Phone, Social, User;
+@class Address, Email, Phone, Social, User;
 
 typedef enum {
     CardSynced = 0,
@@ -28,7 +28,6 @@ static NSString * const CardSyncCompleted = @"CardSyncCompleted";
 @property (nonatomic, retain) NSNumber * syncStatus;
 @property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSOrderedSet *addresses;
-@property (nonatomic, retain) Contact *contact;
 @property (nonatomic, retain) NSOrderedSet *emails;
 @property (nonatomic, retain) NSOrderedSet *phones;
 @property (nonatomic, retain) NSOrderedSet *socials;

@@ -136,25 +136,25 @@
         self.circleView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
         
         if ([group.members count] == 1) {
-            GroupMember *member = [group.members allObjects][0];
+            GroupMember *member = group.members[0];
             [self.circleView addSubview:[self createViewWithFrame:self.circleView.bounds user:member.user]];
         } else if ([group.members count] == 2) {
-            GroupMember *member1 = [group.members allObjects][0];
-            GroupMember *member2 = [group.members allObjects][1];
+            GroupMember *member1 = group.members[0];
+            GroupMember *member2 = group.members[1];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) user:member1.user]];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, 0, circleSize / 2, circleSize) user:member2.user]];
         } else if ([group.members count] == 3) {
-            GroupMember *member1 = [group.members allObjects][0];
-            GroupMember *member2 = [group.members allObjects][1];
-            GroupMember *member3 = [group.members allObjects][2];
+            GroupMember *member1 = group.members[0];
+            GroupMember *member2 = group.members[1];
+            GroupMember *member3 = group.members[2];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) user:member1.user]];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) user:member2.user]];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) user:member3.user]];
         } else {
-            GroupMember *member1 = [group.members allObjects][0];
-            GroupMember *member2 = [group.members allObjects][1];
-            GroupMember *member3 = [group.members allObjects][2];
-            GroupMember *member4 = [group.members allObjects][3];
+            GroupMember *member1 = group.members[0];
+            GroupMember *member2 = group.members[1];
+            GroupMember *member3 = group.members[2];
+            GroupMember *member4 = group.members[3];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, -0.5, circleSize / 2, circleSize / 2) user:member1.user]];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) user:member2.user]];
             [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) user:member3.user]];

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AsyncImageView.h"
-#import "Request.h"
+#import "User.h"
 
 @interface UserRequestCell : UITableViewCell
 
@@ -18,6 +18,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *acceptButton;
 @property (weak, nonatomic) IBOutlet UIButton *declineButton;
 
-@property (nonatomic, strong) Request *request;
+@property (nonatomic, strong) User *user;
 
 @end

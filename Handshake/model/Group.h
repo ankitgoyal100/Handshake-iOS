@@ -1,15 +1,15 @@
 //
 //  Group.h
-//  Handshake
+//  
 //
-//  Created by Sam Ober on 5/3/15.
-//  Copyright (c) 2015 Handshake. All rights reserved.
+//  Created by Sam Ober on 6/12/15.
+//
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class GroupMember;
+@class FeedItem, GroupMember;
 
 typedef enum {
     GroupSynced = 0,
@@ -24,23 +24,30 @@ typedef enum {
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSNumber * groupId;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSNumber * syncStatus;
-@property (nonatomic, retain) NSSet *members;
+@property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSSet *feedItems;
+@property (nonatomic, retain) NSOrderedSet *members;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
-
-+ (void)sync;
-+ (void)syncWithCompletionBlock:(void (^)())completionBlock;
 
 @end
 
 @interface Group (CoreDataGeneratedAccessors)
 
+- (void)addFeedItemsObject:(FeedItem *)value;
+- (void)removeFeedItemsObject:(FeedItem *)value;
+- (void)addFeedItems:(NSSet *)values;
+- (void)removeFeedItems:(NSSet *)values;
+
+- (void)insertObject:(GroupMember *)value inMembersAtIndex:(NSUInteger)idx;
+- (void)removeObjectFromMembersAtIndex:(NSUInteger)idx;
+- (void)insertMembers:(NSArray *)value atIndexes:(NSIndexSet *)indexes;
+- (void)removeMembersAtIndexes:(NSIndexSet *)indexes;
+- (void)replaceObjectInMembersAtIndex:(NSUInteger)idx withObject:(GroupMember *)value;
+- (void)replaceMembersAtIndexes:(NSIndexSet *)indexes withMembers:(NSArray *)values;
 - (void)addMembersObject:(GroupMember *)value;
 - (void)removeMembersObject:(GroupMember *)value;
-- (void)addMembers:(NSSet *)values;
-- (void)removeMembers:(NSSet *)values;
-
+- (void)addMembers:(NSOrderedSet *)values;
+- (void)removeMembers:(NSOrderedSet *)values;
 @end

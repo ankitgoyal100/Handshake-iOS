@@ -8,7 +8,6 @@
 
 #import "Card.h"
 #import "Address.h"
-#import "Contact.h"
 #import "Email.h"
 #import "Phone.h"
 #import "Social.h"
@@ -28,7 +27,6 @@ static BOOL syncing = NO;
 @dynamic syncStatus;
 @dynamic updatedAt;
 @dynamic addresses;
-@dynamic contact;
 @dynamic emails;
 @dynamic phones;
 @dynamic socials;

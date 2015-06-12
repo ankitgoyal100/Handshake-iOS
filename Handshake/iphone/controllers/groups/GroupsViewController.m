@@ -15,7 +15,8 @@
 #import "Group.h"
 #import "EditGroupViewController.h"
 #import "JoinGroupViewController.h"
-#import "Contact.h"
+#import "GroupServerSync.h"
+#import "ContactServerSync.h"
 
 @interface GroupsViewController () <NSFetchedResultsControllerDelegate, UIActionSheetDelegate, EditGroupViewControllerDelegate, JoinGroupViewControllerDelegate>
 
@@ -156,7 +157,7 @@
 - (void)groupEdited:(Group *)group {
     group.createdAt = [NSDate date];
     group.syncStatus = [NSNumber numberWithInt:GroupCreated];
-    [Group sync];
+    [GroupServerSync sync];
 }
 
 - (void)groupJoined:(Group *)group {
@@ -164,7 +165,7 @@
     controller.group = group;
     [self.navigationController pushViewController:controller animated:YES];
     
-    [Contact sync];
+    [ContactServerSync sync];
 }
 
 @end

@@ -17,7 +17,6 @@ typedef enum {
 
 @interface Account : User
 
-@property (nonatomic, retain) NSNumber * syncStatus;
 @property (nonatomic, retain) NSString * email;
 
 + (void)sync;

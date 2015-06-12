@@ -11,10 +11,10 @@
 #import "HandshakeSession.h"
 #import "HandshakeClient.h"
 #import "ContactCell.h"
-#import "Contact.h"
 #import "UserViewController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
+#import "User.h"
 
 @interface MutualContactsViewController ()
 
@@ -49,8 +49,8 @@
     [super viewWillAppear:animated];
     
     // check contacts
-    for (Contact *contact in self.contacts)
-        if (!contact.managedObjectContext || [contact.syncStatus intValue] == ContactDeleted)
+    for (User *contact in self.contacts)
+        if (!contact.managedObjectContext || [contact.syncStatus intValue] == UserDeleted)
             [self.contacts removeObject:contact];
     
     [self.tableView reloadData];
@@ -62,6 +62,8 @@
 
 - (void)load {
     [[HandshakeClient client] GET:[NSString stringWithFormat:@"/users/%@/mutual", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (![self.navigationController.viewControllers containsObject:self]) return;
+        
         NSMutableArray *contacts = [[NSMutableArray alloc] init];
         
         NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
@@ -69,9 +71,9 @@
         for (NSDictionary *dict in responseObject[@"mutual"]) {
             // try to get contact
             
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
             
-            request.predicate = [NSPredicate predicateWithFormat:@"contactId == %@", dict[@"id"]];
+            request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", dict[@"id"]];
             request.fetchLimit = 1;
             
             __block NSArray *results;
@@ -115,9 +117,9 @@
     if (indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
     __weak ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-    cell.contact = self.contacts[indexPath.row - 1];
+    cell.user = self.contacts[indexPath.row - 1];
     [cell setDeleteBlock:^(void) {
-        [self.contacts removeObject:cell.contact];
+        [self.contacts removeObject:cell.user];
         [self.tableView reloadData];
     }];
     return cell;
@@ -132,10 +134,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) return;
     
-    Contact *contact = self.contacts[indexPath.row - 1];
+    User *contact = self.contacts[indexPath.row - 1];
 
     UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-    controller.user = contact.user;
+    controller.user = contact;
     [self.navigationController pushViewController:controller animated:YES];
 }
 

@@ -11,7 +11,6 @@
 #import "AsyncImageView.h"
 #import "HandshakeCoreDataStore.h"
 #import "User.h"
-#import "SearchResult.h"
 
 @implementation UserPictureCache
 
@@ -29,6 +28,8 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         NSString *urlString = [(NSURL *)[notification userInfo][AsyncImageURLKey] absoluteString];
         
+        // cache pictures
+        
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
         request.predicate = [NSPredicate predicateWithFormat:@"picture == %@", urlString];
         
@@ -45,6 +46,25 @@
             for (User *user in results) {
                 user.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 0.0);
                // user.pictureData = UIImagePNGRepresentation([notification userInfo][AsyncImageImageKey]);
+            }
+        }
+        
+        // cache thumbs
+        
+        request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+        request.predicate = [NSPredicate predicateWithFormat:@"thumb == %@", urlString];
+        
+        results = nil;
+        
+        [objectContext performBlockAndWait:^{
+            NSError *error;
+            results = [objectContext executeFetchRequest:request error:&error];
+        }];
+        
+        if (results && [results count] > 0) {
+            for (User *user in results) {
+                user.thumbData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 0.0);
+                // user.pictureData = UIImagePNGRepresentation([notification userInfo][AsyncImageImageKey]);
             }
         }
         

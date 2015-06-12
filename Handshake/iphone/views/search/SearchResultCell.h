@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AsyncImageView.h"
-#import "SearchResult.h"
+#import "User.h"
 
 @interface SearchResultCell : UITableViewCell
 
@@ -18,6 +18,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIButton *sentButton;
 
-@property (nonatomic, strong) SearchResult *result;
+@property (nonatomic, strong) User *user;
 
 @end

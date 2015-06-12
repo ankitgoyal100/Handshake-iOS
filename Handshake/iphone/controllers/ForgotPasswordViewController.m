@@ -7,7 +7,6 @@
 //
 
 #import "ForgotPasswordViewController.h"
-#import "ForgotPasswordView.h"
 #import "Handshake.h"
 #import "HandshakeClient.h"
 

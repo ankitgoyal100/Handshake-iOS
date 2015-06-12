@@ -8,13 +8,11 @@
 
 #import "RequestsViewController.h"
 #import "UserRequestCell.h"
-#import "Request.h"
 #import "HandshakeCoreDataStore.h"
 #import "HandshakeClient.h"
 #import "HandshakeSession.h"
 #import "User.h"
 #import "UIControl+Blocks.h"
-#import "SearchResult.h"
 #import "SearchResultCell.h"
 #import "FeedItem.h"
 #import "Handshake-Swift.h"
@@ -27,6 +25,8 @@
 
 @property (nonatomic, strong) UILabel *placeholder;
 @property (nonatomic, strong) OutlineButton *searchBar;
+
+@property (nonatomic, strong) NSArray *requests;
 
 @end
 
@@ -60,6 +60,11 @@
     return _searchBar;
 }
 
+- (NSArray *)requests {
+    if (!_requests) _requests = [[NSArray alloc] init];
+    return _requests;
+}
+
 - (void)search {
     [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"SearchViewController"] animated:NO];
 }
@@ -75,36 +80,16 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    self.requests = [self.fetchController fetchedObjects];
+    
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [self.tableView reloadData];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    // delete all accepted/deleted requests
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Request"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"(accepted == %@ OR removed == %@) AND requestId == nil", @(YES), @(YES)];
-    
-    __block NSArray *results;
-    
-    [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-        results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:nil];
-    }];
-    
-    if (results) {
-        for (Request *r in results) {
-            [r.managedObjectContext deleteObject:r];
-        }
-    }
-}
-
 - (void)fetch {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Request"];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
     
-    request.predicate = [NSPredicate predicateWithFormat:@"user.userId != %@", [[HandshakeSession currentSession] account].userId];
+    request.predicate = [NSPredicate predicateWithFormat:@"requestReceived = %@", @(YES)];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]];
     
     self.fetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
@@ -115,18 +100,18 @@
         [self.fetchController performFetch:nil];
     }];
     
-    request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"tag == %@ AND request == nil", @"suggestion"];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"user.mutual" ascending:NO]];
-    
-    self.suggestionsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
-    
-    self.suggestionsController.delegate = self;
-    
-    [self.suggestionsController.managedObjectContext performBlockAndWait:^{
-        [self.suggestionsController performFetch:nil];
-    }];
+//    request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
+//    
+//    request.predicate = [NSPredicate predicateWithFormat:@"tag == %@ AND request == nil", @"suggestion"];
+//    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"user.mutual" ascending:NO]];
+//    
+//    self.suggestionsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
+//    
+//    self.suggestionsController.delegate = self;
+//    
+//    [self.suggestionsController.managedObjectContext performBlockAndWait:^{
+//        [self.suggestionsController performFetch:nil];
+//    }];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
@@ -143,8 +128,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0 && [[self.fetchController fetchedObjects] count] == 0) return 1;
-    if (section == 0) return [[self.fetchController fetchedObjects] count] + 1;
+    if (section == 0 && [self.requests count] == 0) return 1;
+    if (section == 0) return [self.requests count] + 1;
     
     if (section == 1 && [[self.suggestionsController fetchedObjects] count] == 0) return 0;
     if (section == 1) return [[self.suggestionsController fetchedObjects] count] + 1;
@@ -196,25 +181,25 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"RequestsHeader"];
     
-    if (indexPath.section == 0 && [[self.fetchController fetchedObjects] count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"NoResultsCell"];
+    if (indexPath.section == 0 && [self.requests count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"NoResultsCell"];
     
     if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
     if (indexPath.section == 0) {
         UserRequestCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserRequestCell"];
-        cell.request = [self.fetchController fetchedObjects][indexPath.row - 1];
+        cell.user = self.requests[indexPath.row - 1];
         return cell;
     }
     
     if (indexPath.section == 1 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"SuggestionsHeader"];
     
     SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
-    cell.result = [self.suggestionsController fetchedObjects][indexPath.row - 1];
+    cell.user = [self.suggestionsController fetchedObjects][indexPath.row - 1];
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && [[self.fetchController fetchedObjects] count] == 0) return 70;
+    if (indexPath.section == 0 && [self.requests count] == 0) return 70;
     
     if (indexPath.section == 0 && indexPath.row == 0) return 1;
     
@@ -233,9 +218,9 @@
     User *user;
     
     if (indexPath.section == 0)
-        user = ((Request *)[self.fetchController fetchedObjects][indexPath.row - 1]).user;
+        user = self.requests[indexPath.row - 1];
     else if (indexPath.section == 1)
-        user = ((SearchResult *)[self.suggestionsController fetchedObjects][indexPath.row - 1]).user;
+        user = [self.suggestionsController fetchedObjects][indexPath.row - 1];
     
     UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
     controller.user = user;

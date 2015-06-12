@@ -7,7 +7,6 @@
 //
 
 #import "StartViewController.h"
-#import "StartView.h"
 #import "SignUpViewController.h"
 #import "LogInViewController.h"
 #import "HandshakeSession.h"

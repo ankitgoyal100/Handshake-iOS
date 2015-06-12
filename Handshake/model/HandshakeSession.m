@@ -13,11 +13,10 @@
 #import "SSKeychain.h"
 #import "HandshakeClient.h"
 #import "Card.h"
-#import "Contact.h"
-#import "Group.h"
-#import "Request.h"
-#import "SearchResult.h"
-#import "FeedItem.h"
+#import "ContactServerSync.h"
+#import "RequestServerSync.h"
+#import "GroupServerSync.h"
+#import "FeedItemServerSync.h"
 
 static HandshakeSession *session = nil;
 
@@ -85,11 +84,11 @@ static HandshakeSession *session = nil;
             
             [Account syncWithSuccessBlock:^{
                 [Card sync];
-                [Contact syncWithCompletionBlock:^{
-                    [Group syncWithCompletionBlock:^{
-                        [FeedItem sync];
+                [ContactServerSync syncWithCompletionBlock:^{
+                    [GroupServerSync syncWithCompletionBlock:^{
+                        [FeedItemServerSync sync];
+                        [RequestServerSync sync];
                     }];
-                    [Request sync];
                 }];
             }];
             
@@ -151,12 +150,11 @@ static HandshakeSession *session = nil;
         
         [Account syncWithSuccessBlock:^{
             [Card sync];
-            [Contact syncWithCompletionBlock:^{
-                [Group syncWithCompletionBlock:^{
-                    [FeedItem sync];
+            [ContactServerSync syncWithCompletionBlock:^{
+                [GroupServerSync syncWithCompletionBlock:^{
+                    [FeedItemServerSync sync];
+                    [RequestServerSync sync];
                 }];
-                [Request sync];
-                [SearchResult syncSuggestions];
             }];
         }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -172,6 +170,7 @@ static HandshakeSession *session = nil;
 }
 
 - (void)invalidate {
+    NSLog(@"invalidated");
     [HandshakeSession destroySession];
     [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_INVALID object:nil];
     

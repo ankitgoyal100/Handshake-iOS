@@ -7,7 +7,6 @@
 //
 
 #import "LogInViewController.h"
-#import "LogInView.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
 #import "MainViewController.h"

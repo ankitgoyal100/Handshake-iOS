@@ -7,15 +7,9 @@
 //
 
 #import "ContactsViewController.h"
-#import "Handshake.h"
-#import "SearchView.h"
-#import "LoadingTableViewCell.h"
-#import <CoreData/CoreData.h>
 #import "HandshakeCoreDataStore.h"
-#import "Contact.h"
 #import "ContactCell.h"
 #import "UserViewController.h"
-#import "Request.h"
 #import "UserRequestCell.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
@@ -53,7 +47,7 @@
     rect.size.height = 0;//48;
     self.searchView.frame = rect;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidMove:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidMove:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     self.managedObjectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
     
@@ -68,13 +62,13 @@
 }
 
 - (void)fetch {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
     
-    request.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"user.firstName" ascending:YES]];
+    request.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"firstName" ascending:YES]];
     
-    request.predicate = [NSPredicate predicateWithFormat:@"syncStatus != %@", [NSNumber numberWithInt:ContactDeleted]];
+    request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@", @(YES)];
     
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"firstLetter" cacheName:nil];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"firstLetterOfName" cacheName:nil];
     
     self.fetchedResultsController.delegate = self;
     
@@ -246,12 +240,7 @@
     
     ContactCell *cell = (ContactCell *)[tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
     
-    if (!cell) {
-        [tableView registerNib:[UINib nibWithNibName:@"ContactCell" bundle:nil] forCellReuseIdentifier:@"ContactCell"];
-        cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-    }
-    
-    Contact *contact;
+    User *contact;
     
     if ([self.searchField.text length] > 0) {
         contact = self.searchResults[indexPath.row];
@@ -272,7 +261,7 @@
             contact = [self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
     }
     
-    cell.contact = contact;
+    cell.user = contact;
     return cell;
 }
 
@@ -291,7 +280,7 @@
     
     if (indexPath.row == 0) return;
     
-    Contact *contact;
+    User *contact;
     
     if ([self.searchField.text length] > 0) {
         contact = self.searchResults[indexPath.row];
@@ -314,7 +303,7 @@
     
     UserViewController *controller = (UserViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
     
-    controller.user = contact.user;
+    controller.user = contact;
     
     [self.navigationController pushViewController:controller animated:YES];
 }
@@ -348,12 +337,12 @@
 - (void)search:(NSString *)searchText {
     [self.searchResults removeAllObjects];
     
-    for (Contact *contact in [self.fetchedResultsController fetchedObjects]) {
-        NSComparisonResult firstName = [contact.user.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult lastName = [contact.user.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult name = [[contact.user formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+    for (User *contact in [self.fetchedResultsController fetchedObjects]) {
+        NSComparisonResult firstName = [contact.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult lastName = [contact.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult name = [[contact formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
         
-        if ((contact.user.firstName && [contact.user.firstName length] > 0 && firstName == NSOrderedSame) || (contact.user.lastName && [contact.user.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
+        if ((contact.firstName && [contact.firstName length] > 0 && firstName == NSOrderedSame) || (contact.lastName && [contact.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
             [self.searchResults addObject:contact];
         }
     }

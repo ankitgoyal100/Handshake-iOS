@@ -17,6 +17,7 @@
 #import "EditGroupViewController.h"
 #import "FeedItem.h"
 #import "GroupCodeCell.h"
+#import "GroupServerSync.h"
 
 @interface GroupViewController () <UIActionSheetDelegate, EditGroupViewControllerDelegate, UIAlertViewDelegate>
 
@@ -74,7 +75,7 @@
         AsyncImageView *imageView = [[AsyncImageView alloc] initWithFrame:CGRectMake(i * 100, 0, 100, 100)];
         imageView.showActivityIndicator = NO;
         
-        User *user = ((GroupMember *)[group.members allObjects][i]).user;
+        User *user = ((GroupMember *)group.members[i]).user;
         
         if ([user cachedImage])
             imageView.image = [user cachedImage];
@@ -176,9 +177,9 @@
 
 - (void)groupEdited:(Group *)group {
     self.nameLabel.text = group.name;
-    group.syncStatus = [NSNumber numberWithInt:GroupUpdated];
+    group.syncStatus = @(GroupUpdated);
     
-    [Group sync];
+    [GroupServerSync sync];
 }
 
 - (IBAction)options:(id)sender {
@@ -193,10 +194,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Leave"]) {
-        self.group.syncStatus = [NSNumber numberWithInt:GroupDeleted];
-        for (FeedItem *item in self.group.feedItems)
-            [self.group.managedObjectContext deleteObject:item];
-        [Group sync];
+        [GroupServerSync deleteGroup:self.group];
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

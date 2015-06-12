@@ -12,18 +12,13 @@
 #import "HandshakeCoreDataStore.h"
 #import "HandshakeSession.h"
 #import "HandshakeClient.h"
-#import "SearchResult.h"
 #import "ContactCell.h"
 #import "UserRequestCell.h"
 #import "SearchResultCell.h"
-#import "Request.h"
-#import "Contact.h"
 #import "UIControl+Blocks.h"
 #import "UserViewController.h"
 
 @interface UserContactsViewController ()
-
-@property (nonatomic, strong) NSString *tag;
 
 @property (nonatomic, strong) NSArray *contacts;
 
@@ -40,8 +35,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.tag = [NSString stringWithFormat:@"%d", rand()];
     
     self.loaded = NO;
     
@@ -60,54 +53,7 @@
     [self.tableView reloadData];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    // delete all accepted/deleted requests
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Request"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"(accepted == %@ OR removed == %@) AND requestId == nil", @(YES), @(YES)];
-    
-    __block NSArray *results;
-    
-    [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-        results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:nil];
-    }];
-    
-    if (results) {
-        for (Request *r in results) {
-            [r.managedObjectContext deleteObject:r];
-        }
-    }
-}
-
 - (void)back {
-    // delete all tagged search results
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"tag == %@", self.tag];
-    
-    __block NSArray *results;
-    
-    [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-        NSError *error;
-        results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
-    }];
-    
-    for (SearchResult *result in results) {
-        if (result.request && result.request.user.userId == [[HandshakeSession currentSession] account].userId) {
-            [result.managedObjectContext deleteObject:result.request]; // delete outgoing requests
-        }
-        
-        [result.managedObjectContext deleteObject:result];
-    }
-    
-    // save context
-    
-    [[HandshakeCoreDataStore defaultStore] saveMainContext];
-    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -115,6 +61,8 @@
     self.loaded = NO;
     
     [[HandshakeClient client] GET:[NSString stringWithFormat:@"/users/%@/contacts", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (![self.navigationController.viewControllers containsObject:self]) return;
+        
         NSMutableArray *contacts = [[NSMutableArray alloc] init];
         
         for (NSDictionary *dict in responseObject[@"contacts"]) {
@@ -122,8 +70,8 @@
             
             // find or create SearchResult
             
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-            request.predicate = [NSPredicate predicateWithFormat:@"user.userId == %@ AND tag == %@", resultDict[@"id"], self.tag];
+            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+            request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", resultDict[@"id"]];
             request.fetchLimit = 1;
             
             __block NSArray *results;
@@ -133,18 +81,17 @@
                 results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
             }];
             
-            SearchResult *searchResult;
+            User *user;
             
             if (results && [results count] == 1) {
-                searchResult = results[0];
+                user = results[0];
             } else {
-                searchResult = [[SearchResult alloc] initWithEntity:[NSEntityDescription entityForName:@"SearchResult" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
+                user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
             }
             
-            [searchResult updateFromDictionary:resultDict];
-            searchResult.tag = self.tag;
+            [user updateFromDictionary:resultDict];
             
-            [contacts addObject:searchResult];
+            [contacts addObject:user];
         }
         
         NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"user.formattedName" ascending:YES];
@@ -175,25 +122,25 @@
     
     if (indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
-    SearchResult *result = self.contacts[indexPath.row - 1];
+    User *user = self.contacts[indexPath.row - 1];
     
-    if (result.contact && result.contact.managedObjectContext && [result.contact.syncStatus intValue] != ContactDeleted) {
+    if ([user.isContact boolValue]) {
         ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-        cell.contact = result.contact;
+        cell.user = user;
         [cell setDeleteBlock:^(void) {
             [self.tableView reloadData];
         }];
         return cell;
     }
     
-    if (result.request && result.request.user.userId != [[HandshakeSession currentSession] account].userId) {
+    if ([user.requestReceived boolValue]) {
         UserRequestCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserRequestCell"];
-        cell.request = result.request;
+        cell.user = user;
         return cell;
     }
     
     SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
-    cell.result = result;
+    cell.user = user;
     return cell;
 }
 
@@ -208,10 +155,10 @@
     
     if (indexPath.row == 0) return;
     
-    SearchResult *result = self.contacts[indexPath.row - 1];
+    User *user = self.contacts[indexPath.row - 1];
     
     UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-    controller.user = result.user;
+    controller.user = user;
     [self.navigationController pushViewController:controller animated:YES];
 }
 

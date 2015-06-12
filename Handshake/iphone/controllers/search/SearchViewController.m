@@ -9,16 +9,12 @@
 #import "SearchViewController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "SearchResult.h"
 #import "SearchResultCell.h"
 #import "HandshakeClient.h"
 #import "HandshakeSession.h"
 #import "HandshakeCoreDataStore.h"
 #import "UIControl+Blocks.h"
-#import "Card.h"
 #import "UserRequestCell.h"
-#import "Request.h"
-#import "Contact.h"
 #import "ContactCell.h"
 #import "UserViewController.h"
 
@@ -34,8 +30,6 @@
 @property (nonatomic) BOOL typed;
 
 @property (nonatomic, strong) NSFetchedResultsController *contactsFetcher;
-
-@property (nonatomic, strong) NSString *tag;
 
 @end
 
@@ -91,8 +85,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tag = [NSString stringWithFormat:@"%d", rand()];
-    
     self.typed = NO;
     
     self.navigationItem.hidesBackButton = YES;
@@ -107,10 +99,16 @@
     [self fetch];
 }
 
-- (void)fetch {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
-    request.predicate = [NSPredicate predicateWithFormat:@"syncStatus != %@", @(ContactDeleted)];
+    [self.tableView reloadData];
+}
+
+- (void)fetch {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+    
+    request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@", @(YES)];
     request.sortDescriptors = @[];
     
     NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
@@ -126,31 +124,6 @@
 
 - (IBAction)cancel:(id)sender {
     if (self.timer) [self.timer invalidate];
-    
-    // delete all tagged search results
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"tag == %@", self.tag];
-    
-    __block NSArray *results;
-    
-    [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-        NSError *error;
-        results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
-    }];
-    
-    for (SearchResult *result in results) {
-        if (result.request && result.request.user.userId == [[HandshakeSession currentSession] account].userId) {
-            [result.managedObjectContext deleteObject:result.request]; // delete outgoing requests
-        }
-        
-        [result.managedObjectContext deleteObject:result];
-    }
-    
-    // save context
-    
-    [[HandshakeCoreDataStore defaultStore] saveMainContext];
     
     [self.navigationController popViewControllerAnimated:NO];
 }
@@ -185,7 +158,7 @@
     
     if (indexPath.section == 0) {
         ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-        cell.contact = self.localResults[indexPath.row - 1];
+        cell.user = self.localResults[indexPath.row - 1];
         return cell;
     }
     
@@ -203,22 +176,22 @@
 //    if (indexPath.row == 0 || indexPath.row == [self.results count] + 1)
 //        return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
-    SearchResult *result = self.serverResults[[self.searchBar.text lowercaseString]][indexPath.row];
+    User *result = self.serverResults[[self.searchBar.text lowercaseString]][indexPath.row];
     
-    if (result.contact) {
+    if ([result.isContact boolValue]) {
         ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-        cell.contact = result.contact;
+        cell.user = result;
         return cell;
     }
     
-    if (result.request && result.request.user.userId != [[HandshakeSession currentSession] account].userId) {
+    if ([result.requestReceived boolValue]) {
         UserRequestCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserRequestCell"];
-        cell.request = result.request;
+        cell.user = result;
         return cell;
     }
     
     SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
-    cell.result = result;
+    cell.user = result;
     return cell;
 }
 
@@ -255,16 +228,16 @@
     //if (indexPath.row == 0 || indexPath.row == [self.results count] + 1) return;
     
     if (indexPath.section == 0) {
-        Contact *contact = self.localResults[indexPath.row - 1];
+        User *contact = self.localResults[indexPath.row - 1];
         UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-        controller.user = contact.user;
+        controller.user = contact;
         [self.navigationController pushViewController:controller animated:YES];
     }
     
     if (indexPath.section == 1) {
-        SearchResult *result = self.serverResults[[self.searchBar.text lowercaseString]][indexPath.row];
+        User *result = self.serverResults[[self.searchBar.text lowercaseString]][indexPath.row];
         UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-        controller.user = result.user;
+        controller.user = result;
         [self.navigationController pushViewController:controller animated:YES];
     }
 }
@@ -288,12 +261,12 @@
     NSMutableArray *searchResults = [[NSMutableArray alloc] init];
     NSString *searchText = [self.searchBar text];
 
-    for (Contact *contact in [self.contactsFetcher fetchedObjects]) {
-        NSComparisonResult firstName = [contact.user.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult lastName = [contact.user.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult name = [[contact.user formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+    for (User *contact in [self.contactsFetcher fetchedObjects]) {
+        NSComparisonResult firstName = [contact.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult lastName = [contact.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult name = [[contact formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
         
-        if ((contact.user.firstName && [contact.user.firstName length] > 0 && firstName == NSOrderedSame) || (contact.user.lastName && [contact.user.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
+        if ((contact.firstName && [contact.firstName length] > 0 && firstName == NSOrderedSame) || (contact.lastName && [contact.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
             [searchResults addObject:contact];
         }
     }
@@ -316,18 +289,19 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
     params[@"q"] = searchString;
     [[HandshakeClient client] GET:@"/search" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (!self.serverResults[searchString]) {
+        if (![self.navigationController.viewControllers containsObject:self]) return; // user cancelled
+        if (self.serverResults && !self.serverResults[searchString]) {
             NSMutableArray *searchResults = [[NSMutableArray alloc] init];
             
             for (NSDictionary *dict in responseObject[@"results"]) {
                 NSDictionary *resultDict = [HandshakeCoreDataStore removeNullsFromDictionary:dict];
                 
-                if (resultDict[@"contact"]) continue; // skip results with contacts
+                if ([resultDict[@"is_contact"] boolValue]) continue; // skip results with contacts
                 
-                // find or create SearchResult
+                // find or create User
                 
-                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-                request.predicate = [NSPredicate predicateWithFormat:@"user.userId == %@ AND tag == %@", resultDict[@"id"], self.tag];
+                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+                request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", resultDict[@"id"]];
                 request.fetchLimit = 1;
                 
                 __block NSArray *results;
@@ -337,18 +311,17 @@
                     results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
                 }];
                 
-                SearchResult *searchResult;
+                User *user;
                 
                 if (results && [results count] == 1) {
-                    searchResult = results[0];
+                    user = results[0];
                 } else {
-                    searchResult = [[SearchResult alloc] initWithEntity:[NSEntityDescription entityForName:@"SearchResult" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
+                    user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
                 }
                 
-                [searchResult updateFromDictionary:resultDict];
-                searchResult.tag = self.tag;
+                [user updateFromDictionary:resultDict];
                 
-                [searchResults addObject:searchResult];
+                [searchResults addObject:user];
             }
             
             self.serverResults[searchString] = searchResults;

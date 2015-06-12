@@ -7,7 +7,7 @@
 //
 
 #import "FeedItem.h"
-#import "Contact.h"
+#import "User.h"
 #import "Group.h"
 #import "DateConverter.h"
 #import "HandshakeCoreDataStore.h"
@@ -20,7 +20,7 @@
 @dynamic createdAt;
 @dynamic updatedAt;
 @dynamic itemType;
-@dynamic contact;
+@dynamic user;
 @dynamic group;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
@@ -29,12 +29,12 @@
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
     self.itemType = dictionary[@"item_type"];
     
-    if (dictionary[@"contact"]) {
-        // find contact
+    if (dictionary[@"user"]) {
+        // find or create user
         
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
         
-        request.predicate = [NSPredicate predicateWithFormat:@"contactId == %@", dictionary[@"contact"][@"id"]];
+        request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", dictionary[@"user"][@"id"]];
         request.fetchLimit = 1;
         
         __block NSArray *results;
@@ -44,20 +44,16 @@
             results = [self.managedObjectContext executeFetchRequest:request error:&error];
         }];
         
-        if (results && [results count] == 1) {
-            self.contact = results[0];
-        } else {
-//            self.contact = [[Contact alloc] initWithEntity:[NSEntityDescription entityForName:@"Contact" inManagedObjectContext:self.managedObjectContext] insertIntoManagedObjectContext:self.managedObjectContext];
-//            
-//            [self.contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:dictionary[@"contact"]]];
-//            self.contact.updatedAt = [NSDate dateWithTimeIntervalSince1970:0]; // avoid messing with the Contact sync which uses the most recent updatedAt
-//            
-//            if (dictionary[@"contact"][@"is_deleted"]) self.contact.syncStatus = @(ContactDeleted);
-        }
+        if (results && [results count] == 1)
+            self.user = results[0];
+        else
+            self.user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:self.managedObjectContext] insertIntoManagedObjectContext:self.managedObjectContext];
+        
+        [self.user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:dictionary[@"user"]]];
     }
     
     if (dictionary[@"group"]) {
-        // find group
+        // find or create group
         
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
         
@@ -75,87 +71,6 @@
             self.group = results[0];
         }
     }
-}
-
-+ (void)sync {
-    [self syncWithCompletionBlock:nil];
-}
-
-+ (void)syncWithCompletionBlock:(void (^)())completionBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
-        
-        // delete all feed items
-        
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"FeedItem"];
-        
-        __block NSArray *results;
-        
-        [objectContext performBlockAndWait:^{
-            NSError *error;
-            results = [objectContext executeFetchRequest:request error:&error];
-        }];
-        
-        for (FeedItem *item in results)
-            [objectContext deleteObject:item];
-        
-        [self syncPage:1 objectContext:objectContext completionBlock:^{
-            if (completionBlock) completionBlock();
-        }];
-    });
-}
-
-+ (void)syncPage:(int)page objectContext:(NSManagedObjectContext *)objectContext completionBlock:(void (^)())completionBlock {
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
-    params[@"page"] = @(page);
-    
-    [[HandshakeClient client] GET:@"/feed" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject[@"feed"] count] == 0) {
-            if (completionBlock) completionBlock();
-            return;
-        }
-        
-        for (NSDictionary *dict in responseObject[@"feed"]) {
-            NSDictionary *feedDict = [HandshakeCoreDataStore removeNullsFromDictionary:dict];
-            
-            // find/create feed item
-            
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"FeedItem"];
-            
-            request.predicate = [NSPredicate predicateWithFormat:@"feedId == %@", feedDict[@"id"]];
-            request.fetchLimit = 1;
-            
-            __block NSArray *results;
-            
-            [objectContext performBlockAndWait:^{
-                NSError *error;
-                results = [objectContext executeFetchRequest:request error:&error];
-            }];
-            
-            FeedItem *item;
-            
-            if (results && [results count] == 1) {
-                item = results[0];
-            } else {
-                item = [[FeedItem alloc] initWithEntity:[NSEntityDescription entityForName:@"FeedItem" inManagedObjectContext:objectContext] insertIntoManagedObjectContext:objectContext];
-            }
-            
-            [item updateFromDictionary:feedDict];
-        }
-        
-        // save context
-        [objectContext performBlockAndWait:^{
-            [objectContext save:nil];
-        }];
-        
-        [self syncPage:page + 1 objectContext:objectContext completionBlock:completionBlock];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if ([[operation response] statusCode] == 401) {
-            [[HandshakeSession currentSession] invalidate];
-        } else {
-            if (completionBlock) completionBlock();
-        }
-    }];
 }
 
 @end

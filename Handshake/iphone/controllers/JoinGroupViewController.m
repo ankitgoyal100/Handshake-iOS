@@ -12,6 +12,8 @@
 #import "HandshakeCoreDataStore.h"
 #import "Card.h"
 #import "FeedItem.h"
+#import "GroupServerSync.h"
+#import "FeedItemServerSync.h"
 
 @interface JoinGroupViewController () <UIAlertViewDelegate>
 
@@ -228,8 +230,8 @@
         [group updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"group"]]];
         group.syncStatus = [NSNumber numberWithInt:GroupSynced];
         
-        [Group syncWithCompletionBlock:^{
-            [FeedItem sync];
+        [GroupServerSync syncWithCompletionBlock:^{
+            [FeedItemServerSync sync];
         }];
         
         if (self.delegate && [self.delegate respondsToSelector:@selector(groupJoined:)])

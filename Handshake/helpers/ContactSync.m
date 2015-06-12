@@ -8,7 +8,6 @@
 
 #import "ContactSync.h"
 #import "HandshakeCoreDataStore.h"
-#import "Contact.h"
 #import <AddressBook/AddressBook.h>
 #import "Card.h"
 #import "User.h"
@@ -23,7 +22,9 @@
 + (void)syncAll {
     // set all contacts to unsaved
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+    
+    request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@", @(YES)];
     
     __block NSArray *results;
     
@@ -33,7 +34,7 @@
     
     if (!results) return;
     
-    for (Contact *contact in results)
+    for (User *contact in results)
         contact.saved = @(NO);
     
     [self sync];
@@ -47,12 +48,12 @@
         
         // get contacts
         
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Contact"];
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
         
         if ([settings[@"enabled"] boolValue])
-            request.predicate = [NSPredicate predicateWithFormat:@"saved == %@", @(NO)];
+            request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@ AND saved == %@", @(YES), @(NO)];
         else
-            request.predicate = [NSPredicate predicateWithFormat:@"saved == %@ AND savesToPhone == %@", @(NO), @(YES)];
+            request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@ AND saved == %@ AND savesToPhone == %@", @(YES), @(NO), @(YES)];
         
         __block NSArray *results;
         
@@ -67,7 +68,7 @@
         
         if (!addressBook || ABAddressBookGetAuthorizationStatus() != kABAuthorizationStatusAuthorized) return;
         
-        for (Contact *contact in results)
+        for (User *contact in results)
             [self syncContact:contact toAddressBook:addressBook];
         
         error = NULL;
@@ -83,12 +84,12 @@
     });
 }
 
-+ (void)syncContact:(Contact *)contact toAddressBook:(ABAddressBookRef)addressBook {
-    if ([contact.user.cards count] == 0) return;
++ (void)syncContact:(User *)contact toAddressBook:(ABAddressBookRef)addressBook {
+    if ([contact.cards count] == 0) return;
     
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
-    Card *card = contact.user.cards[0];
+    Card *card = contact.cards[0];
     
     NSArray *records = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
     NSInteger count = [records count];
@@ -104,7 +105,7 @@
         
         // check name
         NSString *name = (__bridge NSString *)ABRecordCopyCompositeName(r);
-        if ([name containsString:contact.user.firstName]) certainty++;
+        if ([name containsString:contact.firstName]) certainty++;
         
         // check phones
         
@@ -172,26 +173,26 @@
         newRecord = YES;
     }
     
-    if (contact.user.picture && (!ABPersonHasImageData(record) || [settings[@"pictures"] boolValue])) {
-        if (contact.user.pictureData)
-            ABPersonSetImageData(record, (__bridge CFDataRef)(contact.user.pictureData), &error);
+    if (contact.picture && (!ABPersonHasImageData(record) || [settings[@"pictures"] boolValue])) {
+        if (contact.pictureData)
+            ABPersonSetImageData(record, (__bridge CFDataRef)(contact.pictureData), &error);
         else {
-            UIImage *picture = [[AsyncImageLoader defaultCache] objectForKey:[NSURL URLWithString:contact.user.picture]];
+            UIImage *picture = [[AsyncImageLoader defaultCache] objectForKey:[NSURL URLWithString:contact.picture]];
             if (picture)
                 ABPersonSetImageData(record, (__bridge CFDataRef)(UIImageJPEGRepresentation(picture, 0.01)), &error);
             else {
-                NSData *image = UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.user.picture]]], 0.01);
-                contact.user.pictureData = image;
-                ABPersonSetImageData(record, (__bridge CFDataRef)(UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.user.picture]]], 0.01)), &error);
+                NSData *image = UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.picture]]], 0.01);
+                contact.pictureData = image;
+                ABPersonSetImageData(record, (__bridge CFDataRef)(UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.picture]]], 0.01)), &error);
             }
         
         }
     }
     
     if (newRecord || [settings[@"names"] boolValue]) {
-        ABRecordSetValue(record, kABPersonFirstNameProperty, (__bridge CFTypeRef)(contact.user.firstName), &error);
-        if (contact.user.lastName)
-            ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFTypeRef)(contact.user.lastName), &error);
+        ABRecordSetValue(record, kABPersonFirstNameProperty, (__bridge CFTypeRef)(contact.firstName), &error);
+        if (contact.lastName)
+            ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFTypeRef)(contact.lastName), &error);
         else
             ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFTypeRef)(@""), &error);
     }

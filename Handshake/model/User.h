@@ -10,22 +10,46 @@
 #import <CoreData/CoreData.h>
 #import <UIKit/UIKit.h>
 
-@class Card, Contact, GroupMember;
+@class Card, GroupMember, Request, SearchResult;
+
+typedef enum {
+    UserSynced = 0,
+    UserCreated,
+    UserUpdated,
+    UserDeleted
+} UserSyncStatus;
 
 @interface User : NSManagedObject
 
+@property (nonatomic, retain) NSNumber * userId;
 @property (nonatomic, retain) NSDate * createdAt;
+@property (nonatomic, retain) NSDate * updatedAt;
+
+@property (nonatomic, retain) NSDate *contactUpdated;
+
 @property (nonatomic, retain) NSString * firstName;
 @property (nonatomic, retain) NSString * lastName;
+
+@property (nonatomic, retain) NSString *thumb;
+@property (nonatomic, retain) NSData *thumbData;
+
 @property (nonatomic, retain) NSString * picture;
 @property (nonatomic, retain) NSData * pictureData;
-@property (nonatomic, retain) NSDate * updatedAt;
-@property (nonatomic, retain) NSNumber * userId;
+
+@property (nonatomic, retain) NSNumber *isContact;
+@property (nonatomic, retain) NSNumber *requestSent;
+@property (nonatomic, retain) NSNumber *requestReceived;
+
 @property (nonatomic, retain) NSNumber *contacts;
 @property (nonatomic, retain) NSNumber *mutual;
+
+@property (nonatomic, retain) NSNumber *syncStatus;
+@property (nonatomic, retain) NSNumber *saved;
+@property (nonatomic, retain) NSNumber *savesToPhone;
+
 @property (nonatomic, retain) NSOrderedSet *cards;
-@property (nonatomic, retain) Contact *contact;
 @property (nonatomic, retain) NSSet *groups;
+@property (nonatomic, retain) NSSet *feedItems;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 
@@ -35,6 +59,7 @@
 - (NSString *)firstLetterOfName;
 
 - (UIImage *)cachedImage;
+- (UIImage *)cachedThumb;
 
 @end
 

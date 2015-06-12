@@ -16,7 +16,6 @@ static BOOL syncing = NO;
 
 @implementation Account
 
-@dynamic syncStatus;
 @dynamic email;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {

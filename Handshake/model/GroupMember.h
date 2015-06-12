@@ -14,12 +14,7 @@
 
 @interface GroupMember : NSManagedObject
 
-@property (nonatomic, retain) NSDate * createdAt;
-@property (nonatomic, retain) NSNumber * groupMemberId;
-@property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) Group *group;
 @property (nonatomic, retain) User *user;
-
-- (void)updateFromDictionary:(NSDictionary *)dictionary;
 
 @end
