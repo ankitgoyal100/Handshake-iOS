@@ -87,7 +87,7 @@
             }
         }
         
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"user.formattedName" ascending:YES];
+        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"formattedName" ascending:YES];
         
         self.contacts = [[NSMutableArray alloc] initWithArray:[contacts sortedArrayUsingDescriptors:@[sort]]];
         self.loaded = YES;

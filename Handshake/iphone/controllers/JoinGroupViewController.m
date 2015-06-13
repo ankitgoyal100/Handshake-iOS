@@ -14,6 +14,7 @@
 #import "FeedItem.h"
 #import "GroupServerSync.h"
 #import "FeedItemServerSync.h"
+#import "GroupCodeHelper.h"
 
 @interface JoinGroupViewController () <UIAlertViewDelegate>
 
@@ -27,7 +28,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *field6;
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
-@property (strong, nonatomic) NSString *pasteCode;
 @property (weak, nonatomic) IBOutlet UIButton *pasteButton;
 
 @end
@@ -37,9 +37,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self checkPasteboard];
+    [self checkForCode];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkPasteboard) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkForCode) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -54,26 +54,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)checkPasteboard {
-    // check for any string of length 6 in the clipboard
-    NSMutableCharacterSet *set = [[[NSCharacterSet alphanumericCharacterSet] invertedSet] mutableCopy];
-    NSString *code = [[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""];
-    
-    if ([code length] != 6) {
-        code = nil;
-        
-        [set removeCharactersInString:@"- "];
-        
-        // try to detect code in text
-        for (NSString *text in [[[[UIPasteboard generalPasteboard].string componentsSeparatedByCharactersInSet:set] componentsJoinedByString:@""] componentsSeparatedByString:@" "]) {
-            // if 3 components separated by '-' of length 2 consider it a valid code
-            NSArray *comps = [text componentsSeparatedByString:@"-"];
-            if ([comps count] == 3 && [comps[0] length] == 2 && [comps[1] length] == 2 && [comps[2] length] == 2) {
-                code = [comps componentsJoinedByString:@""];
-                break;
-            }
-        }
-    }
+- (void)checkForCode {
+    NSString *code = [GroupCodeHelper code];
     
     if (code) {
         NSString *formattedCode = [[NSString stringWithFormat:@"%@-%@-%@", [code substringToIndex:2], [code substringWithRange:NSMakeRange(2, 2)], [code substringFromIndex:4]] uppercaseString];
@@ -83,9 +65,7 @@
         
         [self.pasteButton setAttributedTitle:buttonTitle forState:UIControlStateNormal];
         self.pasteButton.hidden = NO;
-        self.pasteCode = code;
     } else {
-        self.pasteCode = nil;
         self.pasteButton.hidden = YES;
     }
 }
@@ -245,7 +225,7 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         self.joinButton.enabled = YES;
         [self.loadingView stopAnimating];
-        [self checkPasteboard];
+        [self checkForCode];
         
         if ([[operation response] statusCode] == 401) {
             // invalidate session
@@ -259,12 +239,13 @@
 }
 
 - (IBAction)paste:(id)sender {
-    self.field1.text = [self.pasteCode substringToIndex:1];
-    self.field2.text = [self.pasteCode substringWithRange:NSMakeRange(1, 1)];
-    self.field3.text = [self.pasteCode substringWithRange:NSMakeRange(2, 1)];
-    self.field4.text = [self.pasteCode substringWithRange:NSMakeRange(3, 1)];
-    self.field5.text = [self.pasteCode substringWithRange:NSMakeRange(4, 1)];
-    self.field6.text = [self.pasteCode substringWithRange:NSMakeRange(5, 1)];
+    NSString *code = [GroupCodeHelper code];
+    self.field1.text = [code substringToIndex:1];
+    self.field2.text = [code substringWithRange:NSMakeRange(1, 1)];
+    self.field3.text = [code substringWithRange:NSMakeRange(2, 1)];
+    self.field4.text = [code substringWithRange:NSMakeRange(3, 1)];
+    self.field5.text = [code substringWithRange:NSMakeRange(4, 1)];
+    self.field6.text = [code substringWithRange:NSMakeRange(5, 1)];
     
     [self checkCode];
     [self.field6 becomeFirstResponder];

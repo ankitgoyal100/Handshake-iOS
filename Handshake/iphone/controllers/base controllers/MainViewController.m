@@ -19,6 +19,13 @@
 #import "UserViewController.h"
 #import "LocationUpdater.h"
 #import "SearchViewController.h"
+#import "GroupCodeHelper.h"
+
+@interface MainViewController()
+
+@property (nonatomic, strong) JoinGroupDialogViewController *groupDialog;
+
+@end
 
 @implementation MainViewController
 
@@ -47,6 +54,16 @@
     
     
     //[[LocationManager sharedManager] startUpdating];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    //[self checkForGroupCode];
 }
 
 - (void)logout:(NSNotification *)notification {
@@ -78,6 +95,38 @@
     }
     
     return YES;
+}
+
+- (void)checkForGroupCode {
+    NSString *code = [GroupCodeHelper code];
+    
+    if (code) {
+        // check for local groups
+        
+        // check with server
+        [[HandshakeClient client] GET:[NSString stringWithFormat:@"/groups/find/%@", code] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Group" bundle:nil];
+            
+            self.groupDialog = [storyboard instantiateInitialViewController];
+            
+            self.groupDialog.groupName = responseObject[@"group"][@"name"];
+            
+            if ([responseObject[@"members"] count] > 0)
+                self.groupDialog.picture1 = responseObject[@"members"][0][@"thumb"];
+            if ([responseObject[@"members"] count] > 1)
+                self.groupDialog.picture2 = responseObject[@"members"][1][@"thumb"];
+            if ([responseObject[@"members"] count] > 2)
+                self.groupDialog.picture3 = responseObject[@"members"][2][@"thumb"];
+            if ([responseObject[@"members"] count] > 3)
+                self.groupDialog.picture4 = responseObject[@"members"][3][@"thumb"];
+            
+            [self.view.window addSubview:self.groupDialog.view];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            if ([[operation response] statusCode] == 404) {
+                
+            }
+        }];
+    }
 }
 
 @end

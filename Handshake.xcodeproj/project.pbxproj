@@ -102,6 +102,9 @@
 		799DD21E1B2B63A10077044C /* FeedItemServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD21D1B2B63A10077044C /* FeedItemServerSync.m */; };
 		799DD2211B2B68D90077044C /* SuggestionsServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2201B2B68D90077044C /* SuggestionsServerSync.m */; };
 		799DD2241B2B87E20077044C /* Group.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2231B2B87E20077044C /* Group.m */; };
+		799DD2261B2B96AD0077044C /* Group.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 799DD2251B2B96AD0077044C /* Group.storyboard */; };
+		799DD2291B2B9A540077044C /* JoinGroupDialogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */; };
+		799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD22B1B2B9A790077044C /* GroupCodeHelper.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
 		79B3FEB719C9150300759F69 /* Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB619C9150300759F69 /* Phone.m */; };
@@ -365,6 +368,11 @@
 		799DD2201B2B68D90077044C /* SuggestionsServerSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SuggestionsServerSync.m; sourceTree = "<group>"; };
 		799DD2221B2B87E20077044C /* Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Group.h; sourceTree = "<group>"; };
 		799DD2231B2B87E20077044C /* Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Group.m; sourceTree = "<group>"; };
+		799DD2251B2B96AD0077044C /* Group.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Group.storyboard; sourceTree = "<group>"; };
+		799DD2271B2B9A540077044C /* JoinGroupDialogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JoinGroupDialogViewController.h; path = groups/JoinGroupDialogViewController.h; sourceTree = "<group>"; };
+		799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JoinGroupDialogViewController.m; path = groups/JoinGroupDialogViewController.m; sourceTree = "<group>"; };
+		799DD22A1B2B9A790077044C /* GroupCodeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupCodeHelper.h; sourceTree = "<group>"; };
+		799DD22B1B2B9A790077044C /* GroupCodeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupCodeHelper.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
 		79B3FEAD19C9150300759F69 /* Address.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Address.m; sourceTree = "<group>"; };
 		79B3FEAF19C9150300759F69 /* Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Email.h; sourceTree = "<group>"; };
@@ -566,6 +574,7 @@
 				7997B7B219E2BC7E00525550 /* Launch.xib */,
 				792801E519C8B36B0075261D /* Supporting Files */,
 				7968660A1ACCB58300CCF0E2 /* Main.storyboard */,
+				799DD2251B2B96AD0077044C /* Group.storyboard */,
 				799DD1F91B28A8700077044C /* Settings.storyboard */,
 				794692281B23B6400093045E /* Start.storyboard */,
 				79C751A71B1DFD8F00DB221C /* Edit.storyboard */,
@@ -656,6 +665,8 @@
 				799DD2021B28EB6A0077044C /* ContactSync.m */,
 				799DD2071B29D78C0077044C /* LocationUpdater.h */,
 				799DD2081B29D78C0077044C /* LocationUpdater.m */,
+				799DD22A1B2B9A790077044C /* GroupCodeHelper.h */,
+				799DD22B1B2B9A790077044C /* GroupCodeHelper.m */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -997,6 +1008,8 @@
 				79B752DA1AFC6CEB007660E5 /* EditGroupViewController.m */,
 				79B752DC1AFD0C70007660E5 /* JoinGroupViewController.h */,
 				79B752DD1AFD0C70007660E5 /* JoinGroupViewController.m */,
+				799DD2271B2B9A540077044C /* JoinGroupDialogViewController.h */,
+				799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */,
 			);
 			name = groups;
 			sourceTree = "<group>";
@@ -1269,6 +1282,7 @@
 				799DD1FA1B28A8700077044C /* Settings.storyboard in Resources */,
 				79C050E619CF650D001BB956 /* PLCameraSheetButton@2x.png in Resources */,
 				792801F619C8B36B0075261D /* Images.xcassets in Resources */,
+				799DD2261B2B96AD0077044C /* Group.storyboard in Resources */,
 				79C050E719CF650D001BB956 /* PLCameraSheetButtonPressed.png in Resources */,
 				79C050EA19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png in Resources */,
 				794692291B23B6400093045E /* Start.storyboard in Resources */,
@@ -1311,6 +1325,7 @@
 				799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */,
 				79C751881B194F0500DB221C /* OptionsCell.m in Sources */,
 				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
+				799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */,
 				795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */,
 				7932B7531AFE94B80011A747 /* RequestsViewController.m in Sources */,
 				795003BD1AE525E0003DD9BF /* EnterAddressCell.m in Sources */,
@@ -1433,6 +1448,7 @@
 				79BD343F1AD4B3FE008079CF /* AddCell.m in Sources */,
 				79BD34541AD84CA6008079CF /* TwitterEditCell.m in Sources */,
 				795003C31AE56FD4003DD9BF /* TwitterEditController.m in Sources */,
+				799DD2291B2B9A540077044C /* JoinGroupDialogViewController.m in Sources */,
 				792803C219C8E5D00075261D /* HandshakeCoreDataStore.m in Sources */,
 				79C7519D1B1CA23300DB221C /* FeedItemCell.m in Sources */,
 				796866041ACCAC0400CCF0E2 /* GroupMember.m in Sources */,

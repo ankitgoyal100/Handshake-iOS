@@ -94,7 +94,7 @@
             [contacts addObject:user];
         }
         
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"user.formattedName" ascending:YES];
+        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"formattedName" ascending:YES];
         
         self.contacts = [contacts sortedArrayUsingDescriptors:@[sort]];
         self.loaded = YES;
