@@ -8,13 +8,28 @@
 
 #import "JoinGroupDialogViewController.h"
 #import "AsyncImageView.h"
+#import "HandshakeSession.h"
+#import "HandshakeClient.h"
+#import "HandshakeCoreDataStore.h"
+#import "Group.h"
+#import "Card.h"
+#import "GroupServerSync.h"
+#import "FeedItemServerSync.h"
 
 @interface JoinGroupDialogViewController ()
+
+@property (strong, nonatomic) IBOutlet UIView *dialogView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *dialogCenter;
+
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
 
 @property (weak, nonatomic) IBOutlet UIView *pictureView;
 @property (weak, nonatomic) IBOutlet UILabel *promptLabel;
 
 @property (strong, nonatomic) IBOutlet UIButton *cancelButton;
+
+@property (strong, nonatomic) IBOutlet UIButton *joinButton;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *joinLoader;
 
 @property (nonatomic, strong) UIView *circleView;
 
@@ -25,34 +40,57 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.promptLabel.text = [NSString stringWithFormat:@"Join %@?", self.groupName];
-    
-    float circleSize = self.pictureView.frame.size.height;
-    
-    self.circleView = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - circleSize) / 2, 16, circleSize, circleSize)];
-    self.circleView.layer.masksToBounds = YES;
-    self.circleView.layer.cornerRadius = circleSize / 2;
-    self.circleView.userInteractionEnabled = NO;
-    self.circleView.layer.borderWidth = 0.5;
-    self.circleView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
-    
-    if (!self.picture2) {
-        [self.circleView addSubview:[self createViewWithFrame:self.circleView.bounds picture:self.picture1]];
-    } else if (!self.picture3) {
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) picture:self.picture1]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, 0, circleSize / 2, circleSize) picture:self.picture2]];
-    } else if (!self.picture4) {
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) picture:self.picture1]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) picture:self.picture2]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:self.picture3]];
-    } else {
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, -0.5, circleSize / 2, circleSize / 2) picture:self.picture1]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) picture:self.picture2]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:self.picture3]];
-        [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:self.picture4]];
-    }
-    
-    [self.pictureView addSubview:self.circleView];
+    [self checkCode];
+}
+
+- (void)checkCode {
+    // check with server
+    [[HandshakeClient client] GET:[NSString stringWithFormat:@"/groups/find/%@", self.groupCode] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        self.promptLabel.text = [NSString stringWithFormat:@"Want to join %@?", responseObject[@"group"][@"name"]];
+        
+        int numMembers = [responseObject[@"group"][@"members"] count];
+        
+        if (self.circleView)
+            [self.circleView removeFromSuperview];
+        
+        float circleSize = self.pictureView.frame.size.height;
+        
+        self.circleView = [[UIView alloc] initWithFrame:CGRectMake((self.pictureView.frame.size.width - circleSize) / 2, 0, circleSize, circleSize)];
+        self.circleView.layer.masksToBounds = YES;
+        self.circleView.layer.cornerRadius = circleSize / 2;
+        self.circleView.userInteractionEnabled = NO;
+        self.circleView.layer.borderWidth = 0.5;
+        self.circleView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
+        
+        if (numMembers == 1) {
+            [self.circleView addSubview:[self createViewWithFrame:self.circleView.bounds picture:responseObject[@"group"][@"members"][0][@"thumb"]]];
+        } else if (numMembers == 2) {
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) picture:responseObject[@"group"][@"members"][0][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, 0, circleSize / 2, circleSize) picture:responseObject[@"group"][@"members"][1][@"thumb"]]];
+        } else if (numMembers == 3) {
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, 0, circleSize / 2, circleSize) picture:responseObject[@"group"][@"members"][0][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][1][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][2][@"thumb"]]];
+        } else {
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, -0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][0][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, -0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][1][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(-0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][2][@"thumb"]]];
+            [self.circleView addSubview:[self createViewWithFrame:CGRectMake(circleSize / 2 + 0.5, circleSize / 2 + 0.5, circleSize / 2, circleSize / 2) picture:responseObject[@"group"][@"members"][3][@"thumb"]]];
+        }
+        
+        [self.pictureView addSubview:self.circleView];
+        
+        [self.loadingView stopAnimating];
+        [UIView animateWithDuration:0.3 animations:^{
+            self.dialogCenter.constant = 10;
+            self.dialogView.alpha = 1;
+            
+            [self.view layoutIfNeeded];
+        }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.view removeFromSuperview];
+    }];
 }
 
 - (AsyncImageView *)createViewWithFrame:(CGRect)frame picture:(NSString *)picture {
@@ -62,20 +100,64 @@
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     
-    imageView.imageURL = [NSURL URLWithString:picture];
+    if (picture)
+        imageView.imageURL = [NSURL URLWithString:picture];
+    else
+        imageView.image = [UIImage imageNamed:@"default_picture"];
     imageView.userInteractionEnabled = NO;
     
     return imageView;
 }
 
 - (IBAction)cancel:(id)sender {
-    NSLog(@"%@", self);
-    NSLog(@"%@", self.view);
-    [self.view removeFromSuperview];
+    [UIView animateWithDuration:0.2 animations:^{
+        self.view.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self.view removeFromSuperview];
+    }];
 }
 
 - (IBAction)join:(id)sender {
-    [self cancel:nil];
+    self.joinButton.hidden = YES;
+    [self.joinLoader startAnimating];
+    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
+    params[@"code"] = self.groupCode;
+    params[@"card_ids"] = @[((Card *)[[HandshakeSession currentSession] account].cards[0]).cardId];
+    [[HandshakeClient client] POST:@"/groups/join" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // attempt to find group
+        
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
+        
+        request.fetchLimit = 1;
+        request.predicate = [NSPredicate predicateWithFormat:@"groupId == %@", responseObject[@"group"][@"id"]];
+        
+        __block NSArray *results;
+        
+        [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
+            NSError *error;
+            results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
+        }];
+        
+        Group *group;
+        
+        if (results && [results count] == 1) {
+            group = results[0];
+        } else {
+            group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
+        }
+        
+        [group updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"group"]]];
+        group.syncStatus = [NSNumber numberWithInt:GroupSynced];
+        
+        [GroupServerSync syncWithCompletionBlock:^{
+            [FeedItemServerSync sync];
+        }];
+        
+        [self cancel:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self cancel:nil];
+    }];
 }
 
 @end

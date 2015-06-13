@@ -170,7 +170,6 @@ static HandshakeSession *session = nil;
 }
 
 - (void)invalidate {
-    NSLog(@"invalidated");
     [HandshakeSession destroySession];
     [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_INVALID object:nil];
     

@@ -31,7 +31,7 @@
         }
     }
     
-    return code;
+    return [code lowercaseString];
 }
 
 @end

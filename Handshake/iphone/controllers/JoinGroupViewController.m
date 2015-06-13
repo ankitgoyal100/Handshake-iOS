@@ -239,7 +239,7 @@
 }
 
 - (IBAction)paste:(id)sender {
-    NSString *code = [GroupCodeHelper code];
+    NSString *code = [[GroupCodeHelper code] uppercaseString];
     self.field1.text = [code substringToIndex:1];
     self.field2.text = [code substringWithRange:NSMakeRange(1, 1)];
     self.field3.text = [code substringWithRange:NSMakeRange(2, 1)];

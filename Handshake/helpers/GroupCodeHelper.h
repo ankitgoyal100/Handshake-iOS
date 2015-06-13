@@ -13,6 +13,4 @@
 
 + (NSString *)code;
 
-+ (void)checkWithView:(UIView *)view;
-
 @end

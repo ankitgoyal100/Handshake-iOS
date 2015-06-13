@@ -10,12 +10,6 @@
 
 @interface JoinGroupDialogViewController : UIViewController
 
-@property (nonatomic, strong) NSString *groupName;
 @property (nonatomic, strong) NSString *groupCode;
-
-@property (nonatomic, strong) NSString *picture1;
-@property (nonatomic, strong) NSString *picture2;
-@property (nonatomic, strong) NSString *picture3;
-@property (nonatomic, strong) NSString *picture4;
 
 @end
