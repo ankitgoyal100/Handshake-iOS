@@ -123,18 +123,18 @@
     
     cell.pictureView.image = nil;
     if (item.user) {
-        if ([item.user cachedImage])
-            cell.pictureView.image = [item.user cachedImage];
-        else if (item.user.picture)
-            cell.pictureView.imageURL = [NSURL URLWithString:item.user.picture];
+        if ([item.user cachedThumb])
+            cell.pictureView.image = [item.user cachedThumb];
+        else if (item.user.thumb)
+            cell.pictureView.imageURL = [NSURL URLWithString:item.user.thumb];
         else
             cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
     } else {
         Account *account = [[HandshakeSession currentSession] account];
-        if ([account cachedImage])
-            cell.pictureView.image = [account cachedImage];
-        else if (account.picture)
-            cell.pictureView.imageURL = [NSURL URLWithString:account.picture];
+        if ([account cachedThumb])
+            cell.pictureView.image = [account cachedThumb];
+        else if (account.thumb)
+            cell.pictureView.imageURL = [NSURL URLWithString:account.thumb];
         else
             cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
     }

@@ -189,39 +189,17 @@
     params[@"code"] = [self code];
     params[@"card_ids"] = @[((Card *)[[HandshakeSession currentSession] account].cards[0]).cardId];
     [[HandshakeClient client] POST:@"/groups/join" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // attempt to find group
-        
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
-        
-        request.fetchLimit = 1;
-        request.predicate = [NSPredicate predicateWithFormat:@"groupId == %@", responseObject[@"group"][@"id"]];
-        
-        __block NSArray *results;
-        
-        [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-            NSError *error;
-            results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
-        }];
-        
-        Group *group;
-        
-        if (results && [results count] == 1) {
-            group = results[0];
-        } else {
-            group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
-        }
-        
-        [group updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"group"]]];
-        group.syncStatus = [NSNumber numberWithInt:GroupSynced];
-        
-        [GroupServerSync syncWithCompletionBlock:^{
+        [GroupServerSync cacheGroups:@[responseObject[@"group"]] completionsBlock:^(NSArray *groups) {
+            Group *group = groups[0];
+            
+            [GroupServerSync loadGroupMembers:group completionBlock:^{
+                if (self.delegate && [self.delegate respondsToSelector:@selector(groupJoined:)])
+                    [self.delegate groupJoined:group];
+                
+                [self cancel:nil];
+            }];
             [FeedItemServerSync sync];
         }];
-        
-        if (self.delegate && [self.delegate respondsToSelector:@selector(groupJoined:)])
-            [self.delegate groupJoined:group];
-        
-        [self cancel:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         self.joinButton.enabled = YES;
         [self.loadingView stopAnimating];

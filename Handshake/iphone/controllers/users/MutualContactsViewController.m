@@ -15,6 +15,7 @@
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
 #import "User.h"
+#import "UserServerSync.h"
 
 @interface MutualContactsViewController ()
 
@@ -64,34 +65,11 @@
     [[HandshakeClient client] GET:[NSString stringWithFormat:@"/users/%@/mutual", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (![self.navigationController.viewControllers containsObject:self]) return;
         
-        NSMutableArray *contacts = [[NSMutableArray alloc] init];
-        
-        NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
-        
-        for (NSDictionary *dict in responseObject[@"mutual"]) {
-            // try to get contact
-            
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-            
-            request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", dict[@"id"]];
-            request.fetchLimit = 1;
-            
-            __block NSArray *results;
-            
-            [objectContext performBlockAndWait:^{
-                results = [objectContext executeFetchRequest:request error:nil];
-            }];
-            
-            if (results && [results count] == 1) {
-                [contacts addObject:results[0]];
-            }
-        }
-        
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"formattedName" ascending:YES];
-        
-        self.contacts = [[NSMutableArray alloc] initWithArray:[contacts sortedArrayUsingDescriptors:@[sort]]];
-        self.loaded = YES;
-        [self.tableView reloadData];
+        [UserServerSync cacheUsers:responseObject[@"mutual"] completionBlock:^(NSArray *users) {
+            self.contacts = [[users sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"firstName" ascending:YES]]] mutableCopy];
+            self.loaded = YES;
+            [self.tableView reloadData];
+        }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401)
             [[HandshakeSession currentSession] invalidate];

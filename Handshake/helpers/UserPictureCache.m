@@ -11,6 +11,7 @@
 #import "AsyncImageView.h"
 #import "HandshakeCoreDataStore.h"
 #import "User.h"
+#import "HandshakeSession.h"
 
 @implementation UserPictureCache
 
@@ -25,9 +26,16 @@
 - (void)imageLoaded:(NSNotification *)notification {
     // run in background thread
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        NSString *urlString = [(NSURL *)[notification userInfo][AsyncImageURLKey] absoluteString];
-        
+    NSString *urlString = [(NSURL *)[notification userInfo][AsyncImageURLKey] absoluteString];
+    
+    // cache account pics
+    User *account = [[HandshakeSession currentSession] account];
+    if ([account.picture isEqualToString:urlString])
+        account.pictureData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 0.0);
+    if ([account.thumb isEqualToString:urlString])
+        account.thumbData = UIImageJPEGRepresentation([notification userInfo][AsyncImageImageKey], 0.0);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // cache pictures
         
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];

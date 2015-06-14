@@ -31,6 +31,8 @@ typedef enum {
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 
++ (Group *)findOrCreateById:(NSNumber *)groupId inContext:(NSManagedObjectContext *)context;
+
 @end
 
 @interface Group (CoreDataGeneratedAccessors)

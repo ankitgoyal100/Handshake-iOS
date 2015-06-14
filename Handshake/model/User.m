@@ -198,6 +198,25 @@
         return @"#";
 }
 
++ (User *)findOrCreateById:(NSNumber *)userId inContext:(NSManagedObjectContext *)context {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+    
+    request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", userId];
+    request.fetchLimit = 1;
+    
+    __block NSArray *results;
+    
+    [context performBlockAndWait:^{
+        results = [context executeFetchRequest:request error:nil];
+    }];
+    
+    if (results && [results count] == 1) return results[0];
+    
+    User *user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+    user.userId = userId;
+    return user;
+}
+
 /// FIXES
 
 - (void)addCardsObject:(Card *)value {

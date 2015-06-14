@@ -61,6 +61,8 @@ typedef enum {
 - (UIImage *)cachedImage;
 - (UIImage *)cachedThumb;
 
++ (User *)findOrCreateById:(NSNumber *)userId inContext:(NSManagedObjectContext *)context;
+
 @end
 
 @interface User (CoreDataGeneratedAccessors)

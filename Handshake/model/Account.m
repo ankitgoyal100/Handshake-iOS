@@ -12,8 +12,6 @@
 #import "HandshakeCoreDataStore.h"
 #import "DateConverter.h"
 
-static BOOL syncing = NO;
-
 @implementation Account
 
 @dynamic email;
@@ -25,8 +23,15 @@ static BOOL syncing = NO;
     self.email = dictionary[@"email"];
     self.firstName = dictionary[@"first_name"];
     self.lastName = dictionary[@"last_name"];
+    
+    // if no thumb or thumb is different - update
+    if (!dictionary[@"thumb"] || !self.thumb || ![dictionary[@"thumb"] isEqualToString:self.thumb]) {
+        self.thumb = dictionary[@"thumb"];
+        self.thumbData = nil;
+    }
+    
     // if no picture or picture is different - update
-    if (!dictionary[@"picture"] || (dictionary[@"picture"] && !self.picture)) {
+    if (!dictionary[@"picture"] || !self.picture || ![dictionary[@"picture"] isEqualToString:self.picture]) {
         self.picture = dictionary[@"picture"];
         self.pictureData = nil;
     }
@@ -47,11 +52,6 @@ static BOOL syncing = NO;
 }
 
 + (void)syncWithSuccessBlock:(void (^)())successBlock {
-    if (syncing)
-        return;
-    
-    syncing = YES;
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         // get account
         
@@ -60,7 +60,6 @@ static BOOL syncing = NO;
         if (!account) {
             // no current account found - stop sync
             dispatch_async(dispatch_get_main_queue(), ^{
-                syncing = NO;
                 if (successBlock) successBlock();
             });
             return;
@@ -84,7 +83,6 @@ static BOOL syncing = NO;
         if (![results count]) {
             // no current account found - stop sync
             dispatch_async(dispatch_get_main_queue(), ^{
-                syncing = NO;
                 if (successBlock) successBlock();
             });
             return;
@@ -124,12 +122,10 @@ static BOOL syncing = NO;
                     [[HandshakeCoreDataStore defaultStore] saveMainContext];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        syncing = NO;
                         if (successBlock) successBlock();
                     });
                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        syncing = NO;
                         if ([[operation response] statusCode] == 401) {
                             [[HandshakeSession currentSession] invalidate];
                         } else if ([[operation response] statusCode] != 422) {
@@ -150,13 +146,11 @@ static BOOL syncing = NO;
                 [[HandshakeCoreDataStore defaultStore] saveMainContext];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    syncing = NO;
                     if (successBlock) successBlock();
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                syncing = NO;
                 if ([[operation response] statusCode] == 401) {
                     [[HandshakeSession currentSession] invalidate];
                 } else if ([[operation response] statusCode] != 422) {

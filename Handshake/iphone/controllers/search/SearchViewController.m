@@ -17,6 +17,7 @@
 #import "UserRequestCell.h"
 #import "ContactCell.h"
 #import "UserViewController.h"
+#import "UserServerSync.h"
 
 @interface SearchViewController () <UITextFieldDelegate, NSFetchedResultsControllerDelegate>
 
@@ -290,43 +291,18 @@
     params[@"q"] = searchString;
     [[HandshakeClient client] GET:@"/search" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (![self.navigationController.viewControllers containsObject:self]) return; // user cancelled
-        if (self.serverResults && !self.serverResults[searchString]) {
-            NSMutableArray *searchResults = [[NSMutableArray alloc] init];
+        
+        if (!self.serverResults[searchString]) {
+            // remove results that are contacts
+            NSMutableArray *results = [[NSMutableArray alloc] init];
+            for (NSDictionary *dict in responseObject[@"results"])
+                if (![dict[@"is_contact"] boolValue]) [results addObject:dict];
             
-            for (NSDictionary *dict in responseObject[@"results"]) {
-                NSDictionary *resultDict = [HandshakeCoreDataStore removeNullsFromDictionary:dict];
-                
-                if ([resultDict[@"is_contact"] boolValue]) continue; // skip results with contacts
-                
-                // find or create User
-                
-                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-                request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", resultDict[@"id"]];
-                request.fetchLimit = 1;
-                
-                __block NSArray *results;
-                
-                [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-                    NSError *error;
-                    results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
-                }];
-                
-                User *user;
-                
-                if (results && [results count] == 1) {
-                    user = results[0];
-                } else {
-                    user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
-                }
-                
-                [user updateFromDictionary:resultDict];
-                
-                [searchResults addObject:user];
-            }
-            
-            self.serverResults[searchString] = searchResults;
-            if ([self.searchBar.text isEqualToString:searchString])
-                [self.tableView reloadData];
+            [UserServerSync cacheUsers:results completionBlock:^(NSArray *users) {
+                self.serverResults[searchString] = users;
+                if ([self.searchBar.text isEqualToString:searchString])
+                    [self.tableView reloadData];
+            }];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401)

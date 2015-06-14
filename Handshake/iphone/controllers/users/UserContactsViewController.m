@@ -17,6 +17,7 @@
 #import "SearchResultCell.h"
 #import "UIControl+Blocks.h"
 #import "UserViewController.h"
+#import "UserServerSync.h"
 
 @interface UserContactsViewController ()
 
@@ -63,42 +64,11 @@
     [[HandshakeClient client] GET:[NSString stringWithFormat:@"/users/%@/contacts", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (![self.navigationController.viewControllers containsObject:self]) return;
         
-        NSMutableArray *contacts = [[NSMutableArray alloc] init];
-        
-        for (NSDictionary *dict in responseObject[@"contacts"]) {
-            NSDictionary *resultDict = [HandshakeCoreDataStore removeNullsFromDictionary:dict];
-            
-            // find or create SearchResult
-            
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-            request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", resultDict[@"id"]];
-            request.fetchLimit = 1;
-            
-            __block NSArray *results;
-            
-            [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] performBlockAndWait:^{
-                NSError *error;
-                results = [[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] executeFetchRequest:request error:&error];
-            }];
-            
-            User *user;
-            
-            if (results && [results count] == 1) {
-                user = results[0];
-            } else {
-                user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
-            }
-            
-            [user updateFromDictionary:resultDict];
-            
-            [contacts addObject:user];
-        }
-        
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"formattedName" ascending:YES];
-        
-        self.contacts = [contacts sortedArrayUsingDescriptors:@[sort]];
-        self.loaded = YES;
-        [self.tableView reloadData];
+        [UserServerSync cacheUsers:responseObject[@"contacts"] completionBlock:^(NSArray *users) {
+            self.contacts = [users sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"firstName" ascending:YES]]];
+            self.loaded = YES;
+            [self.tableView reloadData];
+        }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401)
             [[HandshakeSession currentSession] invalidate];

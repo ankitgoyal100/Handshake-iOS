@@ -51,7 +51,6 @@
 		792803BC19C8B4580075261D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792803BA19C8B4580075261D /* Security.framework */; };
 		792803BF19C8B48F0075261D /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792803BE19C8B48F0075261D /* FacebookSDK.framework */; };
 		792803C219C8E5D00075261D /* HandshakeCoreDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C119C8E5D00075261D /* HandshakeCoreDataStore.m */; };
-		792803C519C8EF390075261D /* HandshakeSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C419C8EF390075261D /* HandshakeSyncManager.m */; };
 		792803C819C8F3150075261D /* HandshakeSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 792803C719C8F3150075261D /* HandshakeSession.m */; };
 		7932B7531AFE94B80011A747 /* RequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7521AFE94B80011A747 /* RequestsViewController.m */; };
 		7932B7571AFF01390011A747 /* UserRequestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B7561AFF01390011A747 /* UserRequestCell.m */; };
@@ -105,6 +104,8 @@
 		799DD2261B2B96AD0077044C /* Group.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 799DD2251B2B96AD0077044C /* Group.storyboard */; };
 		799DD2291B2B9A540077044C /* JoinGroupDialogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */; };
 		799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD22B1B2B9A790077044C /* GroupCodeHelper.m */; };
+		799DD2321B2D0A940077044C /* CardServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2311B2D0A940077044C /* CardServerSync.m */; };
+		799DD2351B2DD9590077044C /* UserServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2341B2DD9590077044C /* UserServerSync.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
 		79B3FEB719C9150300759F69 /* Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB619C9150300759F69 /* Phone.m */; };
@@ -274,8 +275,6 @@
 		792803BE19C8B48F0075261D /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		792803C019C8E5D00075261D /* HandshakeCoreDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeCoreDataStore.h; sourceTree = "<group>"; };
 		792803C119C8E5D00075261D /* HandshakeCoreDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeCoreDataStore.m; sourceTree = "<group>"; };
-		792803C319C8EF390075261D /* HandshakeSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeSyncManager.h; sourceTree = "<group>"; };
-		792803C419C8EF390075261D /* HandshakeSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSyncManager.m; sourceTree = "<group>"; };
 		792803C619C8F3150075261D /* HandshakeSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandshakeSession.h; sourceTree = "<group>"; };
 		792803C719C8F3150075261D /* HandshakeSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandshakeSession.m; sourceTree = "<group>"; };
 		7932B7511AFE94B80011A747 /* RequestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestsViewController.h; path = requests/RequestsViewController.h; sourceTree = "<group>"; };
@@ -373,6 +372,10 @@
 		799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JoinGroupDialogViewController.m; path = groups/JoinGroupDialogViewController.m; sourceTree = "<group>"; };
 		799DD22A1B2B9A790077044C /* GroupCodeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupCodeHelper.h; sourceTree = "<group>"; };
 		799DD22B1B2B9A790077044C /* GroupCodeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupCodeHelper.m; sourceTree = "<group>"; };
+		799DD2301B2D0A940077044C /* CardServerSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardServerSync.h; sourceTree = "<group>"; };
+		799DD2311B2D0A940077044C /* CardServerSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardServerSync.m; sourceTree = "<group>"; };
+		799DD2331B2DD9590077044C /* UserServerSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserServerSync.h; sourceTree = "<group>"; };
+		799DD2341B2DD9590077044C /* UserServerSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserServerSync.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
 		79B3FEAD19C9150300759F69 /* Address.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Address.m; sourceTree = "<group>"; };
 		79B3FEAF19C9150300759F69 /* Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Email.h; sourceTree = "<group>"; };
@@ -790,8 +793,6 @@
 				792802E219C8B3C40075261D /* helpers */,
 				792803C019C8E5D00075261D /* HandshakeCoreDataStore.h */,
 				792803C119C8E5D00075261D /* HandshakeCoreDataStore.m */,
-				792803C319C8EF390075261D /* HandshakeSyncManager.h */,
-				792803C419C8EF390075261D /* HandshakeSyncManager.m */,
 				79B3FEBE19C9155900759F69 /* HandshakeClient.h */,
 				79B3FEBF19C9155900759F69 /* HandshakeClient.m */,
 				792803C619C8F3150075261D /* HandshakeSession.h */,
@@ -826,6 +827,8 @@
 			children = (
 				792802E319C8B3C40075261D /* DateConverter.h */,
 				792802E419C8B3C40075261D /* DateConverter.m */,
+				799DD2301B2D0A940077044C /* CardServerSync.h */,
+				799DD2311B2D0A940077044C /* CardServerSync.m */,
 				799DD2131B2B4C100077044C /* RequestServerSync.h */,
 				799DD2141B2B4C100077044C /* RequestServerSync.m */,
 				799DD2161B2B54410077044C /* ContactServerSync.h */,
@@ -836,6 +839,8 @@
 				799DD21D1B2B63A10077044C /* FeedItemServerSync.m */,
 				799DD21F1B2B68D90077044C /* SuggestionsServerSync.h */,
 				799DD2201B2B68D90077044C /* SuggestionsServerSync.m */,
+				799DD2331B2DD9590077044C /* UserServerSync.h */,
+				799DD2341B2DD9590077044C /* UserServerSync.m */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -1320,6 +1325,7 @@
 				79D46C7E19D22D4F00C52FEE /* STTwitterAppOnly.m in Sources */,
 				799DD1F81B27DB180077044C /* SnapchatEditController.m in Sources */,
 				79C751851B1394B800DB221C /* ContactsCell.m in Sources */,
+				799DD2321B2D0A940077044C /* CardServerSync.m in Sources */,
 				799DD21B1B2B5FB50077044C /* GroupServerSync.m in Sources */,
 				7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */,
 				799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */,
@@ -1336,11 +1342,11 @@
 				79B3FEAE19C9150300759F69 /* Address.m in Sources */,
 				79B752C91AF81545007660E5 /* GroupView.m in Sources */,
 				799DD1E91B263A130077044C /* MutualContactsViewController.m in Sources */,
+				799DD2351B2DD9590077044C /* UserServerSync.m in Sources */,
 				799DD1F21B27CC160077044C /* SocialCell.m in Sources */,
 				79766C971AE038AC00C5CA3D /* PhoneNumberCell.m in Sources */,
 				79BD344E1AD84C85008079CF /* AddressEditCell.m in Sources */,
 				79B3FEBD19C9150400759F69 /* Social.m in Sources */,
-				792803C519C8EF390075261D /* HandshakeSyncManager.m in Sources */,
 				7928035619C8B3C40075261D /* LogInViewController.m in Sources */,
 				7928033919C8B3C40075261D /* UINavigationItem+Additions.m in Sources */,
 				7928033419C8B3C40075261D /* AsyncImageView.m in Sources */,

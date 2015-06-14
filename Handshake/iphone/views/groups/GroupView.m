@@ -191,7 +191,7 @@
     else if (user.picture && [user.picture length] > 0)
         imageView.imageURL = [NSURL URLWithString:user.picture];
     else
-        imageView.image = [UIImage imageNamed:@"default.png"];
+        imageView.image = [UIImage imageNamed:@"default_picture"];
     imageView.userInteractionEnabled = NO;
     
     return imageView;

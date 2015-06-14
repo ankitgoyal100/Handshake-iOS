@@ -13,6 +13,7 @@
 #import "DateConverter.h"
 #import "User.h"
 #import "GroupMember.h"
+#import "UserServerSync.h"
 
 @implementation Group
 
@@ -31,37 +32,25 @@
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
     self.name = dictionary[@"name"];
     self.code = dictionary[@"code"];
+}
+
++ (Group *)findOrCreateById:(NSNumber *)groupId inContext:(NSManagedObjectContext *)context {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
     
-    [self removeMembers:self.members];
+    request.predicate = [NSPredicate predicateWithFormat:@"groupId == %@", groupId];
+    request.fetchLimit = 1;
     
-    for (NSDictionary *memberDict in dictionary[@"members"]) {
-        GroupMember *member = [[GroupMember alloc] initWithEntity:[NSEntityDescription entityForName:@"GroupMember" inManagedObjectContext:self.managedObjectContext] insertIntoManagedObjectContext:self.managedObjectContext];
-        
-        // find or create User
-        
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-        
-        request.predicate = [NSPredicate predicateWithFormat:@"userId == %@", memberDict[@"id"]];
-        request.fetchLimit = 1;
-        
-        __block NSArray *results;
-        
-        [self.managedObjectContext performBlockAndWait:^{
-            results = [self.managedObjectContext executeFetchRequest:request error:nil];
-        }];
-        
-        User *user;
-        
-        if (results && [results count] == 1)
-            user = results[0];
-        else
-            user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:self.managedObjectContext] insertIntoManagedObjectContext:self.managedObjectContext];
-        
-        [user updateFromDictionary:memberDict];
-        member.user = user;
-        
-        [self addMembersObject:member];
-    }
+    __block NSArray *results;
+    
+    [context performBlockAndWait:^{
+        results = [context executeFetchRequest:request error:nil];
+    }];
+    
+    if (results && [results count] == 1) return results[0];
+    
+    Group *group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+    group.groupId = groupId;
+    return group;
 }
 
 /// FIXES

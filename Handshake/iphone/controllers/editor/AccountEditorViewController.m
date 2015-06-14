@@ -37,6 +37,7 @@
 #import "InstagramEditController.h"
 #import "SnapchatEditController.h"
 #import "FacebookHelper.h"
+#import "CardServerSync.h"
 
 @interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate>
 
@@ -722,7 +723,7 @@
     
     // sync
     [Account sync];
-    [Card sync];
+    [CardServerSync sync];
     
     [self cancel:nil];
 }

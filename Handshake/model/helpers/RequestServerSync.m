@@ -11,6 +11,8 @@
 #import "HandshakeSession.h"
 #import "HandshakeClient.h"
 #import "Card.h"
+#import "FeedItemServerSync.h"
+#import "UserServerSync.h"
 
 @implementation RequestServerSync
 
@@ -19,63 +21,62 @@
 }
 
 + (void)syncWithCompletionBlock:(void (^)())completionBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // delete all old requestees
-        
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-        
-        request.predicate = [NSPredicate predicateWithFormat:@"requestReceived == %@", @(YES)];
-        
-        __block NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
-        
-        __block NSArray *results;
-        
-        [objectContext performBlockAndWait:^{
-            NSError *error;
-            results = [objectContext executeFetchRequest:request error:&error];
+    [[HandshakeClient client] GET:@"/requests" parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [UserServerSync cacheUsers:responseObject[@"requests"] completionBlock:^(NSArray *users) {
+            // update old requestees
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                // get list of ids
+                NSMutableArray *userIds = [[NSMutableArray alloc] init];
+                for (NSDictionary *dict in responseObject[@"requests"])
+                    [userIds addObject:dict[@"id"]];
+                
+                NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+                
+                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+                request.predicate = [NSPredicate predicateWithFormat:@"requestReceived == %@ AND !(userId IN %@)", @(YES), userIds];
+                
+                __block NSArray *results;
+                
+                [objectContext performBlockAndWait:^{
+                    results = [objectContext executeFetchRequest:request error:nil];
+                }];
+                
+                if (!results) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (completionBlock) completionBlock();
+                    });
+                    return;
+                }
+                
+                // set requestReceived to NO
+                for (User *user in results)
+                    user.requestReceived = @(NO);
+                
+                [objectContext performBlockAndWait:^{
+                    [objectContext save:nil];
+                }];
+                [[HandshakeCoreDataStore defaultStore] saveMainContext];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completionBlock) completionBlock();
+                });
+            });
         }];
-        
-        if (!results) {
-            // sync fucked up - end
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if ([[operation response] statusCode] == 401) {
+            // invalidate session
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[HandshakeSession currentSession] invalidate];
+            });
+        } else {
+            // sync failed
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) completionBlock();
             });
         }
-        
-        for (User *user in results)
-            [objectContext deleteObject:user];
-        
-        // get new requests
-        
-        [[HandshakeClient client] GET:@"/requests" parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            for (NSDictionary *userDict in responseObject[@"requests"]) {
-                User *user = [[User alloc] initWithEntity:[NSEntityDescription entityForName:@"User" inManagedObjectContext:objectContext] insertIntoManagedObjectContext:objectContext];
-                [user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:userDict]];
-            }
-            
-            // save
-            [objectContext performBlockAndWait:^{
-                [objectContext save:nil];
-            }];
-            [[HandshakeCoreDataStore defaultStore] saveMainContext];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (completionBlock) completionBlock();
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            if ([[operation response] statusCode] == 401) {
-                // invalidate session
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[HandshakeSession currentSession] invalidate];
-                });
-            } else {
-                // sync failed
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (completionBlock) completionBlock();
-                });
-            }
-        }];
-    });
+    }];
 }
 
 + (void)sendRequest:(User *)user successBlock:(void (^)(User *))successBlock failedBlock:(void (^)())failedBlock {
@@ -116,6 +117,8 @@
     [[HandshakeClient client] POST:[NSString stringWithFormat:@"/users/%@/accept", user.userId] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"user"]]];
         if (successBlock) successBlock(user);
+        
+        [FeedItemServerSync sync];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         user.isContact = @(NO);
         user.requestReceived = @(YES);

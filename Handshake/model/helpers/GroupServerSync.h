@@ -14,6 +14,9 @@
 + (void)sync;
 + (void)syncWithCompletionBlock:(void (^)())completionBlock;
 
++ (void)cacheGroups:(NSArray *)jsonArray completionsBlock:(void (^)(NSArray *groups))completionBlock;
++ (void)loadGroupMembers:(Group *)group completionBlock:(void (^)())completionBlock;
+
 + (void)deleteGroup:(Group *)group;
 
 @end

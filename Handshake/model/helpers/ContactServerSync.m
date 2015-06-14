@@ -13,6 +13,7 @@
 #import "ContactSync.h"
 #import "DateConverter.h"
 #import "FeedItem.h"
+#import "UserServerSync.h"
 
 @implementation ContactServerSync
 
@@ -21,7 +22,7 @@
 }
 
 + (void)syncWithCompletionBlock:(void (^)())completionBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // get most recent Contact
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
         request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@", @(YES)];
@@ -115,89 +116,82 @@
 }
 
 + (void)syncPage:(int)page fromDate:(NSDate *)date finishedBlock:(void (^)())finishedBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
-        params[@"page"] = [[NSNumber numberWithInt:page] stringValue];
-        if (date)
-            params[@"since_date"] = [DateConverter convertToString:date];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"contacts"] absoluteString] parameters:params error:nil]];
-        operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-        operation.responseSerializer = [HandshakeClient client].responseSerializer;
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            // map objects to ids
-            NSMutableDictionary *contacts = [[NSMutableDictionary alloc] init];
-            for (NSDictionary *contactDict in responseObject[@"contacts"]) {
-                contacts[contactDict[@"id"]] = contactDict;
-            }
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
+    params[@"page"] = [[NSNumber numberWithInt:page] stringValue];
+    if (date)
+        params[@"since_date"] = [DateConverter convertToString:date];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[HandshakeClient client].requestSerializer requestWithMethod:@"GET" URLString:[[[HandshakeClient client].baseURL URLByAppendingPathComponent:@"contacts"] absoluteString] parameters:params error:nil]];
+    operation.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    operation.responseSerializer = [HandshakeClient client].responseSerializer;
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // map objects to ids
+        NSMutableDictionary *contacts = [[NSMutableDictionary alloc] init];
+        for (NSDictionary *contactDict in responseObject[@"contacts"]) {
+            contacts[contactDict[@"id"]] = contactDict;
+        }
+        
+        [UserServerSync cacheUsers:responseObject[@"contacts"] completionBlock:^(NSArray *users) {
+            // go into background thread
             
-            // request contacts with ids
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
-            
-            request.predicate = [NSPredicate predicateWithFormat:@"%K IN %@", @"userId", [contacts allKeys]];
-            
-            __block NSArray *results;
-            
-            __block NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
-            
-            [objectContext performBlockAndWait:^{
-                NSError *error;
-                results = [objectContext executeFetchRequest:request error:&error];
-            }];
-            
-            if (!results) {
-                if (finishedBlock) finishedBlock();
-                return;
-            }
-            
-            for (User *contact in results) {
-                // update/delete contact and remove from list
-                NSDictionary *contactDict = contacts[contact.userId];
-                [contacts removeObjectForKey:contact.userId];
-                
-                if ([contact.syncStatus intValue] != UserDeleted) {
-                    // update contact
-                    [contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:contactDict]];
-                    contact.contactUpdated = [DateConverter convertToDate:contactDict[@"contact_updated"]];
-                    contact.syncStatus = @(UserSynced);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                if (!users) {
+                    if (finishedBlock) finishedBlock();
+                    return;
                 }
-            }
-            
-            // all left over are new contacts unless they are deleted
-            for (NSNumber *contactId in [contacts allKeys]) {
-                if (![contacts[contactId][@"is_contact"] boolValue]) continue;
                 
-                NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:objectContext];
-                User *contact = [[User alloc] initWithEntity:entity insertIntoManagedObjectContext:objectContext];
+                // get users in background context
                 
-                [contact updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:contacts[contactId]]];
-                contact.contactUpdated = [DateConverter convertToDate:contacts[contactId][@"contact_updated"]];
-                contact.syncStatus = @(UserSynced);
-            }
-            
-            // save context
-            [objectContext performBlockAndWait:^{
-                [objectContext save:nil];
-            }];
-            [[HandshakeCoreDataStore defaultStore] saveMainContext];
-            
-            // check if last page (< 200 contacts returned)
-            if ([responseObject[@"contacts"] count] < 200) {
-                if (finishedBlock) finishedBlock();
-                return;
-            }
-            
-            // get next page of contacts
-            [self syncPage:page + 1 fromDate:date finishedBlock:finishedBlock];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([[operation response] statusCode] == 401) {
-                    [[HandshakeSession currentSession] invalidate];
-                } else {
-                    // retry
-                    [self syncPage:page fromDate:date finishedBlock:finishedBlock];
+                NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
+                
+                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
+                request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@ AND userId IN %@", @(YES), [contacts allKeys]];
+                
+                __block NSArray *results;
+                
+                [objectContext performBlockAndWait:^{
+                    results = [objectContext executeFetchRequest:request error:nil];
+                }];
+                
+                if (!results) {
+                    if (finishedBlock) finishedBlock();
+                    return;
                 }
+                
+                for (User *user in results) {
+                    // update contact_updated field
+                    user.contactUpdated = [DateConverter convertToDate:contacts[user.userId][@"contact_updated"]];
+                }
+                
+                // save
+                
+                [objectContext performBlockAndWait:^{
+                    [objectContext save:nil];
+                }];
+                [[HandshakeCoreDataStore defaultStore] saveMainContext];
+                
+                // check if last page (< 200 contacts returned)
+                if ([responseObject[@"contacts"] count] < 200) {
+                    if (finishedBlock) finishedBlock();
+                    return;
+                }
+                
+                // get next page of contacts
+                [self syncPage:page + 1 fromDate:date finishedBlock:finishedBlock];
             });
         }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[operation response] statusCode] == 401) {
+                [[HandshakeSession currentSession] invalidate];
+                if (finishedBlock) finishedBlock();
+            } else {
+                // retry
+                [self syncPage:page fromDate:date finishedBlock:finishedBlock];
+            }
+        });
+    }];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[[NSOperationQueue alloc] init] addOperation:operation];
     });
 }
