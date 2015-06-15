@@ -110,6 +110,8 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([[self.fetchController fetchedObjects] count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"FeedTutorialCell"];
+    
     if (indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
     FeedItemCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FeedItemCell"];
@@ -206,6 +208,8 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([[self.fetchController fetchedObjects] count] == 0) return 176;
+    
     if (indexPath.row == 0) return 1;
     
     FeedItem *item = [self.fetchController fetchedObjects][indexPath.row - 1];

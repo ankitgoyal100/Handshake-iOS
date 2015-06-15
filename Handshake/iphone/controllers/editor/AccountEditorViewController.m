@@ -38,6 +38,7 @@
 #import "SnapchatEditController.h"
 #import "FacebookHelper.h"
 #import "CardServerSync.h"
+#import "NBPhoneNumberUtil.h"
 
 @interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate>
 
@@ -204,7 +205,13 @@
         
         __block Phone *phone = self.card.phones[indexPath.row];
         
-        cell.numberLabel.text = phone.number;
+        NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
+        NBPhoneNumber *number = [util parse:phone.number defaultRegion:phone.countryCode error:nil];
+        
+        if ([phone.countryCode isEqualToString:[[util countryCodeByCarrier] uppercaseString]])
+            cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatNATIONAL error:nil];
+        else
+            cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
         cell.labelLabel.text = [[phone.label lowercaseString] capitalizedString];
         
         return cell;

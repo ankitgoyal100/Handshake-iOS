@@ -17,6 +17,7 @@
 #import "MainViewController.h"
 #import "HandshakeSession.h"
 #import "LocationUpdater.h"
+#import "NBPhoneNumberUtil.h"
 
 @interface AppDelegate ()
 
@@ -49,6 +50,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (![defaults objectForKey:@"auto_sync"]) {
         [defaults setObject:@{ @"enabled": @(YES), @"names": @(NO), @"pictures": @(NO) } forKey:@"auto_sync"];
+        
+        NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
+        [defaults setObject:[[util countryCodeByCarrier] uppercaseString] forKey:@"country_code"];
         
         [defaults synchronize];
     }

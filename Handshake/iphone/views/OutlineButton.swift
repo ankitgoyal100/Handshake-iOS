@@ -46,7 +46,7 @@ class OutlineButton: UIButton {
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1.5
         self.layer.borderColor = self.borderColor.CGColor
-        self.layer.cornerRadius = 3
+        self.layer.cornerRadius = 5
         self.backgroundColor = self.bgColor
     }
     
@@ -56,7 +56,7 @@ class OutlineButton: UIButton {
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1.5
         self.layer.borderColor = self.borderColor.CGColor
-        self.layer.cornerRadius = 3
+        self.layer.cornerRadius = 5
         self.backgroundColor = self.bgColor
     }
     

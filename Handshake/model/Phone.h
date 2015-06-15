@@ -15,6 +15,7 @@
 
 @property (nonatomic, retain) NSString * label;
 @property (nonatomic, retain) NSString * number;
+@property (nonatomic, retain) NSString * countryCode;
 @property (nonatomic, retain) Card *card;
 
 @end

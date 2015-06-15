@@ -106,6 +106,24 @@
 		799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD22B1B2B9A790077044C /* GroupCodeHelper.m */; };
 		799DD2321B2D0A940077044C /* CardServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2311B2D0A940077044C /* CardServerSync.m */; };
 		799DD2351B2DD9590077044C /* UserServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2341B2DD9590077044C /* UserServerSync.m */; };
+		799DD2421B2EB1B70077044C /* CountryPicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 799DD23F1B2EB1B70077044C /* CountryPicker.bundle */; };
+		799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2411B2EB1B70077044C /* CountryPicker.m */; };
+		799DD2451B2F46980077044C /* PhoneFormats.dat in Resources */ = {isa = PBXBuildFile; fileRef = 799DD2441B2F45C30077044C /* PhoneFormats.dat */; };
+		799DD2631B2F5C820077044C /* NBAsYouTypeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2481B2F5C820077044C /* NBAsYouTypeFormatter.m */; };
+		799DD2641B2F5C820077044C /* NBMetadataCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD24A1B2F5C820077044C /* NBMetadataCore.m */; };
+		799DD2651B2F5C820077044C /* NBMetadataCoreMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD24C1B2F5C820077044C /* NBMetadataCoreMapper.m */; };
+		799DD2661B2F5C820077044C /* NBMetadataCoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD24E1B2F5C820077044C /* NBMetadataCoreTest.m */; };
+		799DD2671B2F5C820077044C /* NBMetadataCoreTestMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2501B2F5C820077044C /* NBMetadataCoreTestMapper.m */; };
+		799DD2681B2F5C820077044C /* NBMetadataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2521B2F5C820077044C /* NBMetadataHelper.m */; };
+		799DD2691B2F5C820077044C /* NBNumberFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2541B2F5C820077044C /* NBNumberFormat.m */; };
+		799DD26A1B2F5C820077044C /* NBPhoneMetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2561B2F5C820077044C /* NBPhoneMetaData.m */; };
+		799DD26B1B2F5C820077044C /* NBPhoneMetaDataGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2581B2F5C820077044C /* NBPhoneMetaDataGenerator.m */; };
+		799DD26C1B2F5C820077044C /* NBPhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD25A1B2F5C820077044C /* NBPhoneNumber.m */; };
+		799DD26D1B2F5C820077044C /* NBPhoneNumberDesc.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD25D1B2F5C820077044C /* NBPhoneNumberDesc.m */; };
+		799DD26E1B2F5C820077044C /* NBPhoneNumberMetadata.plist in Resources */ = {isa = PBXBuildFile; fileRef = 799DD25E1B2F5C820077044C /* NBPhoneNumberMetadata.plist */; };
+		799DD26F1B2F5C820077044C /* NBPhoneNumberUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2601B2F5C820077044C /* NBPhoneNumberUtil.m */; };
+		799DD2701B2F5C820077044C /* NSArray+NBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2621B2F5C820077044C /* NSArray+NBAdditions.m */; };
+		799DD2721B2F68050077044C /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799DD2711B2F68050077044C /* CoreTelephony.framework */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
 		79B3FEB719C9150300759F69 /* Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB619C9150300759F69 /* Phone.m */; };
@@ -376,6 +394,39 @@
 		799DD2311B2D0A940077044C /* CardServerSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardServerSync.m; sourceTree = "<group>"; };
 		799DD2331B2DD9590077044C /* UserServerSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserServerSync.h; sourceTree = "<group>"; };
 		799DD2341B2DD9590077044C /* UserServerSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserServerSync.m; sourceTree = "<group>"; };
+		799DD23F1B2EB1B70077044C /* CountryPicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CountryPicker.bundle; sourceTree = "<group>"; };
+		799DD2401B2EB1B70077044C /* CountryPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountryPicker.h; sourceTree = "<group>"; };
+		799DD2411B2EB1B70077044C /* CountryPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CountryPicker.m; sourceTree = "<group>"; };
+		799DD2441B2F45C30077044C /* PhoneFormats.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = PhoneFormats.dat; sourceTree = "<group>"; };
+		799DD2471B2F5C820077044C /* NBAsYouTypeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBAsYouTypeFormatter.h; sourceTree = "<group>"; };
+		799DD2481B2F5C820077044C /* NBAsYouTypeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBAsYouTypeFormatter.m; sourceTree = "<group>"; };
+		799DD2491B2F5C820077044C /* NBMetadataCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCore.h; sourceTree = "<group>"; };
+		799DD24A1B2F5C820077044C /* NBMetadataCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCore.m; sourceTree = "<group>"; };
+		799DD24B1B2F5C820077044C /* NBMetadataCoreMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreMapper.h; sourceTree = "<group>"; };
+		799DD24C1B2F5C820077044C /* NBMetadataCoreMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreMapper.m; sourceTree = "<group>"; };
+		799DD24D1B2F5C820077044C /* NBMetadataCoreTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreTest.h; sourceTree = "<group>"; };
+		799DD24E1B2F5C820077044C /* NBMetadataCoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreTest.m; sourceTree = "<group>"; };
+		799DD24F1B2F5C820077044C /* NBMetadataCoreTestMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreTestMapper.h; sourceTree = "<group>"; };
+		799DD2501B2F5C820077044C /* NBMetadataCoreTestMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreTestMapper.m; sourceTree = "<group>"; };
+		799DD2511B2F5C820077044C /* NBMetadataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataHelper.h; sourceTree = "<group>"; };
+		799DD2521B2F5C820077044C /* NBMetadataHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataHelper.m; sourceTree = "<group>"; };
+		799DD2531B2F5C820077044C /* NBNumberFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBNumberFormat.h; sourceTree = "<group>"; };
+		799DD2541B2F5C820077044C /* NBNumberFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBNumberFormat.m; sourceTree = "<group>"; };
+		799DD2551B2F5C820077044C /* NBPhoneMetaData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneMetaData.h; sourceTree = "<group>"; };
+		799DD2561B2F5C820077044C /* NBPhoneMetaData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneMetaData.m; sourceTree = "<group>"; };
+		799DD2571B2F5C820077044C /* NBPhoneMetaDataGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneMetaDataGenerator.h; sourceTree = "<group>"; };
+		799DD2581B2F5C820077044C /* NBPhoneMetaDataGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneMetaDataGenerator.m; sourceTree = "<group>"; };
+		799DD2591B2F5C820077044C /* NBPhoneNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumber.h; sourceTree = "<group>"; };
+		799DD25A1B2F5C820077044C /* NBPhoneNumber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumber.m; sourceTree = "<group>"; };
+		799DD25B1B2F5C820077044C /* NBPhoneNumberDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberDefines.h; sourceTree = "<group>"; };
+		799DD25C1B2F5C820077044C /* NBPhoneNumberDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberDesc.h; sourceTree = "<group>"; };
+		799DD25D1B2F5C820077044C /* NBPhoneNumberDesc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberDesc.m; sourceTree = "<group>"; };
+		799DD25E1B2F5C820077044C /* NBPhoneNumberMetadata.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = NBPhoneNumberMetadata.plist; sourceTree = "<group>"; };
+		799DD25F1B2F5C820077044C /* NBPhoneNumberUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberUtil.h; sourceTree = "<group>"; };
+		799DD2601B2F5C820077044C /* NBPhoneNumberUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberUtil.m; sourceTree = "<group>"; };
+		799DD2611B2F5C820077044C /* NSArray+NBAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+NBAdditions.h"; sourceTree = "<group>"; };
+		799DD2621B2F5C820077044C /* NSArray+NBAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+NBAdditions.m"; sourceTree = "<group>"; };
+		799DD2711B2F68050077044C /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
 		79B3FEAD19C9150300759F69 /* Address.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Address.m; sourceTree = "<group>"; };
 		79B3FEAF19C9150300759F69 /* Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Email.h; sourceTree = "<group>"; };
@@ -515,6 +566,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				799DD2721B2F68050077044C /* CoreTelephony.framework in Frameworks */,
 				7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */,
 				7997B7AE19E224E600525550 /* CoreLocation.framework in Frameworks */,
 				79D46C8919D22D5F00C52FEE /* Social.framework in Frameworks */,
@@ -557,6 +609,9 @@
 		792801E419C8B36B0075261D /* Handshake */ = {
 			isa = PBXGroup;
 			children = (
+				799DD2461B2F5C820077044C /* libPhoneNumber */,
+				799DD2441B2F45C30077044C /* PhoneFormats.dat */,
+				799DD23E1B2EB1B70077044C /* CountryPicker */,
 				79D46C5B19D22D4F00C52FEE /* STTwitter */,
 				79C050C819CF650D001BB956 /* GKImagePicker */,
 				7928020B19C8B3C40075261D /* AFNetworking */,
@@ -902,6 +957,7 @@
 		792803BD19C8B46C0075261D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				799DD2711B2F68050077044C /* CoreTelephony.framework */,
 				7932B7691B02AD340011A747 /* QuartzCore.framework */,
 				7997B7AD19E224E600525550 /* CoreLocation.framework */,
 				79D46C8819D22D5F00C52FEE /* Social.framework */,
@@ -998,6 +1054,51 @@
 				799DD1EB1B2640B90077044C /* UserContactsViewController.m */,
 			);
 			name = users;
+			sourceTree = "<group>";
+		};
+		799DD23E1B2EB1B70077044C /* CountryPicker */ = {
+			isa = PBXGroup;
+			children = (
+				799DD23F1B2EB1B70077044C /* CountryPicker.bundle */,
+				799DD2401B2EB1B70077044C /* CountryPicker.h */,
+				799DD2411B2EB1B70077044C /* CountryPicker.m */,
+			);
+			path = CountryPicker;
+			sourceTree = "<group>";
+		};
+		799DD2461B2F5C820077044C /* libPhoneNumber */ = {
+			isa = PBXGroup;
+			children = (
+				799DD2471B2F5C820077044C /* NBAsYouTypeFormatter.h */,
+				799DD2481B2F5C820077044C /* NBAsYouTypeFormatter.m */,
+				799DD2491B2F5C820077044C /* NBMetadataCore.h */,
+				799DD24A1B2F5C820077044C /* NBMetadataCore.m */,
+				799DD24B1B2F5C820077044C /* NBMetadataCoreMapper.h */,
+				799DD24C1B2F5C820077044C /* NBMetadataCoreMapper.m */,
+				799DD24D1B2F5C820077044C /* NBMetadataCoreTest.h */,
+				799DD24E1B2F5C820077044C /* NBMetadataCoreTest.m */,
+				799DD24F1B2F5C820077044C /* NBMetadataCoreTestMapper.h */,
+				799DD2501B2F5C820077044C /* NBMetadataCoreTestMapper.m */,
+				799DD2511B2F5C820077044C /* NBMetadataHelper.h */,
+				799DD2521B2F5C820077044C /* NBMetadataHelper.m */,
+				799DD2531B2F5C820077044C /* NBNumberFormat.h */,
+				799DD2541B2F5C820077044C /* NBNumberFormat.m */,
+				799DD2551B2F5C820077044C /* NBPhoneMetaData.h */,
+				799DD2561B2F5C820077044C /* NBPhoneMetaData.m */,
+				799DD2571B2F5C820077044C /* NBPhoneMetaDataGenerator.h */,
+				799DD2581B2F5C820077044C /* NBPhoneMetaDataGenerator.m */,
+				799DD2591B2F5C820077044C /* NBPhoneNumber.h */,
+				799DD25A1B2F5C820077044C /* NBPhoneNumber.m */,
+				799DD25B1B2F5C820077044C /* NBPhoneNumberDefines.h */,
+				799DD25C1B2F5C820077044C /* NBPhoneNumberDesc.h */,
+				799DD25D1B2F5C820077044C /* NBPhoneNumberDesc.m */,
+				799DD25E1B2F5C820077044C /* NBPhoneNumberMetadata.plist */,
+				799DD25F1B2F5C820077044C /* NBPhoneNumberUtil.h */,
+				799DD2601B2F5C820077044C /* NBPhoneNumberUtil.m */,
+				799DD2611B2F5C820077044C /* NSArray+NBAdditions.h */,
+				799DD2621B2F5C820077044C /* NSArray+NBAdditions.m */,
+			);
+			path = libPhoneNumber;
 			sourceTree = "<group>";
 		};
 		79B752BF1AF6F49B007660E5 /* groups */ = {
@@ -1281,6 +1382,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				799DD2451B2F46980077044C /* PhoneFormats.dat in Resources */,
 				79C050E919CF650D001BB956 /* PLCameraSheetDoneButton.png in Resources */,
 				7968660B1ACCB58300CCF0E2 /* Main.storyboard in Resources */,
 				7997B81519EF8A5600525550 /* back@3x.png in Resources */,
@@ -1288,11 +1390,13 @@
 				79C050E619CF650D001BB956 /* PLCameraSheetButton@2x.png in Resources */,
 				792801F619C8B36B0075261D /* Images.xcassets in Resources */,
 				799DD2261B2B96AD0077044C /* Group.storyboard in Resources */,
+				799DD2421B2EB1B70077044C /* CountryPicker.bundle in Resources */,
 				79C050E719CF650D001BB956 /* PLCameraSheetButtonPressed.png in Resources */,
 				79C050EA19CF650D001BB956 /* PLCameraSheetDoneButton@2x.png in Resources */,
 				794692291B23B6400093045E /* Start.storyboard in Resources */,
 				79C050E519CF650D001BB956 /* PLCameraSheetButton.png in Resources */,
 				7928033719C8B3C40075261D /* back@2x.png in Resources */,
+				799DD26E1B2F5C820077044C /* NBPhoneNumberMetadata.plist in Resources */,
 				79C751A81B1DFD8F00DB221C /* Edit.storyboard in Resources */,
 				79C050EB19CF650D001BB956 /* PLCameraSheetDoneButtonPressed.png in Resources */,
 				79C050E819CF650D001BB956 /* PLCameraSheetButtonPressed@2x.png in Resources */,
@@ -1320,6 +1424,7 @@
 				79C050E119CF650D001BB956 /* GKImageCropView.m in Sources */,
 				792803B219C8B3C40075261D /* UIAlertView+AFNetworking.m in Sources */,
 				79D46C7B19D22D4F00C52FEE /* NSString+STTwitter.m in Sources */,
+				799DD26D1B2F5C820077044C /* NBPhoneNumberDesc.m in Sources */,
 				799DD1F51B27DB070077044C /* InstagramEditController.m in Sources */,
 				79D4AD5819C93F3100F5A154 /* Card.m in Sources */,
 				79D46C7E19D22D4F00C52FEE /* STTwitterAppOnly.m in Sources */,
@@ -1330,6 +1435,7 @@
 				7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */,
 				799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */,
 				79C751881B194F0500DB221C /* OptionsCell.m in Sources */,
+				799DD26F1B2F5C820077044C /* NBPhoneNumberUtil.m in Sources */,
 				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
 				799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */,
 				795003BA1AE525C1003DD9BF /* AddressEditController.m in Sources */,
@@ -1344,6 +1450,7 @@
 				799DD1E91B263A130077044C /* MutualContactsViewController.m in Sources */,
 				799DD2351B2DD9590077044C /* UserServerSync.m in Sources */,
 				799DD1F21B27CC160077044C /* SocialCell.m in Sources */,
+				799DD2651B2F5C820077044C /* NBMetadataCoreMapper.m in Sources */,
 				79766C971AE038AC00C5CA3D /* PhoneNumberCell.m in Sources */,
 				79BD344E1AD84C85008079CF /* AddressEditCell.m in Sources */,
 				79B3FEBD19C9150400759F69 /* Social.m in Sources */,
@@ -1362,6 +1469,7 @@
 				7928033619C8B3C40075261D /* FacebookHelper.m in Sources */,
 				7928032E19C8B3C40075261D /* AFSecurityPolicy.m in Sources */,
 				79D46C8519D22D4F00C52FEE /* STHTTPRequest.m in Sources */,
+				799DD26A1B2F5C820077044C /* NBPhoneMetaData.m in Sources */,
 				792803B519C8B3C40075261D /* UIProgressView+AFNetworking.m in Sources */,
 				79BD34291AD05500008079CF /* TwitterCell.m in Sources */,
 				792801EB19C8B36B0075261D /* AppDelegate.m in Sources */,
@@ -1375,6 +1483,7 @@
 				7928038919C8B3C40075261D /* DateConverter.m in Sources */,
 				79C751A61B1CE5FF00DB221C /* FeedItem.m in Sources */,
 				79C050E219CF650D001BB956 /* GKImageCropViewController.m in Sources */,
+				799DD2681B2F5C820077044C /* NBMetadataHelper.m in Sources */,
 				799DD21E1B2B63A10077044C /* FeedItemServerSync.m in Sources */,
 				79C050E419CF650D001BB956 /* GKResizeableCropOverlayView.m in Sources */,
 				79B752CF1AFC5DD6007660E5 /* GroupMembersViewController.m in Sources */,
@@ -1384,6 +1493,7 @@
 				799DD1FD1B28B56A0077044C /* ChangeEmailViewController.m in Sources */,
 				79C050E019CF650D001BB956 /* GKImageCropOverlayView.m in Sources */,
 				7928035B19C8B3C40075261D /* SettingsViewController.m in Sources */,
+				799DD26C1B2F5C820077044C /* NBPhoneNumber.m in Sources */,
 				796866321ACDE7CE00CCF0E2 /* FormTextField.swift in Sources */,
 				7932B7571AFF01390011A747 /* UserRequestCell.m in Sources */,
 				7928032F19C8B3C40075261D /* AFURLConnectionOperation.m in Sources */,
@@ -1392,10 +1502,12 @@
 				7997B7A719DF3EAE00525550 /* ImageViewController.m in Sources */,
 				7928032A19C8B3C40075261D /* AFHTTPRequestOperation.m in Sources */,
 				7928035C19C8B3C40075261D /* SignUpViewController.m in Sources */,
+				799DD2671B2F5C820077044C /* NBMetadataCoreTestMapper.m in Sources */,
 				792803B319C8B3C40075261D /* UIButton+AFNetworking.m in Sources */,
 				792803B719C8B3C40075261D /* UIWebView+AFNetworking.m in Sources */,
 				799DD2001B28C6E30077044C /* ContactSyncSettingsViewController.m in Sources */,
 				79B752C21AF6F4B9007660E5 /* GroupsViewController.m in Sources */,
+				799DD2691B2F5C820077044C /* NBNumberFormat.m in Sources */,
 				79C050DF19CF650D001BB956 /* GKCropBorderView.m in Sources */,
 				79D46C8319D22D4F00C52FEE /* BAVPlistNode.m in Sources */,
 				79D46C8019D22D4F00C52FEE /* STTwitterOAuth.m in Sources */,
@@ -1409,14 +1521,18 @@
 				799DD20C1B2A26350077044C /* MessageCell.m in Sources */,
 				799DD2061B290D170077044C /* SaveCell.m in Sources */,
 				7932B7651B0189820011A747 /* SearchResultCell.m in Sources */,
+				799DD2701B2F5C820077044C /* NSArray+NBAdditions.m in Sources */,
 				795003B71AE52099003DD9BF /* EmailEditController.m in Sources */,
 				79D46C7F19D22D4F00C52FEE /* STTwitterHTML.m in Sources */,
 				799DD1EC1B2640B90077044C /* UserContactsViewController.m in Sources */,
+				799DD2661B2F5C820077044C /* NBMetadataCoreTest.m in Sources */,
 				79B3FEB719C9150300759F69 /* Phone.m in Sources */,
 				79B752DE1AFD0C70007660E5 /* JoinGroupViewController.m in Sources */,
 				7928033019C8B3C40075261D /* AFURLRequestSerialization.m in Sources */,
+				799DD2641B2F5C820077044C /* NBMetadataCore.m in Sources */,
 				792803B419C8B3C40075261D /* UIImageView+AFNetworking.m in Sources */,
 				79BD34231AD054E7008079CF /* AddressCell.m in Sources */,
+				799DD2631B2F5C820077044C /* NBAsYouTypeFormatter.m in Sources */,
 				79C7518C1B1C975400DB221C /* ContactsViewController.m in Sources */,
 				79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */,
 				79D46C8419D22D4F00C52FEE /* JSONSyntaxHighlight.m in Sources */,
@@ -1424,6 +1540,7 @@
 				792803AF19C8B3C40075261D /* UIControl+Blocks.m in Sources */,
 				792803C819C8F3150075261D /* HandshakeSession.m in Sources */,
 				7928035D19C8B3C40075261D /* StartViewController.m in Sources */,
+				799DD26B1B2F5C820077044C /* NBPhoneMetaDataGenerator.m in Sources */,
 				79D46C8219D22D4F00C52FEE /* STTwitterOSRequest.m in Sources */,
 				799DD2241B2B87E20077044C /* Group.m in Sources */,
 				79B752D51AFC6450007660E5 /* MemberCell.m in Sources */,
@@ -1440,6 +1557,7 @@
 				7928032D19C8B3C40075261D /* AFNetworkReachabilityManager.m in Sources */,
 				79BD34261AD054F5008079CF /* FacebookCell.m in Sources */,
 				79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */,
+				799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */,
 				799DD1EF1B2792910077044C /* SectionHeaderCell.m in Sources */,
 				7928033119C8B3C40075261D /* AFURLResponseSerialization.m in Sources */,
 				79BD34161ACF71C5008079CF /* UserViewController.m in Sources */,

@@ -696,6 +696,10 @@ static NSMutableDictionary *flagRules = nil;
     return res;
 }
 
+- (void)callCode:(NSString *)str {
+    NSLog(@"%@", [self findCallingCodeInfo:str]);
+}
+
 - (NSString *)format:(NSString *)orig {
     // First remove all added punctuation to get just raw phone number characters.
     NSString *str = [RMPhoneFormat strip:orig];

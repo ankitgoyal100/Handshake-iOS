@@ -24,7 +24,6 @@
     
     dispatch_async(queue, ^{
         NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
-        
         // get users from db
         
         NSMutableArray *userIds = [[NSMutableArray alloc] init];
@@ -52,9 +51,6 @@
         for (User *user in results)
             userMap[user.userId] = user;
         
-        // recreate id list
-        [userIds removeAllObjects];
-        
         for (NSDictionary *dict in jsonArray) {
             // update/create users
             
@@ -68,7 +64,7 @@
             if ([user.syncStatus intValue] == UserSynced)
                 [user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:dict]];
             
-            [userIds addObject:user.userId];
+            userMap[dict[@"id"]] = user;
         }
         
         [objectContext performBlockAndWait:^{
@@ -76,7 +72,6 @@
         }];
         
         // get users in main context
-        
         dispatch_async(dispatch_get_main_queue(), ^{
             NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
             request.predicate = [NSPredicate predicateWithFormat:@"userId IN %@", userIds];

@@ -52,6 +52,7 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="groups" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Phone" representedClassName="Phone" syncable="YES">
+        <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="number" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Card" inverseName="phones" inverseEntity="Card" syncable="YES"/>
@@ -92,7 +93,7 @@
         <element name="FeedItem" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Group" positionX="0" positionY="0" width="128" height="165"/>
         <element name="GroupMember" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="Phone" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="Phone" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>
         <element name="User" positionX="0" positionY="0" width="128" height="360"/>
     </elements>

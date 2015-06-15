@@ -176,9 +176,6 @@
         for (Group *group in results)
             groupMap[group.groupId] = group;
         
-        // recreate id list
-        [groupIds removeAllObjects];
-        
         for (NSDictionary *dict in jsonArray) {
             // update/create groups
             
@@ -192,7 +189,7 @@
             if ([group.syncStatus intValue] == GroupSynced)
                 [group updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:dict]];
             
-            [groupIds addObject:group.groupId];
+            groupMap[dict[@"id"]] = group;
         }
         
         [objectContext performBlockAndWait:^{

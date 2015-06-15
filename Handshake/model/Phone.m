@@ -13,6 +13,7 @@
 
 @dynamic label;
 @dynamic number;
+@dynamic countryCode;
 @dynamic card;
 
 @end

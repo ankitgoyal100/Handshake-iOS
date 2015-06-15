@@ -16,6 +16,7 @@
 #import "Address.h"
 #import "Social.h"
 #import "AsyncImageView.h"
+#import "NBPhoneNumberUtil.h"
 
 @implementation ContactSync
 
@@ -102,10 +103,14 @@
     for (int i = 0; i < count; i++) {
         ABRecordRef r = (__bridge ABRecordRef)records[i];
         int certainty = 0; // count of how many data points match
+        BOOL nameMatch = NO;
         
         // check name
         NSString *name = (__bridge NSString *)ABRecordCopyCompositeName(r);
-        if ([name containsString:contact.firstName]) certainty++;
+        if ([name containsString:contact.firstName]) {
+            nameMatch = YES;
+            certainty++;
+        }
         
         // check phones
         
@@ -116,15 +121,8 @@
             NSString *number = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phoneNumbers, index));
             number = [[number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
             
-            // 7 digit requirement to check
-            if ([number length] < 7) continue;
-            
             for (Phone *phone in card.phones) {
-                NSString *number2 = [[phone.number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-                
-                if ([number length] < 7) continue;
-                
-                if ([number containsString:number2] || [number2 containsString:number]) {
+                if ([phone.number hasSuffix:number]) {
                     // match
                     certainty++;
                     break;
@@ -158,7 +156,7 @@
             record = r;
             matches = 1; // we are certain
             break;
-        } else if (certainty == 1) {
+        } else if (!nameMatch && certainty == 1) { // cannot say match solely based on first name
             record = r;
             matches++;
         }
@@ -201,18 +199,13 @@
         ABMutableMultiValueRef phones = ABMultiValueCreateMutableCopy(ABRecordCopyValue(record, kABPersonPhoneProperty));//ABMultiValueCreateMutable(kABMultiStringPropertyType);
         // loop through phones
         for (Phone *phone in card.phones) {
-            if ([phone.number length] < 7) continue;
-            
-            NSString *number2 = [[phone.number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-            
             BOOL skip = NO;
             
             CFIndex numPhones = ABMultiValueGetCount(phones);
             for (CFIndex index = 0; index < numPhones; index++) {
                 NSString *number = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phones, index));
                 number = [[number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-                if ([number length] < 7) continue;
-                if ([number containsString:number2] || [number2 containsString:number]) {
+                if ([phone.number hasSuffix:number]) {
                     skip = YES; // number already exists in contact
                     break;
                 }
@@ -225,7 +218,11 @@
             else if ([[phone.label lowercaseString] isEqualToString:@"cell"] || [[phone.label lowercaseString] isEqualToString:@"mobile"]) type = kABPersonPhoneMobileLabel;
             else if ([[phone.label lowercaseString] isEqualToString:@"work"] || [[phone.label lowercaseString] isEqualToString:@"office"]) type = kABWorkLabel;
             else type = kABOtherLabel;
-            ABMultiValueAddValueAndLabel(phones, (__bridge CFTypeRef)(phone.number), type, NULL);
+            
+            NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
+            NBPhoneNumber *phoneNumber = [util parse:phone.number defaultRegion:phone.countryCode error:nil];
+            
+            ABMultiValueAddValueAndLabel(phones, (__bridge CFTypeRef)([util format:phoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil]), type, NULL);
         }
         ABRecordSetValue(record, kABPersonPhoneProperty, phones, &error);
         CFRelease(phones);

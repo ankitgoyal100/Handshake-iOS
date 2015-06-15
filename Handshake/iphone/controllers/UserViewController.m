@@ -39,6 +39,7 @@
 #import "HandshakeClient.h"
 #import "ContactServerSync.h"
 #import "RequestServerSync.h"
+#import "NBPhoneNumberUtil.h"
 
 @interface UserViewController() <NSFetchedResultsControllerDelegate, GKImagePickerDelegate, UIActionSheetDelegate>
 
@@ -323,7 +324,13 @@
             Phone *phone = self.card.phones[row];
             PhoneCell *cell = (PhoneCell *)[tableView dequeueReusableCellWithIdentifier:@"PhoneCell"];
             
-            cell.numberLabel.text = phone.number;
+            NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
+            NBPhoneNumber *number = [util parse:phone.number defaultRegion:phone.countryCode error:nil];
+            
+            if ([phone.countryCode isEqualToString:[[util countryCodeByCarrier] uppercaseString]])
+                cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatNATIONAL error:nil];
+            else
+                cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
             cell.labelLabel.text = [[phone.label lowercaseString] capitalizedString];
             
             [cell.callButton addEventHandler:^(id sender) {

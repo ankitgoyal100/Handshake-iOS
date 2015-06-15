@@ -44,6 +44,7 @@
         
         phone.number = phoneDict[@"number"];
         phone.label = phoneDict[@"label"];
+        phone.countryCode = phoneDict[@"country_code"];
         
         [self addPhonesObject:phone];
     }
@@ -214,6 +215,7 @@
             NSMutableDictionary *phoneDict = [[NSMutableDictionary alloc] init];
             phoneDict[@"number"] = phone.number;
             phoneDict[@"label"] = phone.label;
+            phoneDict[@"country_code"] = phone.countryCode;
             [phones addObject:phoneDict];
         }
     }
