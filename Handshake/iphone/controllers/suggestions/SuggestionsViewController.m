@@ -1,32 +1,33 @@
 //
-//  GroupMembersViewController.m
+//  SuggestionsViewController.m
 //  Handshake
 //
-//  Created by Sam Ober on 5/7/15.
+//  Created by Sam Ober on 6/16/15.
 //  Copyright (c) 2015 Handshake. All rights reserved.
 //
 
-#import "GroupMembersViewController.h"
+#import "SuggestionsViewController.h"
+#import "HandshakeCoreDataStore.h"
+#import "Suggestion.h"
+#import "User.h"
+#import "SearchResultCell.h"
+#import "UserViewController.h"
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
-#import "AsyncImageView.h"
-#import "HandshakeCoreDataStore.h"
-#import "GroupMember.h"
-#import "User.h"
-#import "UserViewController.h"
-#import "MemberCell.h"
-#import "GroupServerSync.h"
+#import "SuggestionsServerSync.h"
 
-@interface GroupMembersViewController () <NSFetchedResultsControllerDelegate>
+@interface SuggestionsViewController () <NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchController;
 
 @end
 
-@implementation GroupMembersViewController
+@implementation SuggestionsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.title = @"Suggestions";
     
     if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
         [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
@@ -41,33 +42,39 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.tableView reloadData];
+}
+
 - (void)fetch {
-    if (!self.group)
-        return;
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Suggestion"];
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"GroupMember"];
+    request.predicate = [NSPredicate predicateWithFormat:@"user.isContact == %@ AND user.requestReceived == %@ AND user.requestSent == %@", @(NO), @(NO), @(NO)];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"user.mutual" ascending:NO]];
     
-    request.predicate = [NSPredicate predicateWithFormat:@"group == %@", self.group];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"user.firstName" ascending:YES]];
+    NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
     
-    self.fetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
+    self.fetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:objectContext sectionNameKeyPath:nil cacheName:nil];
     
     self.fetchController.delegate = self;
     
-    [self.fetchController.managedObjectContext performBlockAndWait:^{
-        NSError *error;
-        [self.fetchController performFetch:&error];
+    [objectContext performBlockAndWait:^{
+        [self.fetchController performFetch:nil];
     }];
 }
 
 - (void)refresh {
-    [GroupServerSync loadGroupMembers:self.group completionBlock:^{
+    [SuggestionsServerSync syncWithCompletionBlock:^{
+        [self fetch];
         [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
     }];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [self.tableView reloadData];
+    [self fetch];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -75,7 +82,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [[self.fetchController fetchedObjects] count] + 1;
+    return 1 + [[self.fetchController fetchedObjects] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -83,19 +90,10 @@
     
     if (indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
-    User *user = ((GroupMember *)[self.fetchController fetchedObjects][indexPath.row - 1]).user;
+    Suggestion *suggestion = [self.fetchController fetchedObjects][indexPath.row - 1];
     
-    MemberCell *cell = (MemberCell *)[tableView dequeueReusableCellWithIdentifier:@"MemberCell"];
-    
-    if ([user cachedThumb])
-        cell.pictureView.image = [user cachedThumb];
-    else if (user.thumb)
-        cell.pictureView.imageURL = [NSURL URLWithString:user.thumb];
-    else
-        cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
-    
-    cell.nameLabel.text = [user formattedName];
-    
+    SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
+    cell.user = suggestion.user;
     return cell;
 }
 
@@ -112,10 +110,10 @@
     
     if (indexPath.row == 0) return;
     
-    User *user = ((GroupMember *)[self.fetchController fetchedObjects][indexPath.row - 1]).user;
+    Suggestion *suggestion = [self.fetchController fetchedObjects][indexPath.row - 1];
     
-    UserViewController *controller = (UserViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-    controller.user = user;
+    UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
+    controller.user = suggestion.user;
     [self.navigationController pushViewController:controller animated:YES];
 }
 

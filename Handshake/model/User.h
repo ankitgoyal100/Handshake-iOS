@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import <UIKit/UIKit.h>
 
-@class Card, GroupMember, Request, SearchResult;
+@class Card, GroupMember, Request, SearchResult, Suggestion;
 
 typedef enum {
     UserSynced = 0,
@@ -50,6 +50,7 @@ typedef enum {
 @property (nonatomic, retain) NSOrderedSet *cards;
 @property (nonatomic, retain) NSSet *groups;
 @property (nonatomic, retain) NSSet *feedItems;
+@property (nonatomic, retain) Suggestion *suggestion;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 

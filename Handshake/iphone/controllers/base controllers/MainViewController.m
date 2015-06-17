@@ -48,14 +48,6 @@
     self.tabBar.tintColor = LOGO_COLOR;
     
     [[LocationUpdater sharedUpdater] updateLocation];
-    
-//    self.tabBar.layer.masksToBounds = NO;
-//    self.tabBar.layer.shadowOffset = CGSizeMake(0, 1);
-//    self.tabBar.layer.shadowOpacity = 0.3;
-    
-    
-    
-    //[[LocationManager sharedManager] startUpdating];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

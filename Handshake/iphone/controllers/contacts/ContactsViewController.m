@@ -14,6 +14,7 @@
 #import "UINavigationItem+Additions.h"
 #import "UIBarButtonItem+DefaultBackButton.h"
 #import "SectionHeaderCell.h"
+#import "ContactServerSync.h"
 
 @interface ContactsViewController() <UITextFieldDelegate, NSFetchedResultsControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
@@ -54,6 +55,9 @@
     if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
         [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
+    
     [self fetch];
 }
 
@@ -83,6 +87,12 @@
         NSError *error = nil;
         [self.fetchedResultsController performFetch:&error];
         //[self.requestFetchController performFetch:&error];
+    }];
+}
+
+- (void)refresh {
+    [ContactServerSync syncWithCompletionBlock:^{
+        [self.refreshControl endRefreshing];
     }];
 }
 
@@ -142,6 +152,8 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.searchField.text length] > 0) return 1;
     
+    if ([[self.fetchedResultsController fetchedObjects] count] == 0) return 1;
+    
     return [[self.fetchedResultsController sections] count];
 }
 
@@ -199,6 +211,8 @@
     if ([self.searchField.text length] > 0)
         return [self.searchResults count] + 1;
     
+    if ([[self.fetchedResultsController fetchedObjects] count] == 0) return 1;
+    
     NSArray *sections = [self.fetchedResultsController sections];
     
     // if there is a '#' section
@@ -231,6 +245,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
+    
+    if ([[self.fetchedResultsController fetchedObjects] count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"NoResultsCell"];
     
     if (indexPath.row == 0) {
         SectionHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SectionHeaderCell"];
@@ -267,6 +283,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //if (indexPath.section == 0 && indexPath.row == 0) return 1;
+    
+    if ([[self.fetchedResultsController fetchedObjects] count] == 0) return 60;
     
     if (indexPath.row == 0) return 30;
     

@@ -13,6 +13,7 @@
 #import "Card.h"
 #import "FeedItemServerSync.h"
 #import "UserServerSync.h"
+#import "Suggestion.h"
 
 @implementation RequestServerSync
 
@@ -86,6 +87,12 @@
     params[@"card_ids"] = @[((Card *)[[HandshakeSession currentSession] account].cards[0]).cardId];
     [[HandshakeClient client] POST:[NSString stringWithFormat:@"/users/%@/request", user.userId] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:responseObject[@"user"]]];
+        
+        if (user.suggestion) {
+            [user.managedObjectContext deleteObject:user.suggestion];
+            user.suggestion = nil;
+        }
+        
         if (successBlock) successBlock(user);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         user.requestSent = @(NO);
@@ -137,6 +144,7 @@
         if (successBlock) successBlock(user);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         user.requestReceived = @(YES);
+        if (failedBlock) failedBlock();
     }];
     
     user.requestReceived = @(NO);

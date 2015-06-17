@@ -135,6 +135,8 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if ([self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] == 0) return 2;
+    
     return 4;
 }
 
@@ -145,6 +147,8 @@
     if (section == 0) return 2;
     
     if (self.user != [[HandshakeSession currentSession] account] && ![self.user.isContact boolValue]) return 0;
+    
+    if ([self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] == 0) return 1;
     
     if (section == 1 && [self.card.phones count] + [self.card.emails count] + [self.card.addresses count] == 0) return 0;
     
@@ -311,6 +315,10 @@
         return cell;
     }
     
+    if ([self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] == 0) {
+        return [tableView dequeueReusableCellWithIdentifier:@"NoResultsCell"];
+    }
+    
     if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0)
         return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
@@ -443,6 +451,8 @@
     if (indexPath.section == 0 && indexPath.row == 1) return 46;
     if (indexPath.section == 0 && indexPath.row == 2 && [self.user.isContact boolValue]) return 46;
     if (indexPath.section == 0 && indexPath.row == 2) return 100;
+    
+    if ([self.card.phones count] + [self.card.emails count] + [self.card.addresses count] + [self.card.socials count] == 0) return 60;
     
     if ((indexPath.section == 1 || indexPath.section == 2) && indexPath.row == 0) return 20;
     

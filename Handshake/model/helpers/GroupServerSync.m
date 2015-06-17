@@ -101,6 +101,7 @@
                         [objectContext performBlockAndWait:^{
                             [objectContext save:nil];
                         }];
+                        [[HandshakeCoreDataStore defaultStore] saveMainContext];
                         
                         NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
                         

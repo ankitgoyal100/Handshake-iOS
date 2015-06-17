@@ -53,6 +53,7 @@
 @dynamic cards;
 @dynamic groups;
 @dynamic feedItems;
+@dynamic suggestion;
 
 @synthesize loadedImage;
 @synthesize loadedThumb;

@@ -17,16 +17,22 @@
 #import "FeedItem.h"
 #import "Handshake-Swift.h"
 #import "UserViewController.h"
+#import "RequestServerSync.h"
+#import "Suggestion.h"
+#import "SuggestionsPreviewController.h"
 
-@interface RequestsViewController () <NSFetchedResultsControllerDelegate>
+@interface RequestsViewController () <NSFetchedResultsControllerDelegate, SuggestionsPreviewControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchController;
-@property (nonatomic, strong) NSFetchedResultsController *suggestionsController;
 
 @property (nonatomic, strong) UILabel *placeholder;
 @property (nonatomic, strong) OutlineButton *searchBar;
 
 @property (nonatomic, strong) NSArray *requests;
+
+@property (nonatomic, strong) NSAttributedString *tutorialString;
+
+@property (nonatomic, strong) SuggestionsPreviewController *suggestionsController;
 
 @end
 
@@ -53,11 +59,22 @@
         _searchBar.borderColorHighlighted = [UIColor clearColor];
         _searchBar.layer.cornerRadius = 6;
         _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        [_searchBar addTarget:self action:@selector(search) forControlEvents:UIControlEventTouchUpInside];
+        [_searchBar addTarget:self action:@selector(search:) forControlEvents:UIControlEventTouchUpInside];
         
         [_searchBar addSubview:self.placeholder];
     }
     return _searchBar;
+}
+
+- (NSAttributedString *)tutorialString {
+    if (!_tutorialString) {
+        NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+        [pStyle setLineSpacing:2];
+        
+        NSDictionary *attrs = @{ NSFontAttributeName: [UIFont systemFontOfSize:17], NSParagraphStyleAttributeName: pStyle, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.5 alpha:1] };
+        _tutorialString = [[NSAttributedString alloc] initWithString:@"No pending requests. Find people you know and add them!" attributes:attrs];
+    }
+    return _tutorialString;
 }
 
 - (NSArray *)requests {
@@ -65,7 +82,7 @@
     return _requests;
 }
 
-- (void)search {
+- (IBAction)search:(id)sender {
     [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"SearchViewController"] animated:NO];
 }
 
@@ -74,12 +91,17 @@
     
     self.navigationItem.titleView = self.searchBar;
     
-    [self fetch];
+    self.suggestionsController = [[SuggestionsPreviewController alloc] initWithShowCount:8];
+    self.suggestionsController.delegate = self;
+    
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self fetch];
     self.requests = [self.fetchController fetchedObjects];
     
     [self.navigationController setNavigationBarHidden:NO animated:animated];
@@ -99,29 +121,28 @@
     [self.fetchController.managedObjectContext performBlockAndWait:^{
         [self.fetchController performFetch:nil];
     }];
-    
-//    request = [[NSFetchRequest alloc] initWithEntityName:@"SearchResult"];
-//    
-//    request.predicate = [NSPredicate predicateWithFormat:@"tag == %@ AND request == nil", @"suggestion"];
-//    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"user.mutual" ascending:NO]];
-//    
-//    self.suggestionsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
-//    
-//    self.suggestionsController.delegate = self;
-//    
-//    [self.suggestionsController.managedObjectContext performBlockAndWait:^{
-//        [self.suggestionsController performFetch:nil];
-//    }];
+}
+
+- (void)refresh {
+    [RequestServerSync syncWithCompletionBlock:^{
+        self.requests = [self.fetchController fetchedObjects];
+        [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
+    }];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [self fetch];
-    
-    if (controller == self.suggestionsController)
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationFade];
 }
 
-#pragma mark - Table view data source
+- (void)suggestionsControllerDidUpdate:(SuggestionsPreviewController *)controller {
+    // reload section 1
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+- (void)showSuggestions {
+    [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"SuggestionsViewController"] animated:YES];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -131,57 +152,15 @@
     if (section == 0 && [self.requests count] == 0) return 1;
     if (section == 0) return [self.requests count] + 1;
     
-    if (section == 1 && [[self.suggestionsController fetchedObjects] count] == 0) return 0;
-    if (section == 1) return [[self.suggestionsController fetchedObjects] count] + 1;
+    if (section == 1) return [self.suggestionsController numberOfRows];
     
     return 0;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
-    
-    view.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, self.view.frame.size.width - 24, view.frame.size.height)];
-    
-    //label.font = [UIFont fontWithName:@"Roboto-Medium" size:14];
-    //label.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13];
-    //label.textColor = [UIColor colorWithWhite:0.50 alpha:1];
-    
-    label.font = [UIFont boldSystemFontOfSize:14];
-    label.textColor = [UIColor colorWithWhite:0.64 alpha:1];
-    
-    if (section == 0)
-        label.text = @"Pending Approval";
-    else
-        label.text = @"People You May Know";
-    
-    [view addSubview:label];
-    
-    UIView *sep = [[UIView alloc] initWithFrame:CGRectMake(0, view.frame.size.height - 1, view.frame.size.width, 1)];
-    sep.backgroundColor = [UIColor colorWithWhite:0.94 alpha:1];
-    [view addSubview:sep];
-    
-//    if (section == 0) {
-//        sep = [[UIView alloc] initWithFrame:CGRectMake(0, 0, view.frame.size.width, 1)];
-//        sep.backgroundColor = [UIColor colorWithWhite:0.94 alpha:1];
-//        [view addSubview:sep];
-//    }
-    
-    return view;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 0;
-//    if (section == 0 && [[self.fetchController fetchedObjects] count] == 0) return 0;
-//    if (section == 1 && [[self.suggestionsController fetchedObjects] count] == 0) return 0;
-//    return 30;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"RequestsHeader"];
     
-    if (indexPath.section == 0 && [self.requests count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"NoResultsCell"];
+    if (indexPath.section == 0 && [self.requests count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"RequestsTutorialCell"];
     
     if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
     
@@ -191,20 +170,19 @@
         return cell;
     }
     
-    if (indexPath.section == 1 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"SuggestionsHeader"];
-    
-    SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
-    cell.user = [self.suggestionsController fetchedObjects][indexPath.row - 1];
-    return cell;
+    // suggestions
+    return [self.suggestionsController cellAtIndex:indexPath.row tableView:tableView];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && [self.requests count] == 0) return 70;
+    if (indexPath.section == 0 && [self.requests count] == 0) {
+        CGRect frame = [self.tutorialString boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 48, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context:nil];
+        return frame.size.height + 48 + 36 + 30;
+    }
     
     if (indexPath.section == 0 && indexPath.row == 0) return 1;
     
-    //if (indexPath.section == 0 && indexPath.row == 0) return 40;
-    if (indexPath.section == 1 && indexPath.row == 0) return 60;
+    if (indexPath.section == 1) return [self.suggestionsController heightForRowAtIndex:indexPath.row];
     
     return 57;
 }
@@ -213,17 +191,20 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (indexPath.section == 0 && indexPath.row == 0) return;
-    if (indexPath.section == 1 && indexPath.row == 0) return;
     
-    User *user;
-    
-    if (indexPath.section == 0)
-        user = self.requests[indexPath.row - 1];
-    else if (indexPath.section == 1)
-        user = [self.suggestionsController fetchedObjects][indexPath.row - 1];
+    if (indexPath.section == 1) {
+        [self.suggestionsController cellWasSelectedAtIndex:indexPath.row handler:^(Suggestion *suggestion) {
+            if (suggestion) {
+                UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
+                controller.user = suggestion.user;
+                [self.navigationController pushViewController:controller animated:YES];
+            }
+        }];
+        return;
+    }
     
     UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
-    controller.user = user;
+    controller.user = self.requests[indexPath.row - 1];
     [self.navigationController pushViewController:controller animated:YES];
 }
 

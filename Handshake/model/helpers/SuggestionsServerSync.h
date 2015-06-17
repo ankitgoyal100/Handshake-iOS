@@ -10,4 +10,7 @@
 
 @interface SuggestionsServerSync : NSObject
 
++ (void)sync;
++ (void)syncWithCompletionBlock:(void (^)())completionBlock;
+
 @end

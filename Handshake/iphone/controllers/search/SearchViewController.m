@@ -77,6 +77,7 @@
         _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _searchBar.returnKeyType = UIReturnKeySearch;
         _searchBar.enablesReturnKeyAutomatically = YES;
+        _searchBar.tintColor = [UIColor whiteColor];
         
         [_searchBar addSubview:self.placeholder];
     }

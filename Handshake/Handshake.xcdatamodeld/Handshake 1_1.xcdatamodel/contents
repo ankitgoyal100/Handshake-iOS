@@ -62,6 +62,9 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Card" inverseName="socials" inverseEntity="Card" syncable="YES"/>
     </entity>
+    <entity name="Suggestion" representedClassName="Suggestion" syncable="YES">
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="suggestion" inverseEntity="User" syncable="YES"/>
+    </entity>
     <entity name="User" representedClassName="User" syncable="YES">
         <attribute name="contacts" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="contactUpdated" optional="YES" attributeType="Date" syncable="YES"/>
@@ -84,6 +87,7 @@
         <relationship name="cards" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Card" inverseName="user" inverseEntity="Card" syncable="YES"/>
         <relationship name="feedItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FeedItem" inverseName="user" inverseEntity="FeedItem" syncable="YES"/>
         <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroupMember" inverseName="user" inverseEntity="GroupMember" syncable="YES"/>
+        <relationship name="suggestion" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Suggestion" inverseName="user" inverseEntity="Suggestion" syncable="YES"/>
     </entity>
     <elements>
         <element name="Account" positionX="0" positionY="0" width="128" height="60"/>
@@ -95,6 +99,7 @@
         <element name="GroupMember" positionX="0" positionY="0" width="128" height="75"/>
         <element name="Phone" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="360"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="375"/>
+        <element name="Suggestion" positionX="9" positionY="153" width="128" height="60"/>
     </elements>
 </model>

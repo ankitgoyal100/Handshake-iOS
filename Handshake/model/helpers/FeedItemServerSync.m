@@ -39,11 +39,6 @@
     params[@"page"] = @(page);
     
     [[HandshakeClient client] GET:@"/feed" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject[@"feed"] count] == 0) {
-            if (completionBlock) completionBlock();
-            return;
-        }
-        
         responseObject = [HandshakeCoreDataStore removeNullsFromDictionary:responseObject];
         
         // cache users and groups
@@ -174,6 +169,14 @@
                     [objectContext performBlockAndWait:^{
                         [objectContext save:nil];
                     }];
+                    
+                    // check if last page (< 100 items returned)
+                    if ([responseObject[@"feed"] count] < 200) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (completionBlock) completionBlock();
+                        });
+                        return;
+                    }
                     
                     // load next page
                     [self syncPage:page + 1 completionBlock:completionBlock];

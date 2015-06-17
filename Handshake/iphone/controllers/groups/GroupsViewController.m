@@ -27,9 +27,22 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *groupCodeField;
 
+@property (nonatomic, strong) NSAttributedString *tutorialString;
+
 @end
 
 @implementation GroupsViewController
+
+- (NSAttributedString *)tutorialString {
+    if (!_tutorialString) {
+        NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+        [pStyle setLineSpacing:2];
+        
+        NSDictionary *attrs = @{ NSFontAttributeName: [UIFont systemFontOfSize:17], NSParagraphStyleAttributeName: pStyle, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.5 alpha:1] };
+        _tutorialString = [[NSAttributedString alloc] initWithString:@"Instantly share and receive contact information with entire groups of your friends!" attributes:attrs];
+    }
+    return _tutorialString;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -77,10 +90,14 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if ([[self.fetchController fetchedObjects] count] == 0) return 1;
+    
     return [[self.fetchController fetchedObjects] count] / 2 + [[self.fetchController fetchedObjects] count] % 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([[self.fetchController fetchedObjects] count] == 0) return [tableView dequeueReusableCellWithIdentifier:@"GroupsTutorialCell"];
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
     // remove all subviews
@@ -118,6 +135,11 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([[self.fetchController fetchedObjects] count] == 0) {
+        CGRect frame = [self.tutorialString boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 48, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context:nil];
+        return frame.size.height + 48 + 36 + 30;
+    }
+    
     if (indexPath.row == 0) return 192;
     
     if (indexPath.row == [self tableView:tableView numberOfRowsInSection:indexPath.section] - 1) return 196;
@@ -139,15 +161,19 @@
         
         [self presentViewController:nav animated:YES completion:nil];
     } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Create Group"]) {
-        EditGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
-        controller.delegate = self;
-        
-        Group *group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
-        group.syncStatus = [NSNumber numberWithInt:GroupDeleted]; // don't show in list
-        controller.group = group;
-        
-        [self.navigationController pushViewController:controller animated:YES];
+        [self createGroup:nil];
     }
+}
+
+- (IBAction)createGroup:(id)sender {
+    EditGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EditGroupViewController"];
+    controller.delegate = self;
+    
+    Group *group = [[Group alloc] initWithEntity:[NSEntityDescription entityForName:@"Group" inManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]] insertIntoManagedObjectContext:[[HandshakeCoreDataStore defaultStore] mainManagedObjectContext]];
+    group.syncStatus = [NSNumber numberWithInt:GroupDeleted]; // don't show in list
+    controller.group = group;
+    
+    [self.navigationController pushViewController:controller animated:YES];
 }
 
 - (void)groupEditCancelled:(Group *)group {

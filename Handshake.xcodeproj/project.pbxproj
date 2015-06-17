@@ -124,6 +124,13 @@
 		799DD26F1B2F5C820077044C /* NBPhoneNumberUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2601B2F5C820077044C /* NBPhoneNumberUtil.m */; };
 		799DD2701B2F5C820077044C /* NSArray+NBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2621B2F5C820077044C /* NSArray+NBAdditions.m */; };
 		799DD2721B2F68050077044C /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799DD2711B2F68050077044C /* CoreTelephony.framework */; };
+		799DD2751B2FAC000077044C /* Suggestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2741B2FAC000077044C /* Suggestion.m */; };
+		799DD2781B2FBF010077044C /* ContactUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2771B2FBF010077044C /* ContactUploader.m */; };
+		799DD27C1B2FE4640077044C /* SuggestionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD27B1B2FE4640077044C /* SuggestionsViewController.m */; };
+		799DD27F1B3097EE0077044C /* FeedSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD27E1B3097EE0077044C /* FeedSection.m */; };
+		799DD2821B30987D0077044C /* FeedTutorialSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2811B30987D0077044C /* FeedTutorialSection.m */; };
+		799DD2851B309C140077044C /* FeedItemSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2841B309C140077044C /* FeedItemSection.m */; };
+		799DD2881B309D360077044C /* SuggestionsPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2871B309D360077044C /* SuggestionsPreviewController.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
 		79B3FEB719C9150300759F69 /* Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB619C9150300759F69 /* Phone.m */; };
@@ -427,6 +434,20 @@
 		799DD2611B2F5C820077044C /* NSArray+NBAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+NBAdditions.h"; sourceTree = "<group>"; };
 		799DD2621B2F5C820077044C /* NSArray+NBAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+NBAdditions.m"; sourceTree = "<group>"; };
 		799DD2711B2F68050077044C /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		799DD2731B2FAC000077044C /* Suggestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Suggestion.h; sourceTree = "<group>"; };
+		799DD2741B2FAC000077044C /* Suggestion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Suggestion.m; sourceTree = "<group>"; };
+		799DD2761B2FBF010077044C /* ContactUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactUploader.h; sourceTree = "<group>"; };
+		799DD2771B2FBF010077044C /* ContactUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactUploader.m; sourceTree = "<group>"; };
+		799DD27A1B2FE4640077044C /* SuggestionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuggestionsViewController.h; path = suggestions/SuggestionsViewController.h; sourceTree = "<group>"; };
+		799DD27B1B2FE4640077044C /* SuggestionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SuggestionsViewController.m; path = suggestions/SuggestionsViewController.m; sourceTree = "<group>"; };
+		799DD27D1B3097EE0077044C /* FeedSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedSection.h; path = feed/FeedSection.h; sourceTree = "<group>"; };
+		799DD27E1B3097EE0077044C /* FeedSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedSection.m; path = feed/FeedSection.m; sourceTree = "<group>"; };
+		799DD2801B30987D0077044C /* FeedTutorialSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedTutorialSection.h; path = feed/FeedTutorialSection.h; sourceTree = "<group>"; };
+		799DD2811B30987D0077044C /* FeedTutorialSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedTutorialSection.m; path = feed/FeedTutorialSection.m; sourceTree = "<group>"; };
+		799DD2831B309C140077044C /* FeedItemSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedItemSection.h; path = feed/FeedItemSection.h; sourceTree = "<group>"; };
+		799DD2841B309C140077044C /* FeedItemSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedItemSection.m; path = feed/FeedItemSection.m; sourceTree = "<group>"; };
+		799DD2861B309D360077044C /* SuggestionsPreviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuggestionsPreviewController.h; path = feed/SuggestionsPreviewController.h; sourceTree = "<group>"; };
+		799DD2871B309D360077044C /* SuggestionsPreviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SuggestionsPreviewController.m; path = feed/SuggestionsPreviewController.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
 		79B3FEAD19C9150300759F69 /* Address.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Address.m; sourceTree = "<group>"; };
 		79B3FEAF19C9150300759F69 /* Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Email.h; sourceTree = "<group>"; };
@@ -725,6 +746,8 @@
 				799DD2081B29D78C0077044C /* LocationUpdater.m */,
 				799DD22A1B2B9A790077044C /* GroupCodeHelper.h */,
 				799DD22B1B2B9A790077044C /* GroupCodeHelper.m */,
+				799DD2761B2FBF010077044C /* ContactUploader.h */,
+				799DD2771B2FBF010077044C /* ContactUploader.m */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -755,6 +778,7 @@
 		7928023219C8B3C40075261D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				799DD2791B2FE3D60077044C /* suggestions */,
 				799DD1E61B2639D00077044C /* users */,
 				79C751941B1C9EB800DB221C /* feed */,
 				7932B75B1B0159740011A747 /* search */,
@@ -872,6 +896,8 @@
 				79D4AD5719C93F3100F5A154 /* Card.m */,
 				79C751A41B1CE5FF00DB221C /* FeedItem.h */,
 				79C751A51B1CE5FF00DB221C /* FeedItem.m */,
+				799DD2731B2FAC000077044C /* Suggestion.h */,
+				799DD2741B2FAC000077044C /* Suggestion.m */,
 				796866341ACDE91D00CCF0E2 /* Handshake-Bridging-Header.h */,
 			);
 			path = model;
@@ -1101,6 +1127,15 @@
 			path = libPhoneNumber;
 			sourceTree = "<group>";
 		};
+		799DD2791B2FE3D60077044C /* suggestions */ = {
+			isa = PBXGroup;
+			children = (
+				799DD27A1B2FE4640077044C /* SuggestionsViewController.h */,
+				799DD27B1B2FE4640077044C /* SuggestionsViewController.m */,
+			);
+			name = suggestions;
+			sourceTree = "<group>";
+		};
 		79B752BF1AF6F49B007660E5 /* groups */ = {
 			isa = PBXGroup;
 			children = (
@@ -1240,6 +1275,14 @@
 			children = (
 				79C751951B1C9ED900DB221C /* FeedViewController.h */,
 				79C751961B1C9ED900DB221C /* FeedViewController.m */,
+				799DD27D1B3097EE0077044C /* FeedSection.h */,
+				799DD27E1B3097EE0077044C /* FeedSection.m */,
+				799DD2801B30987D0077044C /* FeedTutorialSection.h */,
+				799DD2811B30987D0077044C /* FeedTutorialSection.m */,
+				799DD2831B309C140077044C /* FeedItemSection.h */,
+				799DD2841B309C140077044C /* FeedItemSection.m */,
+				799DD2861B309D360077044C /* SuggestionsPreviewController.h */,
+				799DD2871B309D360077044C /* SuggestionsPreviewController.m */,
 			);
 			name = feed;
 			sourceTree = "<group>";
@@ -1435,6 +1478,7 @@
 				7997B79F19DC57A400525550 /* BaseNavigationController.m in Sources */,
 				799DD2091B29D78C0077044C /* LocationUpdater.m in Sources */,
 				79C751881B194F0500DB221C /* OptionsCell.m in Sources */,
+				799DD2881B309D360077044C /* SuggestionsPreviewController.m in Sources */,
 				799DD26F1B2F5C820077044C /* NBPhoneNumberUtil.m in Sources */,
 				795003B41AE52003003DD9BF /* EmailAddressCell.m in Sources */,
 				799DD22C1B2B9A790077044C /* GroupCodeHelper.m in Sources */,
@@ -1469,6 +1513,7 @@
 				7928033619C8B3C40075261D /* FacebookHelper.m in Sources */,
 				7928032E19C8B3C40075261D /* AFSecurityPolicy.m in Sources */,
 				79D46C8519D22D4F00C52FEE /* STHTTPRequest.m in Sources */,
+				799DD2751B2FAC000077044C /* Suggestion.m in Sources */,
 				799DD26A1B2F5C820077044C /* NBPhoneMetaData.m in Sources */,
 				792803B519C8B3C40075261D /* UIProgressView+AFNetworking.m in Sources */,
 				79BD34291AD05500008079CF /* TwitterCell.m in Sources */,
@@ -1522,6 +1567,7 @@
 				799DD2061B290D170077044C /* SaveCell.m in Sources */,
 				7932B7651B0189820011A747 /* SearchResultCell.m in Sources */,
 				799DD2701B2F5C820077044C /* NSArray+NBAdditions.m in Sources */,
+				799DD2851B309C140077044C /* FeedItemSection.m in Sources */,
 				795003B71AE52099003DD9BF /* EmailEditController.m in Sources */,
 				79D46C7F19D22D4F00C52FEE /* STTwitterHTML.m in Sources */,
 				799DD1EC1B2640B90077044C /* UserContactsViewController.m in Sources */,
@@ -1531,7 +1577,9 @@
 				7928033019C8B3C40075261D /* AFURLRequestSerialization.m in Sources */,
 				799DD2641B2F5C820077044C /* NBMetadataCore.m in Sources */,
 				792803B419C8B3C40075261D /* UIImageView+AFNetworking.m in Sources */,
+				799DD27C1B2FE4640077044C /* SuggestionsViewController.m in Sources */,
 				79BD34231AD054E7008079CF /* AddressCell.m in Sources */,
+				799DD27F1B3097EE0077044C /* FeedSection.m in Sources */,
 				799DD2631B2F5C820077044C /* NBAsYouTypeFormatter.m in Sources */,
 				79C7518C1B1C975400DB221C /* ContactsViewController.m in Sources */,
 				79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */,
@@ -1560,11 +1608,13 @@
 				799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */,
 				799DD1EF1B2792910077044C /* SectionHeaderCell.m in Sources */,
 				7928033119C8B3C40075261D /* AFURLResponseSerialization.m in Sources */,
+				799DD2781B2FBF010077044C /* ContactUploader.m in Sources */,
 				79BD34161ACF71C5008079CF /* UserViewController.m in Sources */,
 				794692271B2222F80093045E /* GroupCodeCell.m in Sources */,
 				799DD2181B2B54410077044C /* ContactServerSync.m in Sources */,
 				79C751A31B1CC0A200DB221C /* AccountOptionsCell.m in Sources */,
 				799DD2151B2B4C100077044C /* RequestServerSync.m in Sources */,
+				799DD2821B30987D0077044C /* FeedTutorialSection.m in Sources */,
 				79B752DB1AFC6CEB007660E5 /* EditGroupViewController.m in Sources */,
 				799DD2031B28EB6A0077044C /* ContactSync.m in Sources */,
 				795003C01AE55C9D003DD9BF /* AddSocialController.m in Sources */,

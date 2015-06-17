@@ -59,7 +59,6 @@
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             if ([[operation response] statusCode] == 401)
                 [[HandshakeSession currentSession] invalidate];
-            [self updateLocation]; //try again
         }];
     }
 }

@@ -18,6 +18,8 @@
 #import "RequestServerSync.h"
 #import "GroupServerSync.h"
 #import "FeedItemServerSync.h"
+#import "ContactUploader.h"
+#import "SuggestionsServerSync.h"
 
 static HandshakeSession *session = nil;
 
@@ -83,12 +85,7 @@ static HandshakeSession *session = nil;
             
             [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_RESTORED object:nil];
             
-            [Account sync];
-            [CardServerSync sync];
-            [ContactServerSync sync];
-            [GroupServerSync sync];
-            [RequestServerSync sync];
-            [FeedItemServerSync sync];
+            [self sync];
             
             return session;
         }
@@ -146,16 +143,23 @@ static HandshakeSession *session = nil;
             [session.managedObjectContext save:&error];
         }];
         
-        [Account sync];
-        [CardServerSync sync];
-        [ContactServerSync sync];
-        [GroupServerSync sync];
-        [RequestServerSync sync];
-        [FeedItemServerSync sync];
+        [self sync];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401) {
             if (failedBlock) failedBlock(AUTHENTICATION_ERROR);
         } else if (failedBlock) failedBlock(NETWORK_ERROR);
+    }];
+}
+
++ (void)sync {
+    [Account sync];
+    [CardServerSync sync];
+    [ContactServerSync sync];
+    [GroupServerSync sync];
+    [RequestServerSync sync];
+    [FeedItemServerSync sync];
+    [ContactUploader uploadWithCompletionBlock:^{
+        [SuggestionsServerSync sync];
     }];
 }
 
