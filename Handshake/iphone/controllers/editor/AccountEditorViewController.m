@@ -751,6 +751,7 @@
 }
 
 - (void)addContactInfoViewControllerDidFinish {
+    self.saveButton.enabled = YES;
     [self.tableView reloadData];
 }
 

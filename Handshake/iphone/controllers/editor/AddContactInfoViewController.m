@@ -24,8 +24,8 @@
 }
 
 - (IBAction)cancel:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(addContactInfoViewControllerDidFinish)])
-        [self.delegate addContactInfoViewControllerDidFinish];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addContactInfoViewControllerDidCancel)])
+        [self.delegate addContactInfoViewControllerDidCancel];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -65,7 +65,8 @@
 }
 
 - (void)phoneEdited:(Phone *)phone {
-    [self cancel:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addContactInfoViewControllerDidFinish)])
+        [self.delegate addContactInfoViewControllerDidFinish];
 }
 
 - (void)phoneEditCancelled:(Phone *)phone {
@@ -73,7 +74,8 @@
 }
 
 - (void)emailEdited:(Email *)email {
-    [self cancel:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addContactInfoViewControllerDidFinish)])
+        [self.delegate addContactInfoViewControllerDidFinish];
 }
 
 - (void)emailEditCancelled:(Email *)email {
@@ -81,7 +83,8 @@
 }
 
 - (void)addressEdited:(Address *)address {
-    [self cancel:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addContactInfoViewControllerDidFinish)])
+        [self.delegate addContactInfoViewControllerDidFinish];
 }
 
 - (void)addressEditCancelled:(Address *)address {

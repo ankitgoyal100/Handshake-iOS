@@ -13,6 +13,7 @@
 
 @optional
 - (void)addContactInfoViewControllerDidFinish;
+- (void)addContactInfoViewControllerDidCancel;
 
 @end
 
