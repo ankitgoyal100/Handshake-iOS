@@ -60,6 +60,11 @@
         [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"ContactSyncSettingsViewController"] animated:YES];
     }
     
+    if (indexPath.row == 5) {
+        // notifications
+        [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NotificationSettingsViewController"] animated:YES];
+    }
+    
     if (indexPath.row == 7) {
         // facebook
         if ([FacebookHelper sharedHelper].username) {

@@ -127,9 +127,6 @@
 		799DD2751B2FAC000077044C /* Suggestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2741B2FAC000077044C /* Suggestion.m */; };
 		799DD2781B2FBF010077044C /* ContactUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2771B2FBF010077044C /* ContactUploader.m */; };
 		799DD27C1B2FE4640077044C /* SuggestionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD27B1B2FE4640077044C /* SuggestionsViewController.m */; };
-		799DD27F1B3097EE0077044C /* FeedSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD27E1B3097EE0077044C /* FeedSection.m */; };
-		799DD2821B30987D0077044C /* FeedTutorialSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2811B30987D0077044C /* FeedTutorialSection.m */; };
-		799DD2851B309C140077044C /* FeedItemSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2841B309C140077044C /* FeedItemSection.m */; };
 		799DD2881B309D360077044C /* SuggestionsPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2871B309D360077044C /* SuggestionsPreviewController.m */; };
 		79B3FEAE19C9150300759F69 /* Address.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEAD19C9150300759F69 /* Address.m */; };
 		79B3FEB119C9150300759F69 /* Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B3FEB019C9150300759F69 /* Email.m */; };
@@ -201,6 +198,8 @@
 		79D46C8919D22D5F00C52FEE /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79D46C8819D22D5F00C52FEE /* Social.framework */; };
 		79D46C8C19D22D9E00C52FEE /* TwitterHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C8B19D22D9E00C52FEE /* TwitterHelper.m */; };
 		79D4AD5819C93F3100F5A154 /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D4AD5719C93F3100F5A154 /* Card.m */; };
+		79E759E21B3251E000CF94AC /* NotificationsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E11B3251E000CF94AC /* NotificationsHelper.m */; };
+		79E759E51B32778F00CF94AC /* NotificationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -440,12 +439,6 @@
 		799DD2771B2FBF010077044C /* ContactUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactUploader.m; sourceTree = "<group>"; };
 		799DD27A1B2FE4640077044C /* SuggestionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuggestionsViewController.h; path = suggestions/SuggestionsViewController.h; sourceTree = "<group>"; };
 		799DD27B1B2FE4640077044C /* SuggestionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SuggestionsViewController.m; path = suggestions/SuggestionsViewController.m; sourceTree = "<group>"; };
-		799DD27D1B3097EE0077044C /* FeedSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedSection.h; path = feed/FeedSection.h; sourceTree = "<group>"; };
-		799DD27E1B3097EE0077044C /* FeedSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedSection.m; path = feed/FeedSection.m; sourceTree = "<group>"; };
-		799DD2801B30987D0077044C /* FeedTutorialSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedTutorialSection.h; path = feed/FeedTutorialSection.h; sourceTree = "<group>"; };
-		799DD2811B30987D0077044C /* FeedTutorialSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedTutorialSection.m; path = feed/FeedTutorialSection.m; sourceTree = "<group>"; };
-		799DD2831B309C140077044C /* FeedItemSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedItemSection.h; path = feed/FeedItemSection.h; sourceTree = "<group>"; };
-		799DD2841B309C140077044C /* FeedItemSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedItemSection.m; path = feed/FeedItemSection.m; sourceTree = "<group>"; };
 		799DD2861B309D360077044C /* SuggestionsPreviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuggestionsPreviewController.h; path = feed/SuggestionsPreviewController.h; sourceTree = "<group>"; };
 		799DD2871B309D360077044C /* SuggestionsPreviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SuggestionsPreviewController.m; path = feed/SuggestionsPreviewController.m; sourceTree = "<group>"; };
 		79B3FEAC19C9150300759F69 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
@@ -580,6 +573,10 @@
 		79D46C8B19D22D9E00C52FEE /* TwitterHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterHelper.m; sourceTree = "<group>"; };
 		79D4AD5619C93F3100F5A154 /* Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Card.h; sourceTree = "<group>"; };
 		79D4AD5719C93F3100F5A154 /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
+		79E759E01B3251E000CF94AC /* NotificationsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationsHelper.h; sourceTree = "<group>"; };
+		79E759E11B3251E000CF94AC /* NotificationsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationsHelper.m; sourceTree = "<group>"; };
+		79E759E31B32778F00CF94AC /* NotificationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationSettingsViewController.h; sourceTree = "<group>"; };
+		79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationSettingsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -748,6 +745,8 @@
 				799DD22B1B2B9A790077044C /* GroupCodeHelper.m */,
 				799DD2761B2FBF010077044C /* ContactUploader.h */,
 				799DD2771B2FBF010077044C /* ContactUploader.m */,
+				79E759E01B3251E000CF94AC /* NotificationsHelper.h */,
+				79E759E11B3251E000CF94AC /* NotificationsHelper.m */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -835,6 +834,8 @@
 				799DD1FC1B28B56A0077044C /* ChangeEmailViewController.m */,
 				799DD1FE1B28C6E30077044C /* ContactSyncSettingsViewController.h */,
 				799DD1FF1B28C6E30077044C /* ContactSyncSettingsViewController.m */,
+				79E759E31B32778F00CF94AC /* NotificationSettingsViewController.h */,
+				79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */,
 			);
 			path = settings;
 			sourceTree = "<group>";
@@ -1275,12 +1276,6 @@
 			children = (
 				79C751951B1C9ED900DB221C /* FeedViewController.h */,
 				79C751961B1C9ED900DB221C /* FeedViewController.m */,
-				799DD27D1B3097EE0077044C /* FeedSection.h */,
-				799DD27E1B3097EE0077044C /* FeedSection.m */,
-				799DD2801B30987D0077044C /* FeedTutorialSection.h */,
-				799DD2811B30987D0077044C /* FeedTutorialSection.m */,
-				799DD2831B309C140077044C /* FeedItemSection.h */,
-				799DD2841B309C140077044C /* FeedItemSection.m */,
 				799DD2861B309D360077044C /* SuggestionsPreviewController.h */,
 				799DD2871B309D360077044C /* SuggestionsPreviewController.m */,
 			);
@@ -1391,7 +1386,7 @@
 						DevelopmentTeam = 59G34X7E6F;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -1531,6 +1526,7 @@
 				799DD2681B2F5C820077044C /* NBMetadataHelper.m in Sources */,
 				799DD21E1B2B63A10077044C /* FeedItemServerSync.m in Sources */,
 				79C050E419CF650D001BB956 /* GKResizeableCropOverlayView.m in Sources */,
+				79E759E21B3251E000CF94AC /* NotificationsHelper.m in Sources */,
 				79B752CF1AFC5DD6007660E5 /* GroupMembersViewController.m in Sources */,
 				79B3FEB119C9150300759F69 /* Email.m in Sources */,
 				792803B119C8B3C40075261D /* UIActivityIndicatorView+AFNetworking.m in Sources */,
@@ -1567,7 +1563,6 @@
 				799DD2061B290D170077044C /* SaveCell.m in Sources */,
 				7932B7651B0189820011A747 /* SearchResultCell.m in Sources */,
 				799DD2701B2F5C820077044C /* NSArray+NBAdditions.m in Sources */,
-				799DD2851B309C140077044C /* FeedItemSection.m in Sources */,
 				795003B71AE52099003DD9BF /* EmailEditController.m in Sources */,
 				79D46C7F19D22D4F00C52FEE /* STTwitterHTML.m in Sources */,
 				799DD1EC1B2640B90077044C /* UserContactsViewController.m in Sources */,
@@ -1579,7 +1574,6 @@
 				792803B419C8B3C40075261D /* UIImageView+AFNetworking.m in Sources */,
 				799DD27C1B2FE4640077044C /* SuggestionsViewController.m in Sources */,
 				79BD34231AD054E7008079CF /* AddressCell.m in Sources */,
-				799DD27F1B3097EE0077044C /* FeedSection.m in Sources */,
 				799DD2631B2F5C820077044C /* NBAsYouTypeFormatter.m in Sources */,
 				79C7518C1B1C975400DB221C /* ContactsViewController.m in Sources */,
 				79BD341D1AD0546B008079CF /* PhoneCell.m in Sources */,
@@ -1588,6 +1582,7 @@
 				792803AF19C8B3C40075261D /* UIControl+Blocks.m in Sources */,
 				792803C819C8F3150075261D /* HandshakeSession.m in Sources */,
 				7928035D19C8B3C40075261D /* StartViewController.m in Sources */,
+				79E759E51B32778F00CF94AC /* NotificationSettingsViewController.m in Sources */,
 				799DD26B1B2F5C820077044C /* NBPhoneMetaDataGenerator.m in Sources */,
 				79D46C8219D22D4F00C52FEE /* STTwitterOSRequest.m in Sources */,
 				799DD2241B2B87E20077044C /* Group.m in Sources */,
@@ -1614,7 +1609,6 @@
 				799DD2181B2B54410077044C /* ContactServerSync.m in Sources */,
 				79C751A31B1CC0A200DB221C /* AccountOptionsCell.m in Sources */,
 				799DD2151B2B4C100077044C /* RequestServerSync.m in Sources */,
-				799DD2821B30987D0077044C /* FeedTutorialSection.m in Sources */,
 				79B752DB1AFC6CEB007660E5 /* EditGroupViewController.m in Sources */,
 				799DD2031B28EB6A0077044C /* ContactSync.m in Sources */,
 				795003C01AE55C9D003DD9BF /* AddSocialController.m in Sources */,

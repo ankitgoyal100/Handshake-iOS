@@ -20,6 +20,7 @@
 #import "FeedItemServerSync.h"
 #import "ContactUploader.h"
 #import "SuggestionsServerSync.h"
+#import "NotificationsHelper.h"
 
 static HandshakeSession *session = nil;
 
@@ -161,6 +162,7 @@ static HandshakeSession *session = nil;
     [ContactUploader uploadWithCompletionBlock:^{
         [SuggestionsServerSync sync];
     }];
+    [[NotificationsHelper sharedHelper] syncSettings];
 }
 
 - (void)logout {

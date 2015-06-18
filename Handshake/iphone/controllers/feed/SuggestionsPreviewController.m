@@ -26,6 +26,7 @@
     self = [super init];
     if (self) {
         self.showCount = showCount;
+        self.showEndSpacer = NO;
         
         [self fetch];
     }
@@ -54,13 +55,10 @@
         [self.delegate suggestionsControllerDidUpdate:self];
 }
 
-- (BOOL)hasHeader {
-    return YES;
-}
-
 - (NSInteger)numberOfRows {
     if ([[self.fetchController fetchedObjects] count] == 0) return 0;
     
+    if (self.showEndSpacer) return 3 + [[self.fetchController fetchedObjects] count];
     return 2 + [[self.fetchController fetchedObjects] count];
 }
 
@@ -68,6 +66,8 @@
     if (index == 0) return [tableView dequeueReusableCellWithIdentifier:@"SuggestionsHeader"];
     
     if (index == [[self.fetchController fetchedObjects] count] + 1) return [tableView dequeueReusableCellWithIdentifier:@"SeeAllCell"];
+    
+    if (index == [[self.fetchController fetchedObjects] count] + 2) return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
     Suggestion *suggestion = [self.fetchController fetchedObjects][index - 1];
     SearchResultCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchResultCell"];
@@ -78,12 +78,15 @@
 - (CGFloat)heightForRowAtIndex:(NSInteger)index {
     if (index == 0) return 50;
     if (index == [[self.fetchController fetchedObjects] count] + 1) return 46;
+    if (index == [[self.fetchController fetchedObjects] count] + 2) return 20;
     
     return 57;
 }
 
 - (void)cellWasSelectedAtIndex:(NSInteger)index handler:(void (^)(Suggestion *suggestion))handler {
     if (index == 0) return;
+    
+    if (index == [[self.fetchController fetchedObjects] count] + 2) return;
     
     if (index == [[self.fetchController fetchedObjects] count] + 1) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(showSuggestions)])

@@ -18,6 +18,7 @@
 #import "HandshakeSession.h"
 #import "LocationUpdater.h"
 #import "NBPhoneNumberUtil.h"
+#import "NotificationsHelper.h"
 
 @interface AppDelegate ()
 
@@ -75,21 +76,33 @@
         self.window.rootViewController = [storyboard instantiateInitialViewController];
     }
     
-    /*
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    UIMutableUserNotificationCategory *requestsCategory = [[UIMutableUserNotificationCategory alloc] init];
+    requestsCategory.identifier = @"requests";
     
-    if ([HandshakeSession currentSession]) {
-        MainViewController *controller = [[MainViewController alloc] initWithNibName:nil bundle:nil];
-        self.window.rootViewController = controller;
-    } else {
-        UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:[[StartViewController alloc] initWithLoading:NO]];
-        controller.navigationBarHidden = YES;
-        self.window.rootViewController = controller;
-    }
+    [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:[NSSet setWithObjects:requestsCategory, nil]]];
 
-    [self.window makeKeyAndVisible];
-    */
     return YES;
+}
+
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+    NSString *token = [[devToken description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    [[NotificationsHelper sharedHelper] registerDevice:token];
+}
+
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+    
+}
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    [application registerForRemoteNotifications];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    [[NotificationsHelper sharedHelper] handleNotification:userInfo completionBlock:^{
+        completionHandler(UIBackgroundFetchResultNewData);
+    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -108,6 +121,8 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    application.applicationIconBadgeNumber = 0;
     
     [FBAppCall handleDidBecomeActive];
 }

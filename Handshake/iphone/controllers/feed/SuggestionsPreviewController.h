@@ -33,4 +33,6 @@
 
 @property (nonatomic, strong) id <SuggestionsPreviewControllerDelegate> delegate;
 
+@property (nonatomic) BOOL showEndSpacer;
+
 @end

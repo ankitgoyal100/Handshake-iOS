@@ -21,9 +21,6 @@
 #import "Suggestion.h"
 #import "SearchResultCell.h"
 #import "FeedItemServerSync.h"
-#import "FeedSection.h"
-#import "FeedTutorialSection.h"
-#import "FeedItemSection.h"
 #import "SuggestionsPreviewController.h"
 #import "SuggestionsServerSync.h"
 
@@ -121,16 +118,22 @@
         self.suggestionsController = [[SuggestionsPreviewController alloc] initWithShowCount:8];
     else
         self.suggestionsController = [[SuggestionsPreviewController alloc] initWithShowCount:3];
+    
+    // if more than 3 feed items - add spacer to suggestions sections
+    if ([[self.fetchController fetchedObjects] count] > 3)
+        self.suggestionsController.showEndSpacer = YES;
+    
     self.suggestionsController.delegate = self;
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    self.suggestionsController.delegate = nil;
     [self fetch];
     [self.tableView reloadData];
 }
 
 - (void)suggestionsControllerDidUpdate:(SuggestionsPreviewController *)controller {
-    // reload suggestions section
+    // reload sections
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
 }
 
@@ -214,17 +217,14 @@
         return [self.suggestionsController numberOfRows]; // suggestions
     }
     
-    // if feed items - first section is up to 3 (incude separator at top)
+    // if feed items - first section is up to 3 (include separator at top)
     if (section == 0) return MIN(3, [[self.fetchController fetchedObjects] count]) + 1;
     
     // suggestions
     if (section == 1) return [self.suggestionsController numberOfRows];
     
-    // if more feed items but no suggestions, rest of feed items (no spacer)
-    if ([[self.fetchController fetchedObjects] count] - 3 > 0 && [self.suggestionsController numberOfRows] == 0) return [[self.fetchController fetchedObjects] count] - 3;
-    
-    // else, add spacer
-    if ([[self.fetchController fetchedObjects] count] - 3 > 0) return [[self.fetchController fetchedObjects] count] - 2;
+    // feed items
+    if ([[self.fetchController fetchedObjects] count] > 3) return [[self.fetchController fetchedObjects] count] - 3;
     
     // else no rows
     return 0;
@@ -255,11 +255,7 @@
     
     // rest of feed items
     
-    // if suggestions add spacer
-    NSInteger index = [self.suggestionsController numberOfRows] == 0 ? indexPath.row + 3 : indexPath.row + 2;
-    
-    // if index is 2 - spacer
-    if (index == 2) return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
+    NSInteger index = indexPath.row + 3;
     
     FeedItemCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FeedItemCell"];
     FeedItem *item = [self.fetchController fetchedObjects][index];
@@ -294,12 +290,7 @@
     }
     
     // rest of feed items
-    
-    // if suggestions add spacer
-    NSInteger index = [self.suggestionsController numberOfRows] == 0 ? indexPath.row + 3 : indexPath.row + 2;
-    
-    // if index is 2 - spacer
-    if (index == 2) return 20;
+    NSInteger index = indexPath.row + 3;
     
     FeedItem *item = [self.fetchController fetchedObjects][index];
     return [self heightForFeedItem:item];
@@ -352,12 +343,7 @@
     }
     
     // rest of feed items
-    
-    // if suggestions add spacer
-    NSInteger index = [self.suggestionsController numberOfRows] == 0 ? indexPath.row + 3 : indexPath.row + 2;
-    
-    // if index is 2 - spacer
-    if (index == 2) return;
+    NSInteger index = indexPath.row + 3;
     
     FeedItem *item = [self.fetchController fetchedObjects][index];
     if (item.user) {

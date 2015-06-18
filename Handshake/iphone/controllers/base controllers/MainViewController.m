@@ -20,8 +20,9 @@
 #import "LocationUpdater.h"
 #import "SearchViewController.h"
 #import "GroupCodeHelper.h"
+#import "NotificationsHelper.h"
 
-@interface MainViewController()
+@interface MainViewController() <NotificationsHelperDelegate>
 
 @property (nonatomic, strong) JoinGroupDialogViewController *groupDialog;
 
@@ -33,6 +34,8 @@
     [super viewDidLoad];
     
     self.delegate = self;
+    
+    [NotificationsHelper sharedHelper].delegate = self;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(forceLogout:) name:SESSION_INVALID object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logout:) name:SESSION_ENDED object:nil];
@@ -121,6 +124,14 @@
         
         [self.view.window addSubview:self.groupDialog.view];
     }
+}
+
+- (void)openUser:(User *)user {
+    UINavigationController *controller = (UINavigationController *)self.selectedViewController;
+    
+    UserViewController *userController = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
+    userController.user = user;
+    [controller pushViewController:userController animated:NO];
 }
 
 @end

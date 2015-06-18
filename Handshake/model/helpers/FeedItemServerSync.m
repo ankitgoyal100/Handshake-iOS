@@ -171,7 +171,7 @@
                     }];
                     
                     // check if last page (< 100 items returned)
-                    if ([responseObject[@"feed"] count] < 200) {
+                    if ([responseObject[@"feed"] count] < 100) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             if (completionBlock) completionBlock();
                         });
