@@ -381,7 +381,7 @@
                 cell.addressLabel.text = addressString;
             else {
                 NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-                [paragrahStyle setMinimumLineHeight:18];
+                [paragrahStyle setLineSpacing:2];
                 
                 cell.addressLabel.attributedText = [[NSAttributedString alloc] initWithString:addressString attributes:@{ NSParagraphStyleAttributeName: paragrahStyle }];
             }
@@ -462,13 +462,13 @@
     
     if (indexPath.section == 1) {
         if (row < [self.card.phones count]) {
-            return 60;
+            return 57;
         }
         
         row -= [self.card.phones count];
         
         if (row < [self.card.emails count]) {
-            return 60;
+            return 57;
         }
         
         row -= [self.card.emails count];
@@ -478,17 +478,17 @@
             
             // if address is one line return 72
             if (![address containsString:@"\n"])
-                return 60;
+                return 57;
             
             NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-            [paragrahStyle setMinimumLineHeight:18];
+            [paragrahStyle setLineSpacing:2];
             
-            NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont systemFontOfSize:14], NSParagraphStyleAttributeName: paragrahStyle };
-            CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 28, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
-            return 24 + 18 + frame.size.height + 3;
+            NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSParagraphStyleAttributeName: paragrahStyle };
+            CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 80, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
+            return 23 + 15 + frame.size.height + 3;
         }
     } else if (indexPath.section == 2) {
-        return 53;
+        return 46;
     }
     
     return 0;

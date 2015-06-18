@@ -57,6 +57,14 @@
         [self.addressField becomeFirstResponder];
 }
 
+- (IBAction)cancel:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(emailEditCancelled:)])
+        [self.delegate emailEditCancelled:self.email];
+    
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)back {
     if (self.delegate && [self.delegate respondsToSelector:@selector(emailEditCancelled:)])
         [self.delegate emailEditCancelled:self.email];
@@ -140,7 +148,8 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(emailEdited:)])
         [self.delegate emailEdited:self.email];
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)delete:(id)sender {

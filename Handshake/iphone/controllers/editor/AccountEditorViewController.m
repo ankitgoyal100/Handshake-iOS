@@ -14,7 +14,7 @@
 #import "Phone.h"
 #import "Email.h"
 #import "Address.h"
-#import "PhoneEditCell.h"
+#import "ContactInfoEditCell.h"
 #import "AddCell.h"
 #import "EmailEditCell.h"
 #import "AddressEditCell.h"
@@ -39,8 +39,9 @@
 #import "FacebookHelper.h"
 #import "CardServerSync.h"
 #import "NBPhoneNumberUtil.h"
+#import "AddContactInfoViewController.h"
 
-@interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate>
+@interface AccountEditorViewController () <PhoneEditControllerDelegate, EmailEditControllerDelegate, AddressEditControllerDelegate, NameEditControllerDelegate, SocialEditDelegate, GKImagePickerDelegate, AddContactInfoViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -152,9 +153,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) return 3;
     
-    if (section == 1) return 2 + [self.card.phones count];
+    if (section == 1) return [self.card.phones count];
     
-    if (section == 2) return 2 + [self.card.emails count];
+    if (section == 2) return [self.card.emails count];
     
     if (section == 3) return 2 + [self.card.addresses count];
     
@@ -201,7 +202,7 @@
         if (indexPath.row == [self.card.phones count] + 1)
             return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
         
-        PhoneEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhoneEditCell"];
+        ContactInfoEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhoneEditCell"];
         
         __block Phone *phone = self.card.phones[indexPath.row];
         
@@ -209,10 +210,17 @@
         NBPhoneNumber *number = [util parse:phone.number defaultRegion:phone.countryCode error:nil];
         
         if ([phone.countryCode isEqualToString:[[util countryCodeByCarrier] uppercaseString]])
-            cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatNATIONAL error:nil];
+            cell.infoLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatNATIONAL error:nil];
         else
-            cell.numberLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
+            cell.infoLabel.text = [util format:number numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil];
         cell.labelLabel.text = [[phone.label lowercaseString] capitalizedString];
+        
+        [cell.deleteButton addEventHandler:^(id sender) {
+            [self.card removePhonesObject:phone];
+            [self.objectContext deleteObject:phone];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            self.saveButton.enabled = YES;
+        } forControlEvents:UIControlEventTouchUpInside];
         
         return cell;
     }
@@ -229,17 +237,18 @@
         if (indexPath.row == [self.card.emails count] + 1)
             return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
         
-        EmailEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"EmailEditCell"];
+        ContactInfoEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhoneEditCell"];
         
         __block Email *email = self.card.emails[indexPath.row];
         
-        cell.addressLabel.text = email.address;
+        cell.infoLabel.text = email.address;
         cell.labelLabel.text = [[email.label lowercaseString] capitalizedString];
         
         [cell.deleteButton addEventHandler:^(id sender) {
             [self.card removeEmailsObject:email];
             [self.objectContext deleteObject:email];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            self.saveButton.enabled = YES;
         } forControlEvents:UIControlEventTouchUpInside];
         
         return cell;
@@ -249,7 +258,7 @@
         if (indexPath.row == [self.card.addresses count]) {
             AddCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             
-            cell.actionLabel.text = @"Add Address";
+            cell.actionLabel.text = @"Add contact information";
             
             return cell;
         }
@@ -257,23 +266,23 @@
         if (indexPath.row == [self.card.addresses count] + 1)
             return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
         
-        AddressEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AddressEditCell"];
+        ContactInfoEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhoneEditCell"];
         
         __block Address *address = self.card.addresses[indexPath.row];
         
         NSString *addressString = [address formattedString];
         
-        cell.addressLabel.text = [addressString stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+        //cell.numberLabel.text = [addressString stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
         
-//        // if address is less than one line don't attribute
-//        if (![addressString containsString:@"\n"])
-//            cell.addressLabel.text = addressString;
-//        else {
-//            NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-//            [paragrahStyle setMinimumLineHeight:20];
-//            
-//            cell.addressLabel.attributedText = [[NSAttributedString alloc] initWithString:addressString attributes:@{ NSParagraphStyleAttributeName: paragrahStyle }];
-//        }
+        // if address is less than one line don't attribute
+        if (![addressString containsString:@"\n"])
+            cell.infoLabel.text = addressString;
+        else {
+            NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
+            [paragrahStyle setLineSpacing:2];
+            
+            cell.infoLabel.attributedText = [[NSAttributedString alloc] initWithString:addressString attributes:@{ NSParagraphStyleAttributeName: paragrahStyle }];
+        }
         
         cell.labelLabel.text = [[address.label lowercaseString] capitalizedString];
         
@@ -281,6 +290,7 @@
             [self.card removeAddressesObject:address];
             [self.objectContext deleteObject:address];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            self.saveButton.enabled = YES;
         } forControlEvents:UIControlEventTouchUpInside];
         
         return cell;
@@ -329,7 +339,6 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
             cell.label.text = @"Add Twitter";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
        
@@ -353,7 +362,6 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
             cell.label.text = @"Add Instagram";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
         return cell;
@@ -377,7 +385,6 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
             cell.label.text = @"Add Snapchat";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
         return cell;
@@ -397,31 +404,31 @@
     if (indexPath.section == 1) {
         if (indexPath.row == [self.card.phones count]) return 46;
         if (indexPath.row == [self.card.phones count] + 1) return 20;
-        return 46;
+        return 57;
     }
     
     if (indexPath.section == 2) {
         if (indexPath.row == [self.card.emails count]) return 46;
         if (indexPath.row == [self.card.emails count] + 1) return 20;
-        return 46;
+        return 57;
     }
     
     if (indexPath.section == 3) {
         if (indexPath.row == [self.card.addresses count]) return 46;
         if (indexPath.row == [self.card.addresses count] + 1) return 20;
-        return 46;
-//        NSString *address = [self.card.addresses[indexPath.row] formattedString];
-//        
-//        // if address is one line return 72
-//        if (![address containsString:@"\n"])
-//            return 50;
-//        
-//        NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
-//        [paragrahStyle setMinimumLineHeight:20];
-//        
-//        NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont systemFontOfSize:15], NSParagraphStyleAttributeName: paragrahStyle };
-//        CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 66, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
-//        return 30 + 18 + frame.size.height + 3;
+        //return 46;
+        NSString *address = [self.card.addresses[indexPath.row] formattedString];
+        
+        // if address is one line return 72
+        if (![address containsString:@"\n"])
+            return 57;
+        
+        NSMutableParagraphStyle *paragrahStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragrahStyle setLineSpacing:2];
+        
+        NSDictionary *attributesDictionary = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSParagraphStyleAttributeName: paragrahStyle };
+        CGRect frame = [address boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 54, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attributesDictionary context:nil];
+        return 23 + 15 + frame.size.height + 3;
     }
     
     if (indexPath.section == 4) {
@@ -440,15 +447,19 @@
     }
     
     if (indexPath.section == 0 && indexPath.row == 1) {
+        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         NameEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"NameEditController"];
         
         controller.user = self.account;
         controller.delegate = self;
         
-        [self.navigationController pushViewController:controller animated:YES];
+        nav.viewControllers = @[controller];
+        
+        [self presentViewController:nav animated:YES completion:nil];
     }
     
     if (indexPath.section == 1 && indexPath.row != [self.card.phones count] + 1) {
+        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         PhoneEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PhoneEditController"];
         
         Phone *phone;
@@ -462,10 +473,13 @@
         controller.phone = phone;
         controller.delegate = self;
         
-        [self.navigationController pushViewController:controller animated:YES];
+        nav.viewControllers = @[controller];
+        
+        [self presentViewController:nav animated:YES completion:nil];
     }
     
     if (indexPath.section == 2 && indexPath.row != [self.card.emails count] + 1) {
+        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         EmailEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EmailEditController"];
         
         Email *email;
@@ -479,10 +493,24 @@
         controller.email = email;
         controller.delegate = self;
         
-        [self.navigationController pushViewController:controller animated:YES];
+        nav.viewControllers = @[controller];
+        
+        [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 3 && indexPath.row != [self.card.addresses count] + 1) {
+    if (indexPath.section == 3 && indexPath.row == [self.card.addresses count]) {
+        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"AddContactInfoViewController"];
+        
+        AddContactInfoViewController *controller = nav.viewControllers[0];
+        
+        controller.card = self.card;
+        controller.delegate = self;
+        
+        [self presentViewController:nav animated:YES completion:nil];
+    }
+    
+    if (indexPath.section == 3 && indexPath.row < [self.card.addresses count]) {
+        UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         AddressEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"AddressEditController"];
         
         Address *address;
@@ -496,7 +524,9 @@
         controller.address = address;
         controller.delegate = self;
         
-        [self.navigationController pushViewController:controller animated:YES];
+        nav.viewControllers = @[controller];
+        
+        [self presentViewController:nav animated:YES completion:nil];
     }
     
     if (indexPath.section == 4 && indexPath.row == 0) {
@@ -554,17 +584,18 @@
         
         if (!twitter) {
             twitter = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
             TwitterEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"TwitterEditController"];
             controller.delegate = self;
             controller.social = twitter;
-            [self.navigationController pushViewController:controller animated:YES];
+            nav.viewControllers = @[controller];
+            [self presentViewController:nav animated:YES completion:nil];
         } else {
             [self.card removeSocialsObject:twitter];
             [self.objectContext deleteObject:twitter];
             self.saveButton.enabled = YES;
             SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
             cell.label.text = @"Add Twitter";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     }
     
@@ -580,17 +611,18 @@
         
         if (!instagram) {
             instagram = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
             InstagramEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"InstagramEditController"];
             controller.delegate = self;
             controller.social = instagram;
-            [self.navigationController pushViewController:controller animated:YES];
+            nav.viewControllers = @[controller];
+            [self presentViewController:nav animated:YES completion:nil];
         } else {
             [self.card removeSocialsObject:instagram];
             [self.objectContext deleteObject:instagram];
             self.saveButton.enabled = YES;
             SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
             cell.label.text = @"Add Instagram";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     }
     
@@ -606,17 +638,18 @@
         
         if (!snapchat) {
             snapchat = [[Social alloc] initWithEntity:[NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.objectContext] insertIntoManagedObjectContext:self.objectContext];
+            UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
             SnapchatEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SnapchatEditController"];
             controller.delegate = self;
             controller.social = snapchat;
-            [self.navigationController pushViewController:controller animated:YES];
+            nav.viewControllers = @[controller];
+            [self presentViewController:nav animated:YES completion:nil];
         } else {
             [self.card removeSocialsObject:snapchat];
             [self.objectContext deleteObject:snapchat];
             self.saveButton.enabled = YES;
             SocialCell *cell = (SocialCell *)[tableView cellForRowAtIndexPath:indexPath];
             cell.label.text = @"Add Snapchat";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     }
 }
@@ -715,6 +748,10 @@
         [self.objectContext deleteObject:social];
         [self.tableView reloadData];
     }
+}
+
+- (void)addContactInfoViewControllerDidFinish {
+    [self.tableView reloadData];
 }
 
 - (IBAction)save:(id)sender {

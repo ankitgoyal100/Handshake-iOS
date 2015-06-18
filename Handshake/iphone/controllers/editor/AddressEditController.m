@@ -69,6 +69,14 @@
     return ([self.street1Field.text length] == 0 && [self.street2Field.text length] == 0 && [self.cityField.text length] == 0 && [self.stateField.text length] == 0 && [self.zipField.text length] == 0);
 }
 
+- (IBAction)cancel:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(addressEditCancelled:)])
+        [self.delegate addressEditCancelled:self.address];
+    
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)back {
     if (self.delegate && [self.delegate respondsToSelector:@selector(addressEditCancelled:)])
         [self.delegate addressEditCancelled:self.address];
@@ -175,7 +183,8 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(addressEdited:)])
         [self.delegate addressEdited:self.address];
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)delete:(id)sender {

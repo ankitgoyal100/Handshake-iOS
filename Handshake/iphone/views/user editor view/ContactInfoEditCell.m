@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Handshake. All rights reserved.
 //
 
-#import "PhoneEditCell.h"
+#import "ContactInfoEditCell.h"
 
-@implementation PhoneEditCell
+@implementation ContactInfoEditCell
 
 - (void)awakeFromNib {
     // Initialization code

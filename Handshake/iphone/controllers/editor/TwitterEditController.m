@@ -71,6 +71,14 @@
     }
 }
 
+- (IBAction)cancel:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(socialEditCancelled:)])
+        [self.delegate socialEditCancelled:self.social];
+    
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)back {
     if (self.delegate && [self.delegate respondsToSelector:@selector(socialEditCancelled:)])
         [self.delegate socialEditCancelled:self.social];
@@ -84,7 +92,8 @@
         self.social.network = @"twitter";
     }
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(socialEdited:)])
         [self.delegate socialEdited:self.social];

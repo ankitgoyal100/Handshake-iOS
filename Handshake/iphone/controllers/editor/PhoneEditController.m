@@ -77,6 +77,15 @@
         [self.numberField becomeFirstResponder];
 }
 
+- (IBAction)cancel:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(phoneEditCancelled:)]) {
+        [self.delegate phoneEditCancelled:self.phone];
+    }
+    
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)back {
     if (self.delegate && [self.delegate respondsToSelector:@selector(phoneEditCancelled:)]) {
         [self.delegate phoneEditCancelled:self.phone];
@@ -183,7 +192,8 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(phoneEdited:)])
         [self.delegate phoneEdited:self.phone];
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)delete:(id)sender {

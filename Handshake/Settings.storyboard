@@ -813,13 +813,13 @@
                                                     </state>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                            <color key="value" red="0.91107755899999998" green="0.32638171319999998" blue="0.34701043370000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="value" red="0.93924057483673096" green="0.3855401873588562" blue="0.46285271644592285" alpha="1" colorSpace="calibratedRGB"/>
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="borderColorHighlighted">
                                                             <color key="value" red="0.56759941579999995" green="0.21344229579999999" blue="0.22562299669999999" alpha="1" colorSpace="calibratedRGB"/>
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                            <color key="value" red="0.91107755899999998" green="0.32638171319999998" blue="0.34701043370000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="value" red="0.93924057483673096" green="0.3855401873588562" blue="0.46285271644592285" alpha="1" colorSpace="calibratedRGB"/>
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="bgColorHighlighted">
                                                             <color key="value" red="0.56759941579999995" green="0.21344229579999999" blue="0.22562299669999999" alpha="1" colorSpace="calibratedRGB"/>

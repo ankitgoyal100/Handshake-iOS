@@ -149,7 +149,7 @@
 		79BD34291AD05500008079CF /* TwitterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34281AD05500008079CF /* TwitterCell.m */; };
 		79BD342C1AD05700008079CF /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD342B1AD05700008079CF /* User.m */; };
 		79BD343F1AD4B3FE008079CF /* AddCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD343E1AD4B3FE008079CF /* AddCell.m */; };
-		79BD34481AD84BF3008079CF /* PhoneEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34471AD84BF3008079CF /* PhoneEditCell.m */; };
+		79BD34481AD84BF3008079CF /* ContactInfoEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34471AD84BF3008079CF /* ContactInfoEditCell.m */; };
 		79BD344B1AD84C76008079CF /* EmailEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD344A1AD84C76008079CF /* EmailEditCell.m */; };
 		79BD344E1AD84C85008079CF /* AddressEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD344D1AD84C85008079CF /* AddressEditCell.m */; };
 		79BD34511AD84C98008079CF /* FacebookEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79BD34501AD84C98008079CF /* FacebookEditCell.m */; };
@@ -200,6 +200,7 @@
 		79D4AD5819C93F3100F5A154 /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D4AD5719C93F3100F5A154 /* Card.m */; };
 		79E759E21B3251E000CF94AC /* NotificationsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E11B3251E000CF94AC /* NotificationsHelper.m */; };
 		79E759E51B32778F00CF94AC /* NotificationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */; };
+		79E759E81B33674000CF94AC /* AddContactInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E71B33674000CF94AC /* AddContactInfoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -483,8 +484,8 @@
 		79BD342B1AD05700008079CF /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		79BD343D1AD4B3FE008079CF /* AddCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddCell.h; path = "user editor view/AddCell.h"; sourceTree = "<group>"; };
 		79BD343E1AD4B3FE008079CF /* AddCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddCell.m; path = "user editor view/AddCell.m"; sourceTree = "<group>"; };
-		79BD34461AD84BF3008079CF /* PhoneEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhoneEditCell.h; path = "user editor view/PhoneEditCell.h"; sourceTree = "<group>"; };
-		79BD34471AD84BF3008079CF /* PhoneEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhoneEditCell.m; path = "user editor view/PhoneEditCell.m"; sourceTree = "<group>"; };
+		79BD34461AD84BF3008079CF /* ContactInfoEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactInfoEditCell.h; path = "user editor view/ContactInfoEditCell.h"; sourceTree = "<group>"; };
+		79BD34471AD84BF3008079CF /* ContactInfoEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactInfoEditCell.m; path = "user editor view/ContactInfoEditCell.m"; sourceTree = "<group>"; };
 		79BD34491AD84C76008079CF /* EmailEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmailEditCell.h; path = "user editor view/EmailEditCell.h"; sourceTree = "<group>"; };
 		79BD344A1AD84C76008079CF /* EmailEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EmailEditCell.m; path = "user editor view/EmailEditCell.m"; sourceTree = "<group>"; };
 		79BD344C1AD84C85008079CF /* AddressEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressEditCell.h; path = "user editor view/AddressEditCell.h"; sourceTree = "<group>"; };
@@ -577,6 +578,8 @@
 		79E759E11B3251E000CF94AC /* NotificationsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationsHelper.m; sourceTree = "<group>"; };
 		79E759E31B32778F00CF94AC /* NotificationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationSettingsViewController.h; sourceTree = "<group>"; };
 		79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationSettingsViewController.m; sourceTree = "<group>"; };
+		79E759E61B33674000CF94AC /* AddContactInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddContactInfoViewController.h; path = editor/AddContactInfoViewController.h; sourceTree = "<group>"; };
+		79E759E71B33674000CF94AC /* AddContactInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddContactInfoViewController.m; path = editor/AddContactInfoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1068,6 +1071,8 @@
 				799DD1F41B27DB070077044C /* InstagramEditController.m */,
 				799DD1F61B27DB180077044C /* SnapchatEditController.h */,
 				799DD1F71B27DB180077044C /* SnapchatEditController.m */,
+				79E759E61B33674000CF94AC /* AddContactInfoViewController.h */,
+				79E759E71B33674000CF94AC /* AddContactInfoViewController.m */,
 			);
 			name = editor;
 			sourceTree = "<group>";
@@ -1208,8 +1213,8 @@
 				79766C941AE0388900C5CA3D /* edit field view */,
 				79BD343D1AD4B3FE008079CF /* AddCell.h */,
 				79BD343E1AD4B3FE008079CF /* AddCell.m */,
-				79BD34461AD84BF3008079CF /* PhoneEditCell.h */,
-				79BD34471AD84BF3008079CF /* PhoneEditCell.m */,
+				79BD34461AD84BF3008079CF /* ContactInfoEditCell.h */,
+				79BD34471AD84BF3008079CF /* ContactInfoEditCell.m */,
 				79BD34491AD84C76008079CF /* EmailEditCell.h */,
 				79BD344A1AD84C76008079CF /* EmailEditCell.m */,
 				79BD344C1AD84C85008079CF /* AddressEditCell.h */,
@@ -1555,7 +1560,7 @@
 				79D46C7C19D22D4F00C52FEE /* STHTTPRequest+STTwitter.m in Sources */,
 				792803AB19C8B3C40075261D /* RMPhoneFormat.m in Sources */,
 				792803B619C8B3C40075261D /* UIRefreshControl+AFNetworking.m in Sources */,
-				79BD34481AD84BF3008079CF /* PhoneEditCell.m in Sources */,
+				79BD34481AD84BF3008079CF /* ContactInfoEditCell.m in Sources */,
 				799DD2211B2B68D90077044C /* SuggestionsServerSync.m in Sources */,
 				796866361ACE2CBE00CCF0E2 /* OutlineButton.swift in Sources */,
 				79C751971B1C9ED900DB221C /* FeedViewController.m in Sources */,
@@ -1599,6 +1604,7 @@
 				79BD344B1AD84C76008079CF /* EmailEditCell.m in Sources */,
 				7928032D19C8B3C40075261D /* AFNetworkReachabilityManager.m in Sources */,
 				79BD34261AD054F5008079CF /* FacebookCell.m in Sources */,
+				79E759E81B33674000CF94AC /* AddContactInfoViewController.m in Sources */,
 				79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */,
 				799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */,
 				799DD1EF1B2792910077044C /* SectionHeaderCell.m in Sources */,

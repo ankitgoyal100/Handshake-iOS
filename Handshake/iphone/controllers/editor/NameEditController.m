@@ -39,6 +39,11 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (IBAction)cancel:(id)sender {
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     

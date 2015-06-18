@@ -78,13 +78,22 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (IBAction)cancel:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(socialEditCancelled:)])
+        [self.delegate socialEditCancelled:self.social];
+    
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (IBAction)save:(id)sender {
     if (self.social) {
         self.social.username = self.usernameLabel.text;
         self.social.network = @"snapchat";
     }
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(socialEdited:)])
         [self.delegate socialEdited:self.social];

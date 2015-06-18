@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PhoneEditCell : UITableViewCell
+@interface ContactInfoEditCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel *numberLabel;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 @property (weak, nonatomic) IBOutlet UILabel *labelLabel;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
