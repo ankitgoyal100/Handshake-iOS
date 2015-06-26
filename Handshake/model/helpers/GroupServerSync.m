@@ -27,15 +27,43 @@
     [[HandshakeClient client] GET:@"/groups" parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self cacheGroups:responseObject[@"groups"] completionsBlock:^(NSArray *groups) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                // sync current groups with server
                 
                 NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
                 
+                // create ids list
+                NSMutableArray *groupIds = [[NSMutableArray alloc] init];
+                for (NSDictionary *dict in responseObject[@"groups"])
+                    [groupIds addObject:dict[@"id"]];
+                
+                // delete all groups that don't exist on server
+                
                 NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
                 
-                request.predicate = [NSPredicate predicateWithFormat:@"syncStatus!=%@", [NSNumber numberWithInt:GroupSynced]];
+                request.predicate = [NSPredicate predicateWithFormat:@"syncStatus == %@ AND !(groupId IN %@)", @(GroupSynced), groupIds];
                 
                 __block NSArray *results;
+                
+                [objectContext performBlockAndWait:^{
+                    NSError *error;
+                    results = [objectContext executeFetchRequest:request error:&error];
+                }];
+                
+                if (!results) {
+                    // error - stop sync
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (completionBlock) completionBlock();
+                    });
+                    return;
+                }
+                
+                for (Group *group in results)
+                    [objectContext deleteObject:group];
+                
+                // sync current groups with server
+                
+                request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
+                
+                request.predicate = [NSPredicate predicateWithFormat:@"syncStatus!=%@", [NSNumber numberWithInt:GroupSynced]];
                 
                 [objectContext performBlockAndWait:^{
                     NSError *error;

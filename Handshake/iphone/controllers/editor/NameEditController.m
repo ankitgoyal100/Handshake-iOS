@@ -98,7 +98,8 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(nameEdited:last:)] && self.user)
         [self.delegate nameEdited:self.user.firstName last:self.user.lastName];
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view endEditing:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

@@ -15,6 +15,7 @@
 #import "Handshake.h"
 #import "BaseNavigationController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "CardServerSync.h"
 
 @interface SignUpViewController() <UIAlertViewDelegate>
 
@@ -102,8 +103,9 @@
     
     [[HandshakeClient client] POST:@"/account" parameters:@{ @"first_name":self.firstNameField.text, @"email":self.emailField.text, @"password":self.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            [self.view.window setRootViewController:[storyboard instantiateInitialViewController]];
+            [CardServerSync syncWithCompletionBlock:^{
+                [self.view.window setRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"TutorialViewController"]];
+            }];
         } failedBlock:^(HandshakeSessionError error) {
             //[self.navItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
             self.signUpButton.hidden = NO;

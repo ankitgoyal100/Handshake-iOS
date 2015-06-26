@@ -8,7 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    AddressBookStatusNotAsked = 0,
+    AddressBookStatusGranted,
+    AddressBookStatusRevoked
+} AddressBookStatus;
+
 @interface ContactSync : NSObject
+
++ (AddressBookStatus)addressBookStatus;
++ (void)requestAddressBookAccessWithCompletionBlock:(void (^)(BOOL success))completionBlock;
 
 + (void)sync;
 + (void)syncAll;

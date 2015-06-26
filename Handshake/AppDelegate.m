@@ -19,6 +19,8 @@
 #import "LocationUpdater.h"
 #import "NBPhoneNumberUtil.h"
 #import "NotificationsHelper.h"
+#import <AddressBook/AddressBook.h>
+#import "FeedItemServerSync.h"
 
 @interface AppDelegate ()
 
@@ -34,18 +36,8 @@
     
     // set navigation bar font
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[[UINavigationBar appearance] titleTextAttributes]];
-    //dict[NSFontAttributeName] = [UIFont fontWithName:@"Roboto-Medium" size:17];
     dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
-    //dict[NSFontAttributeName] = [UIFont boldSystemFontOfSize:18];
-    //dict[NSFontAttributeName] = [UIFont systemFontOfSize:20];
     [[UINavigationBar appearance] setTitleTextAttributes:dict];
-//    [[UINavigationBar appearance] setBackgroundImage:[[UIImage alloc] init]
-//                                      forBarPosition:UIBarPositionAny
-//                                          barMetrics:UIBarMetricsDefault];
-//    
-//    [[UINavigationBar appearance] setShadowImage:[[UIImage alloc] init]];
-//    [[UITabBar appearance] setBackgroundImage:[[UIImage alloc] init]];
-//    [[UITabBar appearance] setShadowImage:[[UIImage alloc] init]];
     
     // set initial settings
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -54,6 +46,10 @@
         
         NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
         [defaults setObject:[[util countryCodeByCarrier] uppercaseString] forKey:@"country_code"];
+        
+        [defaults setBool:(ABAddressBookGetAuthorizationStatus() != kABAuthorizationStatusNotDetermined) forKey:@"address_book_permissions"];
+        [defaults setBool:([CLLocationManager authorizationStatus] != kCLAuthorizationStatusNotDetermined) forKey:@"location_permissions"];
+        [defaults setBool:[UIApplication sharedApplication].isRegisteredForRemoteNotifications forKey:@"notifications_permissions"];
         
         [defaults synchronize];
     }
@@ -72,14 +68,10 @@
     
     // check for current session
     if ([HandshakeSession currentSession]) {
+        [HandshakeSession sync];
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         self.window.rootViewController = [storyboard instantiateInitialViewController];
     }
-    
-    UIMutableUserNotificationCategory *requestsCategory = [[UIMutableUserNotificationCategory alloc] init];
-    requestsCategory.identifier = @"requests";
-    
-    [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:[NSSet setWithObjects:requestsCategory, nil]]];
 
     return YES;
 }
@@ -92,7 +84,7 @@
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
-    
+    [[NotificationsHelper sharedHelper] registerFailed];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
@@ -121,6 +113,8 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    [FeedItemServerSync sync];
     
     application.applicationIconBadgeNumber = 0;
     

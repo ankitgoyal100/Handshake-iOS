@@ -59,6 +59,8 @@
 @property (nonatomic, strong) GKImagePicker *imagePicker;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
+@property (nonatomic, strong) NSAttributedString *tutorialString;
+
 @end
 
 @implementation AccountEditorViewController
@@ -72,14 +74,29 @@
     return _imagePicker;
 }
 
+- (NSAttributedString *)tutorialString {
+    if (!_tutorialString) {
+        NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+        [pStyle setLineSpacing:2];
+        
+        NSDictionary *attrs = @{ NSFontAttributeName: [UIFont systemFontOfSize:17], NSParagraphStyleAttributeName: pStyle, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.5 alpha:1] };
+        _tutorialString = [[NSAttributedString alloc] initWithString:@"Add as much or as little contact information as you want!" attributes:attrs];
+    }
+    return _tutorialString;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.pictureBorderView.layer.borderColor = [UIColor whiteColor].CGColor;
     
-    self.title = @"Edit Profile";
+    if (self.tutorialMode) {
+        self.title = @"Create Profile";
+        self.navigationItem.hidesBackButton = YES;
+    } else
+        self.title = @"Edit Profile";
     
-    if (self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
+    if (!self.tutorialMode && self.navigationController && [self.navigationController.viewControllers indexOfObject:self] != 0)
         [self.navigationItem addLeftBarButtonItem:[[[UIBarButtonItem alloc] init] backButtonWith:@"" tintColor:[UIColor whiteColor] target:self andAction:@selector(back)]];
     
     // get user in child context
@@ -135,7 +152,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 5;
+    return 6;
 }
 
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -151,35 +168,45 @@
 //}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0) return 3;
+    if (section == 0 && self.tutorialMode) return 2;
+    if (section == 0) return 0;
     
-    if (section == 1) return [self.card.phones count];
+    if (section == 1) return self.tutorialMode ? 2 : 3;
     
-    if (section == 2) return [self.card.emails count];
+    if (section == 2) return [self.card.phones count];
     
-    if (section == 3) return 2 + [self.card.addresses count];
+    if (section == 3) return [self.card.emails count];
     
-    if (section == 4) return 5;
+    if (section == 4) return 2 + [self.card.addresses count];
+    
+    if (section == 5) return 5;
     
     return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"TutorialCell"];
+    if (indexPath.section == 0 && indexPath.row == 1) return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
+    
+    if (indexPath.section == 1 && indexPath.row == 0) {
         PictureEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PictureEditCell"];
         
         if ([self.account cachedImage])
             cell.pictureView.image = [self.account cachedImage];
         else if (self.account.picture)
             cell.pictureView.imageURL = [NSURL URLWithString:self.account.picture];
-        else
+        else {
             cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
+            cell.label.text = @"Add a picture";
+        }
+        
+        if (self.tutorialMode) cell.pictureView.layer.cornerRadius = 25;
         
         return cell;
     }
         //return [tableView dequeueReusableCellWithIdentifier:@"HeaderCell"];
     
-    if (indexPath.section == 0 && indexPath.row == 1) {
+    if (indexPath.section == 1 && indexPath.row == 1 && !self.tutorialMode) {
         NameEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NameEditCell"];
         
         cell.nameLabel.text = [self.account formattedName];
@@ -187,10 +214,10 @@
         return cell;
     }
     
-    if (indexPath.section == 0 && indexPath.row == 2)
+    if (indexPath.section == 1 && (indexPath.row == 1 || indexPath.row == 2))
         return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
-    if (indexPath.section == 1) {
+    if (indexPath.section == 2) {
         if (indexPath.row == [self.card.phones count]) {
             AddCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             
@@ -225,7 +252,7 @@
         return cell;
     }
     
-    if (indexPath.section == 2) {
+    if (indexPath.section == 3) {
         if (indexPath.row == [self.card.emails count]) {
             AddCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             
@@ -254,7 +281,7 @@
         return cell;
     }
     
-    if (indexPath.section == 3) {
+    if (indexPath.section == 4) {
         if (indexPath.row == [self.card.addresses count]) {
             AddCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             
@@ -296,7 +323,7 @@
         return cell;
     }
     
-    if (indexPath.section == 4 && indexPath.row == 0) {
+    if (indexPath.section == 5 && indexPath.row == 0) {
         // facebook
         Social *facebook = nil;
         
@@ -321,7 +348,7 @@
         return cell;
     }
     
-    if (indexPath.section == 4 && indexPath.row == 1) {
+    if (indexPath.section == 5 && indexPath.row == 1) {
         // twitter
         Social *twitter = nil;
         
@@ -344,7 +371,7 @@
        
         return cell;
     }
-    if (indexPath.section == 4 && indexPath.row == 2) {
+    if (indexPath.section == 5 && indexPath.row == 2) {
         // instagram
         Social *instagram = nil;
         
@@ -367,7 +394,7 @@
         return cell;
     }
     
-    if (indexPath.section == 4 && indexPath.row == 3) {
+    if (indexPath.section == 5 && indexPath.row == 3) {
         // snapchat
         Social *snapchat = nil;
         
@@ -390,30 +417,36 @@
         return cell;
     }
     
-    if (indexPath.section == 4 && indexPath.row == 4) return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
+    if (indexPath.section == 5 && indexPath.row == 4) return [tableView dequeueReusableCellWithIdentifier:@"EndSpacer"];
     
     return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //if (indexPath.section == 0 && indexPath.row == 0) return 97;
-    if (indexPath.section == 0 && indexPath.row == 0) return 58;
-    if (indexPath.section == 0 && indexPath.row == 1) return 46;
-    if (indexPath.section == 0 && indexPath.row == 2) return 20;
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        CGRect frame = [self.tutorialString boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 48, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context:nil];
+        return frame.size.height + 48;
+    }
+    if (indexPath.section == 0 && indexPath.row == 1) return 20;
     
-    if (indexPath.section == 1) {
+    //if (indexPath.section == 0 && indexPath.row == 0) return 97;
+    if (indexPath.section == 1 && indexPath.row == 0) return self.tutorialMode ? 76 : 58;
+    if (indexPath.section == 1 && indexPath.row == 1) return self.tutorialMode ? 20 : 46;
+    if (indexPath.section == 1 && indexPath.row == 2) return 20;
+    
+    if (indexPath.section == 2) {
         if (indexPath.row == [self.card.phones count]) return 46;
         if (indexPath.row == [self.card.phones count] + 1) return 20;
         return 57;
     }
     
-    if (indexPath.section == 2) {
+    if (indexPath.section == 3) {
         if (indexPath.row == [self.card.emails count]) return 46;
         if (indexPath.row == [self.card.emails count] + 1) return 20;
         return 57;
     }
     
-    if (indexPath.section == 3) {
+    if (indexPath.section == 4) {
         if (indexPath.row == [self.card.addresses count]) return 46;
         if (indexPath.row == [self.card.addresses count] + 1) return 20;
         //return 46;
@@ -431,7 +464,7 @@
         return 23 + 15 + frame.size.height + 3;
     }
     
-    if (indexPath.section == 4) {
+    if (indexPath.section == 5) {
         if (indexPath.row == 4) return 20;
         return 46;
     }
@@ -442,11 +475,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if (indexPath.section == 1 && indexPath.row == 0) {
         [self.imagePicker showActionSheetOnViewController:self onPopoverFromView:nil];
     }
     
-    if (indexPath.section == 0 && indexPath.row == 1) {
+    if (indexPath.section == 1 && indexPath.row == 1) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         NameEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"NameEditController"];
         
@@ -458,7 +491,7 @@
         [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 1 && indexPath.row != [self.card.phones count] + 1) {
+    if (indexPath.section == 2 && indexPath.row != [self.card.phones count] + 1) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         PhoneEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"PhoneEditController"];
         
@@ -478,7 +511,7 @@
         [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 2 && indexPath.row != [self.card.emails count] + 1) {
+    if (indexPath.section == 3 && indexPath.row != [self.card.emails count] + 1) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         EmailEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"EmailEditController"];
         
@@ -498,7 +531,7 @@
         [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 3 && indexPath.row == [self.card.addresses count]) {
+    if (indexPath.section == 4 && indexPath.row == [self.card.addresses count]) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"AddContactInfoViewController"];
         
         AddContactInfoViewController *controller = nav.viewControllers[0];
@@ -509,7 +542,7 @@
         [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 3 && indexPath.row < [self.card.addresses count]) {
+    if (indexPath.section == 4 && indexPath.row < [self.card.addresses count]) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"NavController"];
         AddressEditController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"AddressEditController"];
         
@@ -529,7 +562,7 @@
         [self presentViewController:nav animated:YES completion:nil];
     }
     
-    if (indexPath.section == 4 && indexPath.row == 0) {
+    if (indexPath.section == 5 && indexPath.row == 0) {
         Social *facebook = nil;
         
         for (Social *social in self.card.socials) {
@@ -572,7 +605,7 @@
         }
     }
     
-    if (indexPath.section == 4 && indexPath.row == 1) {
+    if (indexPath.section == 5 && indexPath.row == 1) {
         Social *twitter = nil;
         
         for (Social *social in self.card.socials) {
@@ -599,7 +632,7 @@
         }
     }
     
-    if (indexPath.section == 4 && indexPath.row == 2) {
+    if (indexPath.section == 5 && indexPath.row == 2) {
         Social *instagram = nil;
         
         for (Social *social in self.card.socials) {
@@ -626,7 +659,7 @@
         }
     }
     
-    if (indexPath.section == 4 && indexPath.row == 3) {
+    if (indexPath.section == 5 && indexPath.row == 3) {
         Social *snapchat = nil;
         
         for (Social *social in self.card.socials) {
@@ -756,6 +789,12 @@
 }
 
 - (IBAction)save:(id)sender {
+    [self save];
+    
+    [self cancel:nil];
+}
+
+- (void)save {
     // save context
     
     self.account.syncStatus = [NSNumber numberWithInt:AccountUpdated];
@@ -769,13 +808,25 @@
     // sync
     [Account sync];
     [CardServerSync sync];
-    
-    [self cancel:nil];
 }
 
 - (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)setTutorialMode:(BOOL)tutorialMode {
+    _tutorialMode = tutorialMode;
+    
+    if (tutorialMode) {
+        self.navigationItem.rightBarButtonItems = @[];
+        self.navigationItem.leftBarButtonItems = @[];
+    }
+    
+    [self.tableView reloadData];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 @end

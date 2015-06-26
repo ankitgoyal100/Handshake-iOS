@@ -13,6 +13,12 @@
 #import "FeedItemServerSync.h"
 #import "ContactSync.h"
 
+@interface NotificationsHelper()
+
+@property (nonatomic, copy) NotificationsRequestCompletionBlock completionBlock;
+
+@end
+
 @implementation NotificationsHelper
 
 + (NotificationsHelper *)sharedHelper {
@@ -38,6 +44,18 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // do nothing
     }];
+    
+    if (self.completionBlock) {
+        self.completionBlock(YES);
+        self.completionBlock = nil;
+    }
+}
+
+- (void)registerFailed {
+    if (self.completionBlock) {
+        self.completionBlock(NO);
+        self.completionBlock = nil;
+    }
 }
 
 - (void)syncSettings {
@@ -96,6 +114,31 @@
         }];
     } else
         if (completionBlock) completionBlock();
+}
+
+- (NotificationsStatus)notificationsStatus {
+    BOOL asked = [[NSUserDefaults standardUserDefaults] boolForKey:@"notifications_permissions"];
+    BOOL enabled = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
+    
+    if (enabled) return NotificationsStatusGranted;
+    if (!asked) return NotificationsStatusNotAsked;
+    return NotificationsStatusRevoked;
+}
+
+- (void)requestNotificationsPermissionsWithCompletionBlock:(NotificationsRequestCompletionBlock)completionBlock {
+    // check if already enabled
+    if ([UIApplication sharedApplication].isRegisteredForRemoteNotifications) {
+        if (self.completionBlock) self.completionBlock(YES);
+        return;
+    }
+    
+    self.completionBlock = completionBlock;
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:YES forKey:@"notifications_permissions"];
+    [defaults synchronize];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil]];
 }
 
 @end

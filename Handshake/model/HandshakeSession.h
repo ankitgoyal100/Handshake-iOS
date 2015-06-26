@@ -33,6 +33,8 @@ typedef void (^LoginFailedBlock)(HandshakeSessionError error);
 + (HandshakeSession *)currentSession;
 + (void)loginWithEmail:(NSString *)email password:(NSString *)password successBlock:(LoginSuccessBlock)successBlock failedBlock:(LoginFailedBlock)failedBlock;
 
++ (void)sync;
+
 - (void)logout;
 - (void)invalidate;
 

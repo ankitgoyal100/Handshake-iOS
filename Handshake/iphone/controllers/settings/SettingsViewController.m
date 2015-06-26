@@ -12,6 +12,7 @@
 #import "HandshakeCoreDataStore.h"
 #import "HandshakeClient.h"
 #import "FacebookHelper.h"
+#import "ContactSync.h"
 
 @interface SettingsViewController() <UIAlertViewDelegate, UIActionSheetDelegate>
 
@@ -36,7 +37,7 @@
     [super viewWillAppear:animated];
     
     self.emailField.text = [[HandshakeSession currentSession] account].email;
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue])
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"][@"enabled"] boolValue] && [ContactSync addressBookStatus] == AddressBookStatusGranted)
         self.autoSyncLabel.text = @"On";
     else
         self.autoSyncLabel.text = @"Off";

@@ -31,7 +31,10 @@
         CFErrorRef error = NULL;
         ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
         
-        if (!addressBook || ABAddressBookGetAuthorizationStatus() != kABAuthorizationStatusAuthorized) return;
+        if (!addressBook || ABAddressBookGetAuthorizationStatus() != kABAuthorizationStatusAuthorized) {
+            if (completionBlock) completionBlock();
+            return;
+        }
         
         NSArray *records = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
         NSInteger count = [records count];

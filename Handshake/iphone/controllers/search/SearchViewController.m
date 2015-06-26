@@ -18,6 +18,7 @@
 #import "ContactCell.h"
 #import "UserViewController.h"
 #import "UserServerSync.h"
+#import "LocationUpdater.h"
 
 @interface SearchViewController () <UITextFieldDelegate, NSFetchedResultsControllerDelegate>
 
@@ -31,6 +32,8 @@
 @property (nonatomic) BOOL typed;
 
 @property (nonatomic, strong) NSFetchedResultsController *contactsFetcher;
+
+@property (nonatomic, strong) NSAttributedString *tutorialString;
 
 @end
 
@@ -82,6 +85,17 @@
         [_searchBar addSubview:self.placeholder];
     }
     return _searchBar;
+}
+
+- (NSAttributedString *)tutorialString {
+    if (!_tutorialString) {
+        NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+        [pStyle setLineSpacing:2];
+        
+        NSDictionary *attrs = @{ NSFontAttributeName: [UIFont systemFontOfSize:17], NSParagraphStyleAttributeName: pStyle, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.5 alpha:1] };
+        _tutorialString = [[NSAttributedString alloc] initWithString:@"Help us find who you're looking for! Enable location services to search for the people around you." attributes:attrs];
+    }
+    return _tutorialString;
 }
 
 - (void)viewDidLoad {
@@ -137,28 +151,35 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 0) {
+        if ([[LocationUpdater sharedUpdater] locationStatus] == LocationStatusNotAsked) return 1;
+        return 0;
+    }
+    
     if ([self.searchBar.text length] == 0) return 0;
     
-    if (section == 0 && [self.localResults count] == 0 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return 0;
-    if (section == 0 && [self.localResults count] == 0) return 1;
-    if (section == 0) return [self.localResults count] + 1;
+    if (section == 1 && [self.localResults count] == 0 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return 0;
+    if (section == 1 && [self.localResults count] == 0) return 1;
+    if (section == 1) return [self.localResults count] + 1;
 
-    if (section == 1 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return 1;
-    if (section == 1) return [self.serverResults[[self.searchBar.text lowercaseString]] count];
+    if (section == 2 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return 1;
+    if (section == 2) return [self.serverResults[[self.searchBar.text lowercaseString]] count];
 
     return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
-    if (indexPath.section == 0 && indexPath.row == [self.localResults count] + 1)
+    if (indexPath.section == 0) return [tableView dequeueReusableCellWithIdentifier:@"LocationTutorialCell"];
+    
+    if (indexPath.section == 1 && indexPath.row == 0) return [tableView dequeueReusableCellWithIdentifier:@"Separator"];
+    if (indexPath.section == 1 && indexPath.row == [self.localResults count] + 1)
         return [tableView dequeueReusableCellWithIdentifier:@"Spacer"];
     
-    if (indexPath.section == 0) {
+    if (indexPath.section == 1) {
         ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
         cell.user = self.localResults[indexPath.row - 1];
         return cell;
@@ -198,10 +219,17 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 0) return 1;
-    if (indexPath.section == 0 && indexPath.row == [self.localResults count] + 1) return 20;
+    if (indexPath.section == 0) {
+        // calculate height of tutorial cell
+        CGRect frame = [self.tutorialString boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 48, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context:nil];
+        return frame.size.height + 48 + 36 + 30;
+    }
     
-    if (indexPath.section == 0) return 57;
+    if (indexPath.section == 1 && indexPath.row == 0 && [[LocationUpdater sharedUpdater] locationStatus] == LocationStatusNotAsked) return 20;
+    if (indexPath.section == 1 && indexPath.row == 0) return 1;
+    if (indexPath.section == 1 && indexPath.row == [self.localResults count] + 1) return 20;
+    
+    if (indexPath.section == 1) return 57;
     
     if (![self.serverResults[[self.searchBar.text lowercaseString]] count]) return 60;
     
@@ -222,21 +250,23 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.section == 0 && indexPath.row == 0) return;
-    if (indexPath.section == 0 && indexPath.row == [self.localResults count] + 1) return;
+    if (indexPath.section == 0) return;
     
-    if (indexPath.section == 1 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return;
+    if (indexPath.section == 1 && indexPath.row == 0) return;
+    if (indexPath.section == 1 && indexPath.row == [self.localResults count] + 1) return;
+    
+    if (indexPath.section == 2 && ![self.serverResults[[self.searchBar.text lowercaseString]] count]) return;
     
     //if (indexPath.row == 0 || indexPath.row == [self.results count] + 1) return;
     
-    if (indexPath.section == 0) {
+    if (indexPath.section == 1) {
         User *contact = self.localResults[indexPath.row - 1];
         UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
         controller.user = contact;
         [self.navigationController pushViewController:controller animated:YES];
     }
     
-    if (indexPath.section == 1) {
+    if (indexPath.section == 2) {
         User *result = self.serverResults[[self.searchBar.text lowercaseString]][indexPath.row];
         UserViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
         controller.user = result;
@@ -326,6 +356,13 @@
     [textField resignFirstResponder];
     
     return NO;
+}
+
+- (IBAction)enableLocation:(id)sender {
+    [[LocationUpdater sharedUpdater] requestLocationPermissionsWithCompletionBlock:^(BOOL success) {
+        [self.tableView reloadData];
+        [[LocationUpdater sharedUpdater] updateLocation];
+    }];
 }
 
 @end

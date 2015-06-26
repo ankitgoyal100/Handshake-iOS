@@ -20,6 +20,38 @@
 
 @implementation ContactSync
 
++ (AddressBookStatus)addressBookStatus {
+    BOOL asked = [[NSUserDefaults standardUserDefaults] boolForKey:@"address_book_permissions"];
+    BOOL granted = ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized;
+    
+    if (!asked) return AddressBookStatusNotAsked;
+    if (asked && granted) return AddressBookStatusGranted;
+    return AddressBookStatusRevoked;
+}
+
++ (void)requestAddressBookAccessWithCompletionBlock:(void (^)(BOOL))completionBlock {
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
+        if (completionBlock) completionBlock(YES);
+        return;
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:YES forKey:@"address_book_permissions"];
+        [defaults synchronize];
+        
+        CFErrorRef error = NULL;
+        ABAddressBookRequestAccessWithCompletion(ABAddressBookCreateWithOptions(NULL, &error), ^(bool granted, CFErrorRef error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (granted && completionBlock)
+                    completionBlock(YES);
+                else if (completionBlock)
+                    completionBlock(NO);
+            });
+        });
+    });
+}
+
 + (void)syncAll {
     // set all contacts to unsaved
     

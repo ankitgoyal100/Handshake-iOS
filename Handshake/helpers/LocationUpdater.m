@@ -15,6 +15,8 @@
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
+@property (nonatomic, copy) LocationRequestCompletionBlock completionBlock;
+
 @end
 
 @implementation LocationUpdater
@@ -39,8 +41,27 @@
     return _locationManager;
 }
 
-- (void)updateLocation {
+- (LocationStatus)locationStatus {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (![defaults boolForKey:@"location_permissions"]) return LocationStatusNotAsked;
+    
+    BOOL locationEnabled = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse;
+    if (locationEnabled) return LocationStatusGranted;
+    return LocationStatusRevoked;
+}
+
+- (void)requestLocationPermissionsWithCompletionBlock:(LocationRequestCompletionBlock)completionBlock {
+    self.completionBlock = completionBlock;
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:YES forKey:@"location_permissions"];
+    [defaults synchronize];
+    
     [self.locationManager requestWhenInUseAuthorization];
+}
+
+- (void)updateLocation {
     [self.locationManager startUpdatingLocation];
 }
 
@@ -60,6 +81,14 @@
             if ([[operation response] statusCode] == 401)
                 [[HandshakeSession currentSession] invalidate];
         }];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    if (self.completionBlock) {
+        if (status == kCLAuthorizationStatusAuthorizedWhenInUse) self.completionBlock(YES);
+        if (status == kCLAuthorizationStatusDenied) self.completionBlock(NO);
+        self.completionBlock = nil;
     }
 }
 

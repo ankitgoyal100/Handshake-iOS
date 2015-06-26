@@ -201,6 +201,10 @@
 		79E759E21B3251E000CF94AC /* NotificationsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E11B3251E000CF94AC /* NotificationsHelper.m */; };
 		79E759E51B32778F00CF94AC /* NotificationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */; };
 		79E759E81B33674000CF94AC /* AddContactInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759E71B33674000CF94AC /* AddContactInfoViewController.m */; };
+		79E759EC1B338ABE00CF94AC /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759EB1B338ABE00CF94AC /* TutorialViewController.m */; };
+		79E759EF1B33979400CF94AC /* WelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759EE1B33979400CF94AC /* WelcomeViewController.m */; };
+		79E759F21B35D36800CF94AC /* AddressBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759F11B35D36800CF94AC /* AddressBookViewController.m */; };
+		79E759F51B38D6F400CF94AC /* FinishingSetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -580,6 +584,14 @@
 		79E759E41B32778F00CF94AC /* NotificationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationSettingsViewController.m; sourceTree = "<group>"; };
 		79E759E61B33674000CF94AC /* AddContactInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddContactInfoViewController.h; path = editor/AddContactInfoViewController.h; sourceTree = "<group>"; };
 		79E759E71B33674000CF94AC /* AddContactInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddContactInfoViewController.m; path = editor/AddContactInfoViewController.m; sourceTree = "<group>"; };
+		79E759EA1B338ABE00CF94AC /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TutorialViewController.h; path = tutorial/TutorialViewController.h; sourceTree = "<group>"; };
+		79E759EB1B338ABE00CF94AC /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TutorialViewController.m; path = tutorial/TutorialViewController.m; sourceTree = "<group>"; };
+		79E759ED1B33979400CF94AC /* WelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WelcomeViewController.h; path = tutorial/WelcomeViewController.h; sourceTree = "<group>"; };
+		79E759EE1B33979400CF94AC /* WelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WelcomeViewController.m; path = tutorial/WelcomeViewController.m; sourceTree = "<group>"; };
+		79E759F01B35D36800CF94AC /* AddressBookViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressBookViewController.h; path = tutorial/AddressBookViewController.h; sourceTree = "<group>"; };
+		79E759F11B35D36800CF94AC /* AddressBookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressBookViewController.m; path = tutorial/AddressBookViewController.m; sourceTree = "<group>"; };
+		79E759F31B38D6F400CF94AC /* FinishingSetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FinishingSetupViewController.h; path = tutorial/FinishingSetupViewController.h; sourceTree = "<group>"; };
+		79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FinishingSetupViewController.m; path = tutorial/FinishingSetupViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -780,6 +792,7 @@
 		7928023219C8B3C40075261D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				79E759E91B338A9500CF94AC /* tutorial */,
 				799DD2791B2FE3D60077044C /* suggestions */,
 				799DD1E61B2639D00077044C /* users */,
 				79C751941B1C9EB800DB221C /* feed */,
@@ -1339,6 +1352,21 @@
 			path = Vendor;
 			sourceTree = "<group>";
 		};
+		79E759E91B338A9500CF94AC /* tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				79E759EA1B338ABE00CF94AC /* TutorialViewController.h */,
+				79E759EB1B338ABE00CF94AC /* TutorialViewController.m */,
+				79E759ED1B33979400CF94AC /* WelcomeViewController.h */,
+				79E759EE1B33979400CF94AC /* WelcomeViewController.m */,
+				79E759F01B35D36800CF94AC /* AddressBookViewController.h */,
+				79E759F11B35D36800CF94AC /* AddressBookViewController.m */,
+				79E759F31B38D6F400CF94AC /* FinishingSetupViewController.h */,
+				79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */,
+			);
+			name = tutorial;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1510,6 +1538,7 @@
 				7928033B19C8B3C40075261D /* MainViewController.m in Sources */,
 				796D47EC1AEAE1180001E36C /* ContactCell.m in Sources */,
 				79BD342C1AD05700008079CF /* User.m in Sources */,
+				79E759EF1B33979400CF94AC /* WelcomeViewController.m in Sources */,
 				7928033619C8B3C40075261D /* FacebookHelper.m in Sources */,
 				7928032E19C8B3C40075261D /* AFSecurityPolicy.m in Sources */,
 				79D46C8519D22D4F00C52FEE /* STHTTPRequest.m in Sources */,
@@ -1530,6 +1559,7 @@
 				79C050E219CF650D001BB956 /* GKImageCropViewController.m in Sources */,
 				799DD2681B2F5C820077044C /* NBMetadataHelper.m in Sources */,
 				799DD21E1B2B63A10077044C /* FeedItemServerSync.m in Sources */,
+				79E759F21B35D36800CF94AC /* AddressBookViewController.m in Sources */,
 				79C050E419CF650D001BB956 /* GKResizeableCropOverlayView.m in Sources */,
 				79E759E21B3251E000CF94AC /* NotificationsHelper.m in Sources */,
 				79B752CF1AFC5DD6007660E5 /* GroupMembersViewController.m in Sources */,
@@ -1541,6 +1571,7 @@
 				7928035B19C8B3C40075261D /* SettingsViewController.m in Sources */,
 				799DD26C1B2F5C820077044C /* NBPhoneNumber.m in Sources */,
 				796866321ACDE7CE00CCF0E2 /* FormTextField.swift in Sources */,
+				79E759F51B38D6F400CF94AC /* FinishingSetupViewController.m in Sources */,
 				7932B7571AFF01390011A747 /* UserRequestCell.m in Sources */,
 				7928032F19C8B3C40075261D /* AFURLConnectionOperation.m in Sources */,
 				79B752CC1AFACF59007660E5 /* GroupViewController.m in Sources */,
@@ -1627,6 +1658,7 @@
 				79C7519D1B1CA23300DB221C /* FeedItemCell.m in Sources */,
 				796866041ACCAC0400CCF0E2 /* GroupMember.m in Sources */,
 				792801E819C8B36B0075261D /* main.m in Sources */,
+				79E759EC1B338ABE00CF94AC /* TutorialViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,6 +14,7 @@
 #import "ForgotPasswordViewController.h"
 #import "HandshakeClient.h"
 #import "BaseNavigationController.h"
+#import "CardServerSync.h"
 
 @interface LogInViewController()
 
@@ -99,6 +100,7 @@
     [self.view endEditing:YES];
     
     [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
+        [HandshakeSession sync];
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         [self.view.window setRootViewController:[storyboard instantiateInitialViewController]];
     } failedBlock:^(HandshakeSessionError error) {

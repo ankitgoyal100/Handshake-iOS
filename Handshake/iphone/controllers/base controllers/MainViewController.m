@@ -22,7 +22,7 @@
 #import "GroupCodeHelper.h"
 #import "NotificationsHelper.h"
 
-@interface MainViewController() <NotificationsHelperDelegate>
+@interface MainViewController() <NotificationsHelperDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, strong) JoinGroupDialogViewController *groupDialog;
 
@@ -51,6 +51,19 @@
     self.tabBar.tintColor = LOGO_COLOR;
     
     [[LocationUpdater sharedUpdater] updateLocation];
+    
+    // ask for notifications
+    if ([[NotificationsHelper sharedHelper] notificationsStatus] == NotificationsStatusNotAsked) {
+        // check notifications asked date (don't ask more than once a day)
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSDate *lastAsk = [defaults objectForKey:@"notifications_ask_date"];
+        if (!lastAsk || [[NSDate date] timeIntervalSinceDate:lastAsk] > 60 * 60 * 24) {
+            [defaults setObject:[NSDate date] forKey:@"notifications_ask_date"];
+            [defaults synchronize];
+            
+            [[[UIAlertView alloc] initWithTitle:@"Allow Notifications?" message:@"Get alerted whenever someone sends you a request, adds you as a contact, or joins one of your groups!" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Allow", nil] show];
+        }
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -132,6 +145,12 @@
     UserViewController *userController = [self.storyboard instantiateViewControllerWithIdentifier:@"UserViewController"];
     userController.user = user;
     [controller pushViewController:userController animated:NO];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Allow"]) {
+        [[NotificationsHelper sharedHelper] requestNotificationsPermissionsWithCompletionBlock:nil];
+    }
 }
 
 @end

@@ -12,5 +12,6 @@
 @interface PictureEditCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet AsyncImageView *pictureView;
+@property (weak, nonatomic) IBOutlet UILabel *label;
 
 @end

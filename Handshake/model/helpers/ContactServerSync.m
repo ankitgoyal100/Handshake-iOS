@@ -27,7 +27,7 @@
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"User"];
         request.predicate = [NSPredicate predicateWithFormat:@"isContact == %@", @(YES)];
         request.fetchLimit = 1;
-        [request setSortDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"updatedAt" ascending:NO]]];
+        [request setSortDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"contactUpdated" ascending:NO]]];
         
         __block NSArray *results;
         

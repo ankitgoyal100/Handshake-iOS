@@ -86,8 +86,6 @@ static HandshakeSession *session = nil;
             
             [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_RESTORED object:nil];
             
-            [self sync];
-            
             return session;
         }
         
@@ -143,8 +141,6 @@ static HandshakeSession *session = nil;
             NSError *error;
             [session.managedObjectContext save:&error];
         }];
-        
-        [self sync];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if ([[operation response] statusCode] == 401) {
             if (failedBlock) failedBlock(AUTHENTICATION_ERROR);

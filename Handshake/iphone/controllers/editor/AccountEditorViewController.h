@@ -10,4 +10,8 @@
 
 @interface AccountEditorViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
+@property (nonatomic) BOOL tutorialMode;
+
+- (void)save;
+
 @end

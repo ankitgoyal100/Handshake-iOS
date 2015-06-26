@@ -8,9 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    LocationStatusNotAsked = 0,
+    LocationStatusGranted,
+    LocationStatusRevoked
+} LocationStatus;
+
+typedef void (^LocationRequestCompletionBlock)(BOOL success);
+
 @interface LocationUpdater : NSObject
 
 + (LocationUpdater *)sharedUpdater;
+
+- (LocationStatus)locationStatus;
+- (void)requestLocationPermissionsWithCompletionBlock:(LocationRequestCompletionBlock)completionBlock;
 
 - (void)updateLocation;
 
