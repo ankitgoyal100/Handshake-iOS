@@ -34,7 +34,6 @@
 		7928035C19C8B3C40075261D /* SignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928027E19C8B3C40075261D /* SignUpViewController.m */; };
 		7928035D19C8B3C40075261D /* StartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928028019C8B3C40075261D /* StartViewController.m */; };
 		7928038919C8B3C40075261D /* DateConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 792802E419C8B3C40075261D /* DateConverter.m */; };
-		792803AB19C8B3C40075261D /* RMPhoneFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928030D19C8B3C40075261D /* RMPhoneFormat.m */; };
 		792803AC19C8B3C40075261D /* SSKeychain.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7928030F19C8B3C40075261D /* SSKeychain.strings */; };
 		792803AD19C8B3C40075261D /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928031219C8B3C40075261D /* SSKeychain.m */; };
 		792803AE19C8B3C40075261D /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928031419C8B3C40075261D /* SSKeychainQuery.m */; };
@@ -108,7 +107,6 @@
 		799DD2351B2DD9590077044C /* UserServerSync.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2341B2DD9590077044C /* UserServerSync.m */; };
 		799DD2421B2EB1B70077044C /* CountryPicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 799DD23F1B2EB1B70077044C /* CountryPicker.bundle */; };
 		799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2411B2EB1B70077044C /* CountryPicker.m */; };
-		799DD2451B2F46980077044C /* PhoneFormats.dat in Resources */ = {isa = PBXBuildFile; fileRef = 799DD2441B2F45C30077044C /* PhoneFormats.dat */; };
 		799DD2631B2F5C820077044C /* NBAsYouTypeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD2481B2F5C820077044C /* NBAsYouTypeFormatter.m */; };
 		799DD2641B2F5C820077044C /* NBMetadataCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD24A1B2F5C820077044C /* NBMetadataCore.m */; };
 		799DD2651B2F5C820077044C /* NBMetadataCoreMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 799DD24C1B2F5C820077044C /* NBMetadataCoreMapper.m */; };
@@ -205,6 +203,8 @@
 		79E759EF1B33979400CF94AC /* WelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759EE1B33979400CF94AC /* WelcomeViewController.m */; };
 		79E759F21B35D36800CF94AC /* AddressBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759F11B35D36800CF94AC /* AddressBookViewController.m */; };
 		79E759F51B38D6F400CF94AC /* FinishingSetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */; };
+		79E759F71B3E211900CF94AC /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E759F61B3E211900CF94AC /* MediaPlayer.framework */; };
+		79E759FA1B3E217200CF94AC /* The-Boulevard.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 79E759F91B3E217200CF94AC /* The-Boulevard.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -272,8 +272,6 @@
 		7928028019C8B3C40075261D /* StartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StartViewController.m; path = ../StartViewController.m; sourceTree = "<group>"; };
 		792802E319C8B3C40075261D /* DateConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateConverter.h; sourceTree = "<group>"; };
 		792802E419C8B3C40075261D /* DateConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateConverter.m; sourceTree = "<group>"; };
-		7928030C19C8B3C40075261D /* RMPhoneFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPhoneFormat.h; sourceTree = "<group>"; };
-		7928030D19C8B3C40075261D /* RMPhoneFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPhoneFormat.m; sourceTree = "<group>"; };
 		7928031019C8B3C40075261D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SSKeychain.strings; sourceTree = "<group>"; };
 		7928031119C8B3C40075261D /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
 		7928031219C8B3C40075261D /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychain.m; sourceTree = "<group>"; };
@@ -408,7 +406,6 @@
 		799DD23F1B2EB1B70077044C /* CountryPicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CountryPicker.bundle; sourceTree = "<group>"; };
 		799DD2401B2EB1B70077044C /* CountryPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountryPicker.h; sourceTree = "<group>"; };
 		799DD2411B2EB1B70077044C /* CountryPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CountryPicker.m; sourceTree = "<group>"; };
-		799DD2441B2F45C30077044C /* PhoneFormats.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = PhoneFormats.dat; sourceTree = "<group>"; };
 		799DD2471B2F5C820077044C /* NBAsYouTypeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBAsYouTypeFormatter.h; sourceTree = "<group>"; };
 		799DD2481B2F5C820077044C /* NBAsYouTypeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBAsYouTypeFormatter.m; sourceTree = "<group>"; };
 		799DD2491B2F5C820077044C /* NBMetadataCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCore.h; sourceTree = "<group>"; };
@@ -592,6 +589,8 @@
 		79E759F11B35D36800CF94AC /* AddressBookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressBookViewController.m; path = tutorial/AddressBookViewController.m; sourceTree = "<group>"; };
 		79E759F31B38D6F400CF94AC /* FinishingSetupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FinishingSetupViewController.h; path = tutorial/FinishingSetupViewController.h; sourceTree = "<group>"; };
 		79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FinishingSetupViewController.m; path = tutorial/FinishingSetupViewController.m; sourceTree = "<group>"; };
+		79E759F61B3E211900CF94AC /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		79E759F91B3E217200CF94AC /* The-Boulevard.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The-Boulevard.mp4"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -599,6 +598,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79E759F71B3E211900CF94AC /* MediaPlayer.framework in Frameworks */,
 				799DD2721B2F68050077044C /* CoreTelephony.framework in Frameworks */,
 				7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */,
 				7997B7AE19E224E600525550 /* CoreLocation.framework in Frameworks */,
@@ -643,7 +643,6 @@
 			isa = PBXGroup;
 			children = (
 				799DD2461B2F5C820077044C /* libPhoneNumber */,
-				799DD2441B2F45C30077044C /* PhoneFormats.dat */,
 				799DD23E1B2EB1B70077044C /* CountryPicker */,
 				79D46C5B19D22D4F00C52FEE /* STTwitter */,
 				79C050C819CF650D001BB956 /* GKImagePicker */,
@@ -653,13 +652,13 @@
 				7928022819C8B3C40075261D /* helpers */,
 				7928022B19C8B3C40075261D /* iphone */,
 				792802D919C8B3C40075261D /* model */,
-				7928030B19C8B3C40075261D /* RMPhoneFormat */,
 				7928030E19C8B3C40075261D /* SSKeychain */,
 				7928031519C8B3C40075261D /* UIControl-Blocks */,
 				7928031819C8B3C40075261D /* UIKit+AFNetworking */,
 				792803B819C8B41A0075261D /* Handshake.h */,
 				792801E919C8B36B0075261D /* AppDelegate.h */,
 				792801EA19C8B36B0075261D /* AppDelegate.m */,
+				79E759F81B3E217200CF94AC /* videos */,
 				792801F519C8B36B0075261D /* Images.xcassets */,
 				792801EC19C8B36B0075261D /* Handshake.xcdatamodeld */,
 				7997B7B219E2BC7E00525550 /* Launch.xib */,
@@ -943,15 +942,6 @@
 			path = helpers;
 			sourceTree = "<group>";
 		};
-		7928030B19C8B3C40075261D /* RMPhoneFormat */ = {
-			isa = PBXGroup;
-			children = (
-				7928030C19C8B3C40075261D /* RMPhoneFormat.h */,
-				7928030D19C8B3C40075261D /* RMPhoneFormat.m */,
-			);
-			path = RMPhoneFormat;
-			sourceTree = "<group>";
-		};
 		7928030E19C8B3C40075261D /* SSKeychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -1000,6 +990,7 @@
 		792803BD19C8B46C0075261D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79E759F61B3E211900CF94AC /* MediaPlayer.framework */,
 				799DD2711B2F68050077044C /* CoreTelephony.framework */,
 				7932B7691B02AD340011A747 /* QuartzCore.framework */,
 				7997B7AD19E224E600525550 /* CoreLocation.framework */,
@@ -1367,6 +1358,14 @@
 			name = tutorial;
 			sourceTree = "<group>";
 		};
+		79E759F81B3E217200CF94AC /* videos */ = {
+			isa = PBXGroup;
+			children = (
+				79E759F91B3E217200CF94AC /* The-Boulevard.mp4 */,
+			);
+			path = videos;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1453,8 +1452,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				799DD2451B2F46980077044C /* PhoneFormats.dat in Resources */,
 				79C050E919CF650D001BB956 /* PLCameraSheetDoneButton.png in Resources */,
+				79E759FA1B3E217200CF94AC /* The-Boulevard.mp4 in Resources */,
 				7968660B1ACCB58300CCF0E2 /* Main.storyboard in Resources */,
 				7997B81519EF8A5600525550 /* back@3x.png in Resources */,
 				799DD1FA1B28A8700077044C /* Settings.storyboard in Resources */,
@@ -1589,7 +1588,6 @@
 				79D46C8319D22D4F00C52FEE /* BAVPlistNode.m in Sources */,
 				79D46C8019D22D4F00C52FEE /* STTwitterOAuth.m in Sources */,
 				79D46C7C19D22D4F00C52FEE /* STHTTPRequest+STTwitter.m in Sources */,
-				792803AB19C8B3C40075261D /* RMPhoneFormat.m in Sources */,
 				792803B619C8B3C40075261D /* UIRefreshControl+AFNetworking.m in Sources */,
 				79BD34481AD84BF3008079CF /* ContactInfoEditCell.m in Sources */,
 				799DD2211B2B68D90077044C /* SuggestionsServerSync.m in Sources */,

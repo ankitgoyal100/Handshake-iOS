@@ -191,11 +191,13 @@
     if (indexPath.section == 1 && indexPath.row == 0) {
         PictureEditCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PictureEditCell"];
         
-        if ([self.account cachedImage])
+        if ([self.account cachedImage]) {
             cell.pictureView.image = [self.account cachedImage];
-        else if (self.account.picture)
+            cell.label.text = @"Change picture";
+        } else if (self.account.picture) {
             cell.pictureView.imageURL = [NSURL URLWithString:self.account.picture];
-        else {
+            cell.label.text = @"Change picture";
+        } else {
             cell.pictureView.image = [UIImage imageNamed:@"default_picture"];
             cell.label.text = @"Add a picture";
         }

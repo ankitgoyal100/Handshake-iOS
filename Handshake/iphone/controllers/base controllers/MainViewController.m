@@ -63,6 +63,9 @@
             
             [[[UIAlertView alloc] initWithTitle:@"Allow Notifications?" message:@"Get alerted whenever someone sends you a request, adds you as a contact, or joins one of your groups!" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Allow", nil] show];
         }
+    } else if ([[NotificationsHelper sharedHelper] notificationsStatus] == NotificationsStatusGranted) {
+        // post device token
+        [[NotificationsHelper sharedHelper] requestNotificationsPermissionsWithCompletionBlock:nil];
     }
 }
 

@@ -13,15 +13,18 @@
 #import "MainViewController.h"
 #import "FXBlurView.h"
 #import <QuartzCore/QuartzCore.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface StartViewController ()
 
 @property (weak, nonatomic) IBOutlet UIView *buttonsView;
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
+@property (weak, nonatomic) IBOutlet UIView *videoView;
 
-@property (nonatomic, strong) UIViewController *signUpController;
 @property (weak, nonatomic) IBOutlet UIImageView *background10View;
 @property (weak, nonatomic) IBOutlet UIImageView *background20View;
+
+@property (nonatomic, strong) MPMoviePlayerController *moviePlayer;
 
 
 @end
@@ -41,12 +44,18 @@
     
     self.loading = self.loading;
     
-    self.signUpController = [self.storyboard instantiateViewControllerWithIdentifier:@"SignUpViewController"];
+    // create video view
+    self.moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"The-Boulevard" ofType:@"mp4"]]];
+    self.moviePlayer.view.frame = self.videoView.bounds;
+    [self.moviePlayer prepareToPlay];
+    self.moviePlayer.controlStyle = MPMovieControlStyleNone;
+    self.moviePlayer.scalingMode = MPMovieScalingModeAspectFill;
+    self.moviePlayer.repeatMode = MPMovieRepeatModeOne;
+    [self.videoView addSubview:self.moviePlayer.view];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-    self.navigationController.navigationBarHidden = YES;
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
     
     [super viewWillAppear:animated];
 }
@@ -63,15 +72,9 @@
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
-- (void)signUp {
-    
-}
-
-- (void)logIn {
-    LogInViewController *controller = [[LogInViewController alloc] initWithNibName:nil bundle:nil];
-    [self.navigationController pushViewController:controller animated:YES];
-    
-}
+//- (BOOL)prefersStatusBarHidden {
+//    return YES;
+//}
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;

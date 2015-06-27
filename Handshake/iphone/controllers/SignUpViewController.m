@@ -53,7 +53,6 @@
 
 - (void)back {
     [self.navigationController popViewControllerAnimated:YES];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

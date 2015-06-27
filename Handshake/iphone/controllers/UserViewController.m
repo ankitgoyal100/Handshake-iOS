@@ -257,11 +257,14 @@
     if (indexPath.section == 0 && indexPath.row == 1) {
         ContactsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactsCell"];
         
-        NSString *contactsString = [NSString stringWithFormat:@"%d CONTACTS", [self.user.contacts intValue]];
-        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:contactsString];
+        NSString *contactsString;
+        if ([self.user.contacts intValue] == 1)
+            contactsString = @"1 CONTACT";
+        else
+            contactsString = [NSString stringWithFormat:@"%d CONTACTS", [self.user.contacts intValue]];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:contactsString attributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] }];
         
         [string setAttributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.14 alpha:1] } range:[contactsString rangeOfString:[NSString stringWithFormat:@"%d", [self.user.contacts intValue]]]];
-        [string setAttributes:@{ NSFontAttributeName: [UIFont systemFontOfSize:12], NSForegroundColorAttributeName: [UIColor colorWithWhite:0.64 alpha:1] } range:[contactsString rangeOfString:@"CONTACTS"]];
         
         cell.contactsLabel.attributedText = string;
         
