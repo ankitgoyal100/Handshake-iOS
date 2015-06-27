@@ -46,8 +46,8 @@
     
     // create video view
     self.moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"The-Boulevard" ofType:@"mp4"]]];
-    self.moviePlayer.view.frame = self.videoView.bounds;
     [self.moviePlayer prepareToPlay];
+    self.moviePlayer.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     self.moviePlayer.controlStyle = MPMovieControlStyleNone;
     self.moviePlayer.scalingMode = MPMovieScalingModeAspectFill;
     self.moviePlayer.repeatMode = MPMovieRepeatModeOne;
