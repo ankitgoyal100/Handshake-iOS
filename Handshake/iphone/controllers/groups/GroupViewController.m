@@ -18,8 +18,9 @@
 #import "FeedItem.h"
 #import "GroupCodeCell.h"
 #import "GroupServerSync.h"
+#import <MessageUI/MessageUI.h>
 
-@interface GroupViewController () <UIActionSheetDelegate, EditGroupViewControllerDelegate, UIAlertViewDelegate>
+@interface GroupViewController () <UIActionSheetDelegate, EditGroupViewControllerDelegate, UIAlertViewDelegate, MFMessageComposeViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *picturesView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *picturesViewHeight;
@@ -108,7 +109,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return 4;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -133,8 +134,8 @@
         return cell;
     }
     
-    if (indexPath.row == 2)
-        return [tableView dequeueReusableCellWithIdentifier:@"EditCell"];
+    if (indexPath.row == 3)
+        return [tableView dequeueReusableCellWithIdentifier:@"InviteCell"];
     
     return [tableView dequeueReusableCellWithIdentifier:@"LeaveCell"];
 }
@@ -142,7 +143,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //if (indexPath.row == 0) return 100 - 35;
     
-    if (indexPath.row == 0) return 47;
+    if (indexPath.row == 0 || indexPath.row == 3) return 47;
     
     if (indexPath.row == 2) return 115;
     
@@ -171,7 +172,7 @@
     
     if (indexPath.row == 3) {
         // leave group
-        [[[UIActionSheet alloc] initWithTitle:@"Are you sure?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Leave Group" otherButtonTitles:nil] showFromTabBar:self.tabBarController.tabBar];
+        [[[UIActionSheet alloc] initWithTitle:@"Invite members" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"SMS", @"Copy Code", nil] showFromTabBar:self.tabBarController.tabBar];
     }
 }
 
@@ -189,7 +190,24 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Leave Group"]) {
         [[[UIAlertView alloc] initWithTitle:@"Are you sure?" message:@"You won't receive any new contacts from this group." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Leave", nil] show];
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"SMS"]) {
+        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+        if ([MFMessageComposeViewController canSendText]) {
+            controller.body = [self inviteMessage];
+            controller.messageComposeDelegate = self;
+            
+            controller.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [UIColor blackColor] };
+            
+            [self presentViewController:controller animated:YES completion:nil];
+        }
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Copy Code"]) {
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = [[NSString stringWithFormat:@"%@-%@-%@", [self.group.code substringToIndex:2], [self.group.code substringWithRange:NSMakeRange(2, 2)], [self.group.code substringFromIndex:4]] uppercaseString];
     }
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -197,6 +215,10 @@
         [GroupServerSync deleteGroup:self.group];
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+- (NSString *)inviteMessage {
+    return [NSString stringWithFormat:@"Join my Handshake group! Just copy this message and open the app. (%@)", [[NSString stringWithFormat:@"%@-%@-%@", [self.group.code substringToIndex:2], [self.group.code substringWithRange:NSMakeRange(2, 2)], [self.group.code substringFromIndex:4]] uppercaseString]];
 }
 
 @end

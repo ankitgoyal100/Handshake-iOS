@@ -205,6 +205,7 @@
 		79E759F51B38D6F400CF94AC /* FinishingSetupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */; };
 		79E759F71B3E211900CF94AC /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E759F61B3E211900CF94AC /* MediaPlayer.framework */; };
 		79E759FA1B3E217200CF94AC /* The-Boulevard.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 79E759F91B3E217200CF94AC /* The-Boulevard.mp4 */; };
+		79E75A5C1B432FF200CF94AC /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E75A5B1B432FF200CF94AC /* MessageUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -591,6 +592,7 @@
 		79E759F41B38D6F400CF94AC /* FinishingSetupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FinishingSetupViewController.m; path = tutorial/FinishingSetupViewController.m; sourceTree = "<group>"; };
 		79E759F61B3E211900CF94AC /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		79E759F91B3E217200CF94AC /* The-Boulevard.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The-Boulevard.mp4"; sourceTree = "<group>"; };
+		79E75A5B1B432FF200CF94AC /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -598,6 +600,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79E75A5C1B432FF200CF94AC /* MessageUI.framework in Frameworks */,
 				79E759F71B3E211900CF94AC /* MediaPlayer.framework in Frameworks */,
 				799DD2721B2F68050077044C /* CoreTelephony.framework in Frameworks */,
 				7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */,
@@ -990,6 +993,7 @@
 		792803BD19C8B46C0075261D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79E75A5B1B432FF200CF94AC /* MessageUI.framework */,
 				79E759F61B3E211900CF94AC /* MediaPlayer.framework */,
 				799DD2711B2F68050077044C /* CoreTelephony.framework */,
 				7932B7691B02AD340011A747 /* QuartzCore.framework */,

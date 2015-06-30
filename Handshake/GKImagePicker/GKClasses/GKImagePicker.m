@@ -161,7 +161,7 @@
     self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     self.imagePickerController.delegate = self;
     self.imagePickerController.allowsEditing = NO;
-    self.imagePickerController.navigationBar.tintColor = [UIColor blackColor];
+    self.imagePickerController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [UIColor blackColor] };
     
     [self presentImagePickerController];
 }

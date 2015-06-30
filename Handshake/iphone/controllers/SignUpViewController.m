@@ -128,15 +128,7 @@
 }
 
 - (IBAction)terms:(id)sender {
-    
-}
-
-- (void)terms {
-    BaseNavigationController *controller = [[BaseNavigationController alloc] initWithRootViewController:[[TermsViewController alloc] initWithNibName:nil bundle:nil]];
-    controller.navigationBar.barTintColor = LOGO_COLOR;
-    controller.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName:[UIColor whiteColor] };
-    controller.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentViewController:controller animated:YES completion:nil];
+    [self presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"TermsViewController"] animated:YES completion:nil];
 }
 
 @end

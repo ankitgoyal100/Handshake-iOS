@@ -10,6 +10,8 @@
 
 @interface TermsViewController ()
 
+@property (weak, nonatomic) IBOutlet UIWebView *webView;
+
 @end
 
 @implementation TermsViewController
@@ -17,16 +19,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://gethandshakeapp.com/terms"]]];
-    [self.view addSubview:webView];
-    
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(done)];
-    doneButton.tintColor = [UIColor whiteColor];
-    self.navigationItem.rightBarButtonItem = doneButton;
+    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://gethandshakeapp.com/terms"]]];
 }
 
-- (void)done {
+- (IBAction)done:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
