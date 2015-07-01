@@ -46,7 +46,7 @@
     
     UserViewController *userController = (UserViewController *)((UINavigationController *)self.viewControllers[3]).visibleViewController;
     userController.user = [[HandshakeSession currentSession] account];
-    userController.title = @"You";
+    userController.title = @"Me";
     
     self.tabBar.tintColor = LOGO_COLOR;
     

@@ -5939,15 +5939,15 @@
                                             <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="30" id="OFE-Ib-FH7">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="46"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                                                 </constraint>
                                                 <constraint firstAttribute="width" constant="30" id="OKY-jJ-pR2">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="46"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" constant="40"/>
                                                 </constraint>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="23"/>
+                                                    <integer key="value" value="20"/>
                                                 </userDefinedRuntimeAttribute>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="showActivityIndicator" value="NO"/>
@@ -5978,7 +5978,7 @@
                                             <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="K3y-nx-qCX">
-                                                    <variation key="heightClass=regular-widthClass=compact" constant="17"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" constant="15"/>
                                                 </constraint>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -6023,10 +6023,10 @@
                                             <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                                         </constraint>
                                         <constraint firstItem="1E0-5a-Vu2" firstAttribute="top" secondItem="NuG-fh-aZ9" secondAttribute="top" constant="12" id="ZcO-Pp-o5Q">
-                                            <variation key="heightClass=regular-widthClass=compact" constant="10"/>
+                                            <variation key="heightClass=regular-widthClass=compact" constant="12"/>
                                         </constraint>
                                         <constraint firstItem="oyp-9l-1Ac" firstAttribute="top" secondItem="NuG-fh-aZ9" secondAttribute="top" constant="12" id="aw7-AV-Sla">
-                                            <variation key="heightClass=regular-widthClass=compact" constant="9"/>
+                                            <variation key="heightClass=regular-widthClass=compact" constant="11"/>
                                         </constraint>
                                         <constraint firstItem="JG0-fd-v3H" firstAttribute="leading" secondItem="1E0-5a-Vu2" secondAttribute="trailing" constant="12" id="hjS-Nk-Dhe">
                                             <variation key="heightClass=regular-widthClass=compact" constant="10"/>

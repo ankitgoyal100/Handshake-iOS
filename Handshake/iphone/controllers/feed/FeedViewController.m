@@ -382,6 +382,7 @@
     }
     
     cell.messageLabel.attributedText = [self messageForItem:item];
+    [cell.messageLabel sizeToFit];
     
     NSTimeInterval time = [[NSDate date] timeIntervalSinceDate:item.createdAt];
     
@@ -486,7 +487,7 @@
     NSAttributedString *messageString = [self messageForItem:item];
     
     CGRect frame = [messageString boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 80, 10000) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context:nil];
-    return MAX(67, 17 + 19 + frame.size.height + 1);
+    return MAX(65, 25 + 15 + frame.size.height);
 }
 
 - (IBAction)contacts:(id)sender {

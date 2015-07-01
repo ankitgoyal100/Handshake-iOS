@@ -653,7 +653,7 @@
     }];
     
     if (_user == [[HandshakeSession currentSession] account]) {
-        self.title = @"You";
+        self.title = @"Me";
         
         UIBarButtonItem *contactsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"contacts_icon"] style:UIBarButtonItemStylePlain target:self action:@selector(contacts)];
         contactsButton.tintColor = [UIColor whiteColor];

@@ -120,9 +120,11 @@
 + (void)syncContact:(User *)contact toAddressBook:(ABAddressBookRef)addressBook {
     if ([contact.cards count] == 0) return;
     
-    NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
-    
     Card *card = contact.cards[0];
+    
+    if ([card.phones count] + [card.emails count] + [card.addresses count] + [card.socials count] == 0) return; // no information to sync
+    
+    NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
     NSArray *records = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
     NSInteger count = [records count];
