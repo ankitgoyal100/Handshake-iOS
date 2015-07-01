@@ -128,6 +128,7 @@
     self.isContact = dictionary[@"is_contact"];
     self.requestSent = dictionary[@"request_sent"];
     self.requestReceived = dictionary[@"request_received"];
+    self.notifications = dictionary[@"notifications"];
     
     // if no thumb or thumb is different - update
     if (!dictionary[@"thumb"] || !self.thumb || ![dictionary[@"thumb"] isEqualToString:self.thumb]) {

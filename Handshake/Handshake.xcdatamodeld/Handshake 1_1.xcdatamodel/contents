@@ -73,6 +73,7 @@
         <attribute name="isContact" optional="YES" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mutual" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="notifications" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pictureData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="requestReceived" optional="YES" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
@@ -99,7 +100,7 @@
         <element name="GroupMember" positionX="0" positionY="0" width="128" height="75"/>
         <element name="Phone" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="375"/>
         <element name="Suggestion" positionX="9" positionY="153" width="128" height="60"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="390"/>
     </elements>
 </model>

@@ -39,6 +39,7 @@ typedef enum {
 @property (nonatomic, retain) NSNumber *isContact;
 @property (nonatomic, retain) NSNumber *requestSent;
 @property (nonatomic, retain) NSNumber *requestReceived;
+@property (nonatomic, retain) NSNumber *notifications;
 
 @property (nonatomic, retain) NSNumber *contacts;
 @property (nonatomic, retain) NSNumber *mutual;

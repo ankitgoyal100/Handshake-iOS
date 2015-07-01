@@ -244,7 +244,30 @@
             } forControlEvents:UIControlEventTouchUpInside];
         } else {
             [cell.primaryButton setBackgroundImage:[UIImage imageNamed:@"contacts_button"] forState:UIControlStateNormal];
-            [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"notifications_button"] forState:UIControlStateNormal];
+            
+            if ([self.user.notifications boolValue]) {
+                [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"notifications_button"] forState:UIControlStateNormal];
+                
+                [cell.secondaryButton addEventHandler:^(id sender) {
+                    [[HandshakeClient client] POST:[NSString stringWithFormat:@"/users/%@/black_list", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        self.user.notifications = @(NO);
+                        [self.tableView reloadData];
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        
+                    }];
+                } forControlEvents:UIControlEventTouchUpInside];
+            } else {
+                [cell.secondaryButton setBackgroundImage:[UIImage imageNamed:@"notifications_off_button"] forState:UIControlStateNormal];
+                
+                [cell.secondaryButton addEventHandler:^(id sender) {
+                    [[HandshakeClient client] DELETE:[NSString stringWithFormat:@"/users/%@/black_list", self.user.userId] parameters:[[HandshakeSession currentSession] credentials] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        self.user.notifications = @(YES);
+                        [self.tableView reloadData];
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        
+                    }];
+                } forControlEvents:UIControlEventTouchUpInside];
+            }
             
             [cell.primaryButton addEventHandler:^(id sender) {
                 [[[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:@"Are you sure? You and %@ will no longer be contacts.", [self.user formattedName]] delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Contact" otherButtonTitles:nil] showInView:self.view];
