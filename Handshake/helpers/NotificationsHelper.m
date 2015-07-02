@@ -10,8 +10,11 @@
 #import "UserServerSync.h"
 #import "HandshakeSession.h"
 #import "HandshakeClient.h"
+#import "HandshakeCoreDataStore.h"
 #import "FeedItemServerSync.h"
 #import "ContactSync.h"
+#import "Group.h"
+#import "GroupServerSync.h"
 
 @interface NotificationsHelper()
 
@@ -36,11 +39,25 @@
     // make sure logged in
     if (![HandshakeSession currentSession]) return;
     
+    // compare token to previously registered token
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *registeredToken = [defaults stringForKey:@"notifications_token"];
+    if (registeredToken && [token isEqualToString:registeredToken]) {
+        if (self.completionBlock) {
+            self.completionBlock(YES);
+            self.completionBlock = nil;
+        }
+        return;
+    }
+    
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:[[HandshakeSession currentSession] credentials]];
     params[@"token"] = token;
     params[@"platform"] = @"iphone";
     [[HandshakeClient client] POST:@"/devices" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // do nothing
+        // update registered token in user defaults
+        [defaults setValue:token forKey:@"notifications_token"];
+        [defaults synchronize];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // do nothing
     }];
@@ -91,6 +108,9 @@
 }
 
 - (void)handleNotification:(NSDictionary *)userInfo completionBlock:(void (^)())completionBlock {
+    
+    UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
+    
     // make sure logged in
     if (![HandshakeSession currentSession]) {
         if (completionBlock) completionBlock();
@@ -100,17 +120,42 @@
     if (userInfo[@"user"]) {
         [UserServerSync cacheUsers:@[userInfo[@"user"]] completionBlock:^(NSArray *users) {
             // if application inactive - open the user
-            if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
+            if (appState == UIApplicationStateInactive) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(openUser:)])
                     [self.delegate openUser:users[0]];
-            } else {
-                [FeedItemServerSync sync];
-                // display alert
             }
             
-            [ContactSync sync];
-            
-            if (completionBlock) completionBlock();
+            [FeedItemServerSync syncWithCompletionBlock:^{
+                [ContactSync syncWithCompletionBlock:^{
+                    // sync group members if required
+                    if (userInfo[@"group_id"]) {
+                        NSNumber *groupId = userInfo[@"group_id"];
+                        
+                        // fetch group and sync members
+                        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Group"];
+                        NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] mainManagedObjectContext];
+                        request.predicate = [NSPredicate predicateWithFormat:@"groupId == %@", groupId];
+                        
+                        __block NSArray *results;
+                        
+                        [objectContext performBlockAndWait:^{
+                            results = [objectContext executeFetchRequest:request error:nil];
+                        }];
+                        
+                        if (results && [results count] == 1) {
+                            Group *group = results[0];
+                            
+                            [GroupServerSync loadGroupMembers:group completionBlock:^{
+                                if (completionBlock) completionBlock();
+                            }];
+                            
+                            return;
+                        }
+                    }
+                    
+                    if (completionBlock) completionBlock();
+                }];
+            }];
         }];
     } else
         if (completionBlock) completionBlock();
@@ -126,12 +171,6 @@
 }
 
 - (void)requestNotificationsPermissionsWithCompletionBlock:(NotificationsRequestCompletionBlock)completionBlock {
-    // check if already enabled
-    if ([UIApplication sharedApplication].isRegisteredForRemoteNotifications) {
-        if (self.completionBlock) self.completionBlock(YES);
-        return;
-    }
-    
     self.completionBlock = completionBlock;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

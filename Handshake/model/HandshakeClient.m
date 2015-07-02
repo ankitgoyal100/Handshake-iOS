@@ -16,6 +16,7 @@
     if (!client) {
         dispatch_once(&p, ^{
             //client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://localhost:3000/"]];
+            //client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://192.168.1.16:3000/"]];
             client = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:@"https://handshakeapi11.herokuapp.com/"]];
             client.requestSerializer = [AFJSONRequestSerializer serializer];
             [client.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Accept"];

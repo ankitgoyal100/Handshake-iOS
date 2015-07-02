@@ -80,7 +80,7 @@
     [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 2 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
     [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     
-    self.selectedLabel = indexPath.row - 2;
+    self.selectedLabel = (int)indexPath.row - 2;
     
     [self updateSaveButton];
 }

@@ -50,7 +50,7 @@
         
         self.promptLabel.text = [NSString stringWithFormat:@"Want to join %@?", responseObject[@"group"][@"name"]];
         
-        int numMembers = [responseObject[@"group"][@"members"] count];
+        int numMembers = (int)[responseObject[@"group"][@"members"] count];
         
         if (self.circleView)
             [self.circleView removeFromSuperview];

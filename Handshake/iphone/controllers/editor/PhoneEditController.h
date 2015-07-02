@@ -11,6 +11,7 @@
 
 @protocol PhoneEditControllerDelegate <NSObject>
 
+@optional
 - (void)phoneEdited:(Phone *)phone;
 - (void)phoneEditCancelled:(Phone *)phone;
 - (void)phoneDeleted:(Phone *)phone;

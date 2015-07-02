@@ -42,6 +42,7 @@
 @dynamic isContact;
 @dynamic requestSent;
 @dynamic requestReceived;
+@dynamic notifications;
 
 @dynamic contacts;
 @dynamic mutual;

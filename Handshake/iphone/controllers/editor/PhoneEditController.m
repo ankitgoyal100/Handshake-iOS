@@ -106,7 +106,7 @@
         [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedLabel + 3 inSection:0]].accessoryType = UITableViewCellAccessoryNone;
         [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
         
-    self.selectedLabel = indexPath.row - 3;
+    self.selectedLabel = (int)indexPath.row - 3;
     
     [self updateSaveButton];
 }

@@ -61,8 +61,10 @@
                 user.syncStatus = @(UserSynced);
             }
             
-            if ([user.syncStatus intValue] == UserSynced)
+            if ([user.syncStatus intValue] == UserSynced) {
                 [user updateFromDictionary:[HandshakeCoreDataStore removeNullsFromDictionary:dict]];
+                user.saved = @(NO);
+            }
             
             userMap[dict[@"id"]] = user;
         }

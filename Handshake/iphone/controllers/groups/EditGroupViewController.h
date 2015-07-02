@@ -11,6 +11,7 @@
 
 @protocol EditGroupViewControllerDelegate <NSObject>
 
+@optional
 - (void)groupEdited:(Group *)group;
 - (void)groupEditCancelled:(Group *)group;
 

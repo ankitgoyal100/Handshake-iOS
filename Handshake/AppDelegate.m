@@ -21,6 +21,7 @@
 #import "NotificationsHelper.h"
 #import <AddressBook/AddressBook.h>
 #import "FeedItemServerSync.h"
+#import <HockeySDK/HockeySDK.h>
 
 @interface AppDelegate ()
 
@@ -33,6 +34,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"0928683974cc9fd8cd69e6d66d535815"];
+    [[BITHockeyManager sharedHockeyManager] startManager];
+    [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
     
     // set navigation bar font
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[[UINavigationBar appearance] titleTextAttributes]];
@@ -68,7 +73,9 @@
     
     // check for current session
     if ([HandshakeSession currentSession]) {
-        [HandshakeSession sync];
+        // if app is not in background state run syncs
+        if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground)
+            [HandshakeSession sync];
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         self.window.rootViewController = [storyboard instantiateInitialViewController];
     }
@@ -114,7 +121,8 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
-    [FeedItemServerSync sync];
+    if ([HandshakeSession currentSession])
+        [FeedItemServerSync sync];
     
     application.applicationIconBadgeNumber = 0;
     

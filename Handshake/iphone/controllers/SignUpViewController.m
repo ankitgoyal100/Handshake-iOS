@@ -20,6 +20,7 @@
 @interface SignUpViewController() <UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *firstNameField;
+@property (weak, nonatomic) IBOutlet UITextField *lastNameField;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 
@@ -60,6 +61,8 @@
         return NO;
     
     if (textField == self.firstNameField) {
+        [self.lastNameField becomeFirstResponder];
+    } else if (textField == self.lastNameField) {
         [self.emailField becomeFirstResponder];
     } else if (textField == self.emailField) {
         [self.passwordField becomeFirstResponder];
@@ -73,7 +76,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     
-    if ([self.firstNameField.text length] > 0 && [self.emailField.text length] > 0 && [self.passwordField.text length] >= 8) {
+    if ([self.firstNameField.text length] > 0 && [self.lastNameField.text length] > 0 && [self.emailField.text length] > 0 && [self.passwordField.text length] >= 8) {
         self.signUpButton.enabled = YES;
         self.signUpButton.alpha = 1;
     } else {
@@ -92,7 +95,7 @@
 }
 
 - (IBAction)signUp:(id)sender {
-    if ([self.firstNameField.text length] == 0 || [self.emailField.text length] == 0 || [self.passwordField.text length] < 8)
+    if ([self.firstNameField.text length] == 0 || [self.lastNameField.text length] == 0 || [self.emailField.text length] == 0 || [self.passwordField.text length] < 8)
         return;
     
     self.signUpButton.hidden = YES;
@@ -100,7 +103,7 @@
     [self.activityIndicator startAnimating];
     [self.view endEditing:YES];
     
-    [[HandshakeClient client] POST:@"/account" parameters:@{ @"first_name":self.firstNameField.text, @"email":self.emailField.text, @"password":self.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[HandshakeClient client] POST:@"/account" parameters:@{ @"first_name":self.firstNameField.text, @"last_name": self.lastNameField.text, @"email":self.emailField.text, @"password":self.passwordField.text } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [HandshakeSession loginWithEmail:self.emailField.text password:self.passwordField.text successBlock:^(HandshakeSession *session) {
             [CardServerSync syncWithCompletionBlock:^{
                 [self.view.window setRootViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"TutorialViewController"]];

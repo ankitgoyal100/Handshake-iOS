@@ -11,6 +11,7 @@
 
 @protocol AddressEditControllerDelegate <NSObject>
 
+@optional
 - (void)addressEdited:(Address *)address;
 - (void)addressEditCancelled:(Address *)address;
 - (void)addressDeleted:(Address *)address;

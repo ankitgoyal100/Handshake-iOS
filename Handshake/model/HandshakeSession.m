@@ -52,6 +52,11 @@ static HandshakeSession *session = nil;
         }];
     }
     
+    // delete notifications token from user defaults
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setValue:nil forKey:@"notifications_token"];
+    [defaults synchronize];
+    
     session = nil;
 }
 

@@ -74,9 +74,22 @@
 }
 
 + (void)sync {
+    [self syncWithCompletionBlock:nil];
+}
+
++ (void)syncWithCompletionBlock:(void (^)())completionBlock {
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    static dispatch_queue_t queue = NULL;
+    static dispatch_once_t p = 0;
+    
+    if (!queue) {
+        dispatch_once(&p, ^{
+            queue = dispatch_queue_create("handshake_contact_download_queue", NULL);
+        });
+    }
+    
+    dispatch_async(queue, ^{
         NSManagedObjectContext *objectContext = [[HandshakeCoreDataStore defaultStore] childObjectContext];
         
         // get contacts
@@ -94,7 +107,14 @@
             results = [objectContext executeFetchRequest:request error:nil];
         }];
         
-        if (!results) return; // something went wrong
+        if (!results) {
+            if (completionBlock) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionBlock();
+                });
+            }
+            return; // something went wrong
+        }
         
         CFErrorRef error = NULL;
         ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
@@ -113,6 +133,12 @@
                 [objectContext save:nil];
             }];
             [[HandshakeCoreDataStore defaultStore] saveMainContext];
+        }
+        
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock();
+            });
         }
     });
 }

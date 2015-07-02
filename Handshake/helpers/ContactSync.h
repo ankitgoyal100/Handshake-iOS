@@ -20,6 +20,8 @@ typedef enum {
 + (void)requestAddressBookAccessWithCompletionBlock:(void (^)(BOOL success))completionBlock;
 
 + (void)sync;
++ (void)syncWithCompletionBlock:(void (^)())completionBlock;
+
 + (void)syncAll;
 
 @end
