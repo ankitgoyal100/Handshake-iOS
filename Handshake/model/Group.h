@@ -28,6 +28,7 @@ typedef enum {
 @property (nonatomic, retain) NSDate * updatedAt;
 @property (nonatomic, retain) NSSet *feedItems;
 @property (nonatomic, retain) NSOrderedSet *members;
+@property (nonatomic, retain) NSNumber *savesToPhone;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 

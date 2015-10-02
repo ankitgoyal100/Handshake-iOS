@@ -41,7 +41,7 @@ class OutlineButton: UIButton {
         }
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1.5

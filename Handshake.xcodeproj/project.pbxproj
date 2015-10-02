@@ -58,7 +58,6 @@
 		7932B76A1B02AD340011A747 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932B7691B02AD340011A747 /* QuartzCore.framework */; };
 		7932B76D1B06F32B0011A747 /* UserHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932B76C1B06F32B0011A747 /* UserHeaderCell.m */; };
 		793747C21B4446F000DB3458 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793747BE1B4446F000DB3458 /* HockeySDK.framework */; };
-		793747C31B4446F000DB3458 /* HockeySDK.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 793747C01B4446F000DB3458 /* HockeySDK.xcconfig */; };
 		793747C41B4446F000DB3458 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 793747C11B4446F000DB3458 /* HockeySDKResources.bundle */; };
 		793747C61B44470000DB3458 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793747C51B44470000DB3458 /* AssetsLibrary.framework */; };
 		793747C81B44470A00DB3458 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793747C71B44470A00DB3458 /* CoreGraphics.framework */; };
@@ -189,6 +188,7 @@
 		79C751A61B1CE5FF00DB221C /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C751A51B1CE5FF00DB221C /* FeedItem.m */; };
 		79C751A81B1DFD8F00DB221C /* Edit.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79C751A71B1DFD8F00DB221C /* Edit.storyboard */; };
 		79C751AB1B1E0D6100DB221C /* NameEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C751AA1B1E0D6100DB221C /* NameEditCell.m */; };
+		79CBC0AD1B70576100B2FA9E /* ScanCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79CBC0AC1B70576100B2FA9E /* ScanCodeViewController.m */; };
 		79CCAD421ACC72C4004EEA89 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 79CCAD411ACC72C4004EEA89 /* Account.m */; };
 		79D46C7919D22D4F00C52FEE /* NSDateFormatter+STTwitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C5D19D22D4F00C52FEE /* NSDateFormatter+STTwitter.m */; };
 		79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 79D46C5F19D22D4F00C52FEE /* NSError+STTwitter.m */; };
@@ -561,6 +561,8 @@
 		79C751A71B1DFD8F00DB221C /* Edit.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Edit.storyboard; sourceTree = "<group>"; };
 		79C751A91B1E0D6100DB221C /* NameEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameEditCell.h; path = "user editor view/NameEditCell.h"; sourceTree = "<group>"; };
 		79C751AA1B1E0D6100DB221C /* NameEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NameEditCell.m; path = "user editor view/NameEditCell.m"; sourceTree = "<group>"; };
+		79CBC0AB1B70576100B2FA9E /* ScanCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScanCodeViewController.h; path = groups/ScanCodeViewController.h; sourceTree = "<group>"; };
+		79CBC0AC1B70576100B2FA9E /* ScanCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ScanCodeViewController.m; path = groups/ScanCodeViewController.m; sourceTree = "<group>"; };
 		79CCAD3F1ACB647A004EEA89 /* Handshake 1_1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Handshake 1_1.xcdatamodel"; sourceTree = "<group>"; };
 		79CCAD401ACC72C4004EEA89 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
 		79CCAD411ACC72C4004EEA89 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
@@ -1224,6 +1226,8 @@
 				79B752DD1AFD0C70007660E5 /* JoinGroupViewController.m */,
 				799DD2271B2B9A540077044C /* JoinGroupDialogViewController.h */,
 				799DD2281B2B9A540077044C /* JoinGroupDialogViewController.m */,
+				79CBC0AB1B70576100B2FA9E /* ScanCodeViewController.h */,
+				79CBC0AC1B70576100B2FA9E /* ScanCodeViewController.m */,
 			);
 			name = groups;
 			sourceTree = "<group>";
@@ -1473,7 +1477,9 @@
 		792801DA19C8B36B0075261D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = Handshake;
 				TargetAttributes = {
 					792801E119C8B36B0075261D = {
@@ -1487,6 +1493,7 @@
 					};
 					792801FA19C8B36B0075261D = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = 59G34X7E6F;
 						TestTargetID = 792801E119C8B36B0075261D;
 					};
 				};
@@ -1529,7 +1536,6 @@
 				794692291B23B6400093045E /* Start.storyboard in Resources */,
 				79C050E519CF650D001BB956 /* PLCameraSheetButton.png in Resources */,
 				7928033719C8B3C40075261D /* back@2x.png in Resources */,
-				793747C31B4446F000DB3458 /* HockeySDK.xcconfig in Resources */,
 				793747C41B4446F000DB3458 /* HockeySDKResources.bundle in Resources */,
 				799DD26E1B2F5C820077044C /* NBPhoneNumberMetadata.plist in Resources */,
 				79C751A81B1DFD8F00DB221C /* Edit.storyboard in Resources */,
@@ -1701,6 +1707,7 @@
 				79E759E81B33674000CF94AC /* AddContactInfoViewController.m in Sources */,
 				79D46C7A19D22D4F00C52FEE /* NSError+STTwitter.m in Sources */,
 				799DD2431B2EB1B70077044C /* CountryPicker.m in Sources */,
+				79CBC0AD1B70576100B2FA9E /* ScanCodeViewController.m in Sources */,
 				799DD1EF1B2792910077044C /* SectionHeaderCell.m in Sources */,
 				7928033119C8B3C40075261D /* AFURLResponseSerialization.m in Sources */,
 				799DD2781B2FBF010077044C /* ContactUploader.m in Sources */,
@@ -1772,7 +1779,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Samuel Ober (UTX235R7UR)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Samuel Ober (UTX235R7UR)";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1789,9 +1797,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "224d8b65-ee53-4889-85de-2d386a4f3878";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1813,7 +1822,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Samuel Ober (59G34X7E6F)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Samuel Ober (59G34X7E6F)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1824,8 +1834,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "0623dbe6-f777-460c-98ab-9f1b8e94f536";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1837,8 +1848,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Samuel Ober (UTX235R7UR)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/samober/Documents/FacebookSDK,
@@ -1850,7 +1862,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "f92beb62-c241-4685-b14e-34eece88ad50";
+				PROVISIONING_PROFILE = "9a4cf812-f9d0-4072-8765-d2f13c241199";
 				SWIFT_OBJC_BRIDGING_HEADER = "Handshake/model/Handshake-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1863,7 +1875,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Samuel Ober (59G34X7E6F)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/samober/Documents/FacebookSDK,
@@ -1875,7 +1888,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "89272d23-0ef3-4820-b6da-b27928496e18";
+				PROVISIONING_PROFILE = "5c532abb-0ee3-4574-989b-dfdf87169074";
 				SWIFT_OBJC_BRIDGING_HEADER = "Handshake/model/Handshake-Bridging-Header.h";
 			};
 			name = Release;
@@ -1884,6 +1897,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1895,6 +1910,7 @@
 				INFOPLIST_FILE = HandshakeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Handshake.app/Handshake";
 			};
 			name = Debug;
@@ -1903,6 +1919,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1910,6 +1928,7 @@
 				INFOPLIST_FILE = HandshakeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Handshake.app/Handshake";
 			};
 			name = Release;

@@ -42,6 +42,7 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="savesToPhone" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="syncStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="feedItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FeedItem" inverseName="group" inverseEntity="FeedItem" syncable="YES"/>
@@ -96,7 +97,7 @@
         <element name="Card" positionX="0" positionY="0" width="128" height="195"/>
         <element name="Email" positionX="0" positionY="0" width="128" height="90"/>
         <element name="FeedItem" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Group" positionX="0" positionY="0" width="128" height="165"/>
+        <element name="Group" positionX="0" positionY="0" width="128" height="180"/>
         <element name="GroupMember" positionX="0" positionY="0" width="128" height="75"/>
         <element name="Phone" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Social" positionX="0" positionY="0" width="128" height="90"/>

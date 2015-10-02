@@ -25,6 +25,7 @@
 @dynamic updatedAt;
 @dynamic feedItems;
 @dynamic members;
+@dynamic savesToPhone;
 
 - (void)updateFromDictionary:(NSDictionary *)dictionary {
     self.groupId = dictionary[@"id"];

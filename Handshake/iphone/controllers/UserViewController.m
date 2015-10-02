@@ -297,6 +297,7 @@
             [self.navigationController pushViewController:controller animated:YES];
         } forControlEvents:UIControlEventTouchUpInside];
         
+    
         NSString *mutualString = [NSString stringWithFormat:@"%d MUTUAL", [self.user.mutual intValue]];
         string = [[NSMutableAttributedString alloc] initWithString:mutualString];
         

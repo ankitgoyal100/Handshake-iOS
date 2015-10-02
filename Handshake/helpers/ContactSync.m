@@ -325,7 +325,7 @@
             CFIndex numAddresses = ABMultiValueGetCount(addresses);
             for (CFIndex index = 0; index < numAddresses; index++) {
                 NSDictionary *addressDict = CFBridgingRelease(ABMultiValueCopyValueAtIndex(addresses, index));
-                if ([addressDict[(NSString *)kABPersonAddressStreetKey] containsString:address.street1]) {
+                if (!address.street1 || [addressDict[(NSString *)kABPersonAddressStreetKey] containsString:address.street1]) {
                     skip = YES; // address already exists in contact
                     break;
                 }

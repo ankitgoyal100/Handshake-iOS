@@ -17,8 +17,9 @@
 #import "JoinGroupViewController.h"
 #import "GroupServerSync.h"
 #import "ContactServerSync.h"
+#import "ScanCodeViewController.h"
 
-@interface GroupsViewController () <NSFetchedResultsControllerDelegate, UIActionSheetDelegate, EditGroupViewControllerDelegate, JoinGroupViewControllerDelegate>
+@interface GroupsViewController () <NSFetchedResultsControllerDelegate, UIActionSheetDelegate, EditGroupViewControllerDelegate, JoinGroupViewControllerDelegate, ScanCodeViewControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchController;
 
@@ -148,12 +149,18 @@
 }
 
 - (IBAction)add:(id)sender {
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Join Group", @"Create Group", nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Enter Code", @"Scan Code", @"Create Group", nil];
     [sheet showFromTabBar:self.tabBarController.tabBar];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Join Group"]) {
+    if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Scan Code"]) {
+        ScanCodeViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"ScanCodeViewController"];
+        
+        controller.delegate = self;
+        
+        [self presentViewController:controller animated:YES completion:nil];
+    } else if ([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Enter Code"]) {
         UINavigationController *nav = [self.storyboard instantiateViewControllerWithIdentifier:@"JoinGroupViewController"];
         
         JoinGroupViewController *controller = nav.viewControllers[0];
@@ -187,6 +194,14 @@
 }
 
 - (void)groupJoined:(Group *)group {
+    GroupViewController *controller = (GroupViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"GroupViewController"];
+    controller.group = group;
+    [self.navigationController pushViewController:controller animated:YES];
+    
+    [ContactServerSync sync];
+}
+
+- (void)scanComplete:(Group *)group {
     GroupViewController *controller = (GroupViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"GroupViewController"];
     controller.group = group;
     [self.navigationController pushViewController:controller animated:YES];

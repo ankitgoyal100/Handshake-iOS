@@ -28,13 +28,18 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>5</string>
 	<key>FacebookAppID</key>
 	<string>209231715947381</string>
 	<key>FacebookDisplayName</key>
 	<string>Handshake</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use location to tailor search results and make it easier for you to find your contacts.</string>
 	<key>UIAppFonts</key>
