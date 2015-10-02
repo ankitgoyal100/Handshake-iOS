@@ -8,7 +8,6 @@
 
 #import "ContactSync.h"
 #import "HandshakeCoreDataStore.h"
-#import <AddressBook/AddressBook.h>
 #import "Card.h"
 #import "User.h"
 #import "Phone.h"
@@ -17,12 +16,13 @@
 #import "Social.h"
 #import "AsyncImageView.h"
 #import "NBPhoneNumberUtil.h"
+#import <Contacts/Contacts.h>
 
 @implementation ContactSync
 
 + (AddressBookStatus)addressBookStatus {
     BOOL asked = [[NSUserDefaults standardUserDefaults] boolForKey:@"address_book_permissions"];
-    BOOL granted = ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized;
+    BOOL granted = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] == CNAuthorizationStatusAuthorized;
     
     if (!asked) return AddressBookStatusNotAsked;
     if (asked && granted) return AddressBookStatusGranted;
@@ -30,7 +30,7 @@
 }
 
 + (void)requestAddressBookAccessWithCompletionBlock:(void (^)(BOOL))completionBlock {
-    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
+    if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] == CNAuthorizationStatusAuthorized) {
         if (completionBlock) completionBlock(YES);
         return;
     }
@@ -40,15 +40,15 @@
         [defaults setBool:YES forKey:@"address_book_permissions"];
         [defaults synchronize];
         
-        CFErrorRef error = NULL;
-        ABAddressBookRequestAccessWithCompletion(ABAddressBookCreateWithOptions(NULL, &error), ^(bool granted, CFErrorRef error) {
+        CNContactStore *store = [[CNContactStore alloc] init];
+        [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (granted && completionBlock)
                     completionBlock(YES);
                 else if (completionBlock)
                     completionBlock(NO);
             });
-        });
+        }];
     });
 }
 
@@ -116,16 +116,17 @@
             return; // something went wrong
         }
         
-        CFErrorRef error = NULL;
-        ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+        if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusAuthorized) return;
         
-        if (!addressBook || ABAddressBookGetAuthorizationStatus() != kABAuthorizationStatusAuthorized) return;
+        NSError *error;
+        
+        CNContactStore *store = [[CNContactStore alloc] init];
         
         for (User *contact in results)
-            [self syncContact:contact toAddressBook:addressBook];
+            [self syncContact:contact toContactStore:store];
         
-        error = NULL;
-        ABAddressBookSave(addressBook, &error);
+//        error = NULL;
+//        ABAddressBookSave(addressBook, &error);
         
         if (!error) {
             // save
@@ -143,7 +144,7 @@
     });
 }
 
-+ (void)syncContact:(User *)contact toAddressBook:(ABAddressBookRef)addressBook {
++ (void)syncContact:(User *)contact toContactStore:(CNContactStore *)contactStore {
     if ([contact.cards count] == 0) return;
     
     Card *card = contact.cards[0];
@@ -152,37 +153,38 @@
     
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
-    NSArray *records = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
-    NSInteger count = [records count];
+    NSError *error;
+    NSPredicate *predicate = [CNContact predicateForContactsInContainerWithIdentifier:[contactStore defaultContainerIdentifier]];
+    NSArray *contacts = [contactStore unifiedContactsMatchingPredicate:predicate keysToFetch:@[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactImageDataKey, CNContactImageDataAvailableKey,CNContactPhoneNumbersKey, CNContactEmailAddressesKey, CNContactPostalAddressesKey, CNContactSocialProfilesKey] error:&error];
+    
+    if (error != nil) return;
     
     // find record to update
     
-    ABRecordRef record = NULL;
+    CNContact *record = nil;
     int matches = 0; // count of how many contacts have matching data
     
-    for (int i = 0; i < count; i++) {
-        ABRecordRef r = (__bridge ABRecordRef)records[i];
+    for (int i = 0; i < [contacts count]; i++) {
+        CNContact *r = contacts[i];
         int certainty = 0; // count of how many data points match
         BOOL nameMatch = NO;
-        
+    
         // check name
-        NSString *name = (__bridge NSString *)ABRecordCopyCompositeName(r);
+    
+        NSString *name = [r.givenName stringByAppendingString:[@" " stringByAppendingString:r.familyName]];
         if ([name containsString:contact.firstName]) {
             nameMatch = YES;
             certainty++;
         }
-        
+   
         // check phones
         
-        ABMultiValueRef phoneNumbers = ABRecordCopyValue(r, kABPersonPhoneProperty);
-        CFIndex numPhones = ABMultiValueGetCount(phoneNumbers);
-        
-        for (CFIndex index = 0; index < numPhones; index++) {
-            NSString *number = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phoneNumbers, index));
-            number = [[number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
+        for (CNLabeledValue *number in r.phoneNumbers) {
+            NSString *numberString = ((CNPhoneNumber *)number.value).stringValue;
+            numberString = [[numberString componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
             
             for (Phone *phone in card.phones) {
-                if ([phone.number hasSuffix:number]) {
+                if ([phone.number hasSuffix:numberString]) {
                     // match
                     certainty++;
                     break;
@@ -190,15 +192,11 @@
             }
         }
         
-        CFRelease(phoneNumbers);
         
         // check emails
         
-        ABMultiValueRef emailAddresses = ABRecordCopyValue(r, kABPersonEmailProperty);
-        CFIndex numEmails = ABMultiValueGetCount(emailAddresses);
-        
-        for (CFIndex index = 0; index < numEmails; index++) {
-            NSString *address = CFBridgingRelease(ABMultiValueCopyValueAtIndex(emailAddresses, index));
+        for (CNLabeledValue *email in r.emailAddresses) {
+            NSString *address = email.value;
             
             for (Email *email in card.emails) {
                 if ([address isEqualToString:email.address]) {
@@ -209,7 +207,19 @@
             }
         }
         
-        CFRelease(emailAddresses);
+        // check social networks
+        
+        for (CNLabeledValue *social in r.socialProfiles) {
+            NSString *username = ((CNSocialProfile *)social.value).username;
+            
+            for (Social *social in card.socials) {
+                if ([social.username isEqualToString:username]) {
+                    // match
+                    certainty++;
+                    break;
+                }
+            }
+        }
         
         // require 2 certainty points for guaranteed match
         if (certainty >= 2) {
@@ -222,48 +232,50 @@
         }
     }
     
-    CFErrorRef error = NULL;
     BOOL newRecord = NO;
+    CNMutableContact *mutableRecord;
     
     if (!record || matches != 1) { // if no record found or multiple matches make a new contact
-        record = ABPersonCreate();
-        ABAddressBookAddRecord(addressBook, record, &error);
+        mutableRecord = [[CNMutableContact alloc] init];
         newRecord = YES;
+    } else {
+        mutableRecord = [record mutableCopy];
     }
     
-    if (contact.picture && (!ABPersonHasImageData(record) || [settings[@"pictures"] boolValue])) {
+    if (contact.picture && (!mutableRecord.imageDataAvailable || [settings[@"pictures"] boolValue])) {
         if (contact.pictureData)
-            ABPersonSetImageData(record, (__bridge CFDataRef)(contact.pictureData), &error);
+            mutableRecord.imageData = contact.pictureData;
         else {
             UIImage *picture = [[AsyncImageLoader defaultCache] objectForKey:[NSURL URLWithString:contact.picture]];
             if (picture)
-                ABPersonSetImageData(record, (__bridge CFDataRef)(UIImageJPEGRepresentation(picture, 0.01)), &error);
+                mutableRecord.imageData = UIImageJPEGRepresentation(picture, 0.01);
             else {
                 NSData *image = UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.picture]]], 0.01);
                 contact.pictureData = image;
-                ABPersonSetImageData(record, (__bridge CFDataRef)(UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.picture]]], 0.01)), &error);
+                mutableRecord.imageData = UIImageJPEGRepresentation([UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contact.picture]]], 0.01);
             }
         
         }
     }
     
     if (newRecord || [settings[@"names"] boolValue]) {
-        ABRecordSetValue(record, kABPersonFirstNameProperty, (__bridge CFTypeRef)(contact.firstName), &error);
+        mutableRecord.givenName = contact.firstName;
         if (contact.lastName)
-            ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFTypeRef)(contact.lastName), &error);
+            mutableRecord.familyName = contact.lastName;
         else
-            ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFTypeRef)(@""), &error);
+            mutableRecord.familyName = @"";
     }
-    
+ 
     if ([card.phones count] > 0) {
-        ABMutableMultiValueRef phones = ABMultiValueCreateMutableCopy(ABRecordCopyValue(record, kABPersonPhoneProperty));//ABMultiValueCreateMutable(kABMultiStringPropertyType);
+        NSMutableArray *phones = mutableRecord.phoneNumbers.mutableCopy;
+        //ABMutableMultiValueRef phones = ABMultiValueCreateMutableCopy(ABRecordCopyValue(record, kABPersonPhoneProperty));//ABMultiValueCreateMutable(kABMultiStringPropertyType);
         // loop through phones
         for (Phone *phone in card.phones) {
             BOOL skip = NO;
             
-            CFIndex numPhones = ABMultiValueGetCount(phones);
-            for (CFIndex index = 0; index < numPhones; index++) {
-                NSString *number = CFBridgingRelease(ABMultiValueCopyValueAtIndex(phones, index));
+            //CFIndex numPhones = ABMultiValueGetCount(phones);
+            for (CNLabeledValue *value in phones) {
+                NSString *number = ((CNPhoneNumber *)value.value).stringValue;
                 number = [[number componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
                 if ([phone.number hasSuffix:number]) {
                     skip = YES; // number already exists in contact
@@ -273,30 +285,30 @@
             
             if (skip) continue;
             
-            CFStringRef type = (__bridge CFStringRef)(phone.label);
-            if ([[phone.label lowercaseString] isEqualToString:@"home"]) type = kABHomeLabel;
-            else if ([[phone.label lowercaseString] isEqualToString:@"cell"] || [[phone.label lowercaseString] isEqualToString:@"mobile"]) type = kABPersonPhoneMobileLabel;
-            else if ([[phone.label lowercaseString] isEqualToString:@"work"] || [[phone.label lowercaseString] isEqualToString:@"office"]) type = kABWorkLabel;
-            else type = kABOtherLabel;
-            
             NBPhoneNumberUtil *util = [[NBPhoneNumberUtil alloc] init];
             NBPhoneNumber *phoneNumber = [util parse:phone.number defaultRegion:phone.countryCode error:nil];
             
-            ABMultiValueAddValueAndLabel(phones, (__bridge CFTypeRef)([util format:phoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil]), type, NULL);
+            CNPhoneNumber *pN = [[CNPhoneNumber alloc] initWithStringValue:[util format:phoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil]];
+            CNLabeledValue *value = [[CNLabeledValue alloc] initWithLabel:[phone.label lowercaseString] value:pN];
+            
+            [phones addObject:value];
+            
+            //ABMultiValueAddValueAndLabel(phones, (__bridge CFTypeRef)([util format:phoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:nil]), type, NULL);
         }
-        ABRecordSetValue(record, kABPersonPhoneProperty, phones, &error);
-        CFRelease(phones);
+        
+        mutableRecord.phoneNumbers = phones;
+        //ABRecordSetValue(record, kABPersonPhoneProperty, phones, &error);
+        //CFRelease(phones);
     }
     
     if ([card.emails count] > 0) {
-        ABMutableMultiValueRef emails = ABMultiValueCreateMutableCopy(ABRecordCopyValue(record, kABPersonEmailProperty));//ABMultiValueCreateMutable(kABMultiStringPropertyType);
+        NSMutableArray *emails = mutableRecord.emailAddresses.mutableCopy;
         // loop through emails
         for (Email *email in card.emails) {
             BOOL skip = NO;
             
-            CFIndex numEmails = ABMultiValueGetCount(emails);
-            for (CFIndex index = 0; index < numEmails; index++) {
-                NSString *address = CFBridgingRelease(ABMultiValueCopyValueAtIndex(emails, index));
+            for (CNLabeledValue *emailAddress in emails) {
+                NSString *address = emailAddress.value;
                 if ([address isEqualToString:email.address]) {
                     skip = YES; // email already exists in contact
                     break;
@@ -306,26 +318,23 @@
             if (skip) continue;
             
             if ([email.address length] == 0) continue;
-            CFStringRef type = (__bridge CFStringRef)(email.label);
-            if ([[email.label lowercaseString] isEqualToString:@"home"]) type = kABHomeLabel;
-            else if ([[email.label lowercaseString] isEqualToString:@"work"] || [[email.label lowercaseString] isEqualToString:@"office"]) type = kABWorkLabel;
-            else type = kABOtherLabel;
-            ABMultiValueAddValueAndLabel(emails, (__bridge CFTypeRef)(email.address), type, NULL);
+            
+            CNLabeledValue *value = [[CNLabeledValue alloc] initWithLabel:[email.label lowercaseString] value:email.address];
+            [emails addObject:value];
         }
-        ABRecordSetValue(record, kABPersonEmailProperty, emails, &error);
-        CFRelease(emails);
+        
+        mutableRecord.emailAddresses = emails;
     }
     
     if ([card.addresses count] > 0) {
-        ABMutableMultiValueRef addresses = ABMultiValueCreateMutableCopy(ABRecordCopyValue(record, kABPersonAddressProperty));//ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
+        NSMutableArray *addresses = mutableRecord.postalAddresses.mutableCopy;
         // loop through addresses
         for (Address *address in card.addresses) {
             BOOL skip = NO;
             
-            CFIndex numAddresses = ABMultiValueGetCount(addresses);
-            for (CFIndex index = 0; index < numAddresses; index++) {
-                NSDictionary *addressDict = CFBridgingRelease(ABMultiValueCopyValueAtIndex(addresses, index));
-                if (!address.street1 || [addressDict[(NSString *)kABPersonAddressStreetKey] containsString:address.street1]) {
+            for (CNLabeledValue *value in addresses) {
+                CNPostalAddress *postalAddress = value.value;
+                if (!address.street1 || [postalAddress.street containsString:address.street1]) {
                     skip = YES; // address already exists in contact
                     break;
                 }
@@ -333,49 +342,54 @@
             
             if (skip) continue;
             
-            CFStringRef type = (__bridge CFStringRef)(address.label);
-            if ([[address.label lowercaseString] isEqualToString:@"home"]) type = kABHomeLabel;
-            else if ([[address.label lowercaseString] isEqualToString:@"work"] || [[address.label lowercaseString] isEqualToString:@"office"]) type = kABWorkLabel;
-            else type = kABOtherLabel;
+            CNMutablePostalAddress *postalAddress = [[CNMutablePostalAddress alloc] init];
+            if ([address.street1 length] > 0 && [address.street2 length] > 0) postalAddress.street = [NSString stringWithFormat:@"%@\n%@", address.street1, address.street2];
+            else if ([address.street1 length] > 0) postalAddress.street = address.street1;
+            else if ([address.street2 length] > 0) postalAddress.street = address.street2;
+            if ([address.city length] > 0) postalAddress.city = address.city;
+            if ([address.state length] > 0) postalAddress.state = address.state;
+            if ([address.zip length] > 0) postalAddress.postalCode = address.zip;
             
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            if ([address.street1 length] > 0 && [address.street2 length] > 0) [dict setObject:[NSString stringWithFormat:@"%@\n%@", address.street1, address.street2] forKey:(NSString *)kABPersonAddressStreetKey];
-            else if ([address.street1 length] > 0) [dict setObject:address.street1 forKey:(NSString *)kABPersonAddressStreetKey];
-            else if ([address.street2 length] > 0) [dict setObject:address.street2 forKey:(NSString *)kABPersonAddressStreetKey];
-            if ([address.city length] > 0) [dict setObject:address.city forKey:(NSString *)kABPersonAddressCityKey];
-            if ([address.state length] > 0) [dict setObject:address.state forKey:(NSString *)kABPersonAddressStateKey];
-            if ([address.zip length] > 0) [dict setObject:address.zip forKey:(NSString *)kABPersonAddressZIPKey];
-            //if ([address.country length] > 0) [dict setObject:address.country forKey:(NSString *)kABPersonAddressCountryKey];
-            
-            ABMultiValueAddValueAndLabel(addresses, (__bridge CFTypeRef)(dict), type, NULL);
+            CNLabeledValue *value = [[CNLabeledValue alloc] initWithLabel:[address.label lowercaseString] value:postalAddress];
+            [addresses addObject:value];
         }
-        ABRecordSetValue(record, kABPersonAddressProperty, addresses, &error);
-        CFRelease(addresses);
+        
+        mutableRecord.postalAddresses = addresses;
     }
     
     if ([card.socials count] > 0) {
-        ABMutableMultiValueRef socials = ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
+        NSMutableArray *socials = [[NSMutableArray alloc] init];
         // loop through socials
         for (Social *social in card.socials) {
             if ([social.network length] == 0 || [social.username length] == 0 || [[social.network lowercaseString] isEqualToString:@"facebook"]) continue;
-            CFStringRef type = (__bridge CFStringRef)([[social.network lowercaseString] capitalizedString]);
-            if ([[social.network uppercaseString] isEqualToString:@"TWITTER"]) type = kABPersonSocialProfileServiceTwitter;
-            else if ([[social.network uppercaseString] isEqualToString:@"FLICKR"]) type = kABPersonSocialProfileServiceFlickr;
-            else if ([[social.network uppercaseString] isEqualToString:@"GAME CENTER"] || [[social.network uppercaseString] isEqualToString:@"GAMECENTER"]) type = kABPersonSocialProfileServiceGameCenter;
-            else if ([[social.network uppercaseString] isEqualToString:@"LINKEDIN"]) type = kABPersonSocialProfileServiceLinkedIn;
-            else if ([[social.network uppercaseString] isEqualToString:@"MYSPACE"]) type = kABPersonSocialProfileServiceMyspace;
+            NSString *type = [[social.network lowercaseString] capitalizedString];
+            if ([[social.network uppercaseString] isEqualToString:@"TWITTER"]) type = CNSocialProfileServiceTwitter;
+            else if ([[social.network uppercaseString] isEqualToString:@"FLICKR"]) type = CNSocialProfileServiceFlickr;
+            else if ([[social.network uppercaseString] isEqualToString:@"GAME CENTER"] || [[social.network uppercaseString] isEqualToString:@"GAMECENTER"]) type = CNSocialProfileServiceGameCenter;
+            else if ([[social.network uppercaseString] isEqualToString:@"LINKEDIN"]) type = CNSocialProfileServiceLinkedIn;
+            else if ([[social.network uppercaseString] isEqualToString:@"MYSPACE"]) type = CNSocialProfileServiceMySpace;
             else
                 continue;
             
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            [dict setObject:social.username forKey:(NSString *)kABPersonSocialProfileUsernameKey];
-            [dict setObject:(__bridge id)(type) forKey:(NSString *)kABPersonSocialProfileServiceKey];
+            CNSocialProfile *socialProfile = [[CNSocialProfile alloc] initWithUrlString:nil username:social.username userIdentifier:nil service:type];
+            CNLabeledValue *value = [[CNLabeledValue alloc] initWithLabel:type value:socialProfile];
             
-            ABMultiValueAddValueAndLabel(socials, (__bridge CFTypeRef)(dict), type, NULL);
+            [socials addObject:value];
         }
-        ABRecordSetValue(record, kABPersonSocialProfileProperty, socials, &error);
-        CFRelease(socials);
+        
+        mutableRecord.socialProfiles = socials;
     }
+    
+    
+    CNSaveRequest *request = [[CNSaveRequest alloc] init];
+    
+    if (newRecord) {
+        [request addContact:mutableRecord toContainerWithIdentifier:nil];
+    } else {
+        [request updateContact:mutableRecord];
+    }
+    
+    [contactStore executeSaveRequest:request error:&error];
     
     contact.saved = @(YES);
 }
