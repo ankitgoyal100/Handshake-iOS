@@ -72,6 +72,7 @@
         [objectContext performBlockAndWait:^{
             [objectContext save:nil];
         }];
+        [[HandshakeCoreDataStore defaultStore] saveMainContext];
         
         // get users in main context
         dispatch_async(dispatch_get_main_queue(), ^{

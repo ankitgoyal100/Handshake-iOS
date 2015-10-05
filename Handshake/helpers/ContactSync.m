@@ -78,6 +78,12 @@
 }
 
 + (void)syncWithCompletionBlock:(void (^)())completionBlock {
+    if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusAuthorized) {
+        if (completionBlock) {
+            completionBlock();
+        }
+    }
+    
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey:@"auto_sync"];
     
     static dispatch_queue_t queue = NULL;
@@ -115,8 +121,6 @@
             }
             return; // something went wrong
         }
-        
-        if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusAuthorized) return;
         
         CNContactStore *store = [[CNContactStore alloc] init];
         

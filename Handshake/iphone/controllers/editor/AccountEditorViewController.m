@@ -805,7 +805,7 @@
     [self.objectContext performBlockAndWait:^{
         [self.objectContext save:nil];
     }];
-    [[HandshakeCoreDataStore defaultStore] saveMainContext];
+    //[[HandshakeCoreDataStore defaultStore] saveMainContext];
     
     // sync
     [Account sync];

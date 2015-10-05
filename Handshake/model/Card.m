@@ -36,7 +36,7 @@
     self.updatedAt = [DateConverter convertToDate:dictionary[@"updated_at"]];
     self.name = dictionary[@"name"];
     
-    for (Phone *phone in self.phones) [self.managedObjectContext deleteObject:phone];
+    //for (Phone *phone in self.phones) [self.managedObjectContext deleteObject:phone];
     [self removePhones:self.phones];
     for (NSDictionary *phoneDict in dictionary[@"phones"]) {
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Phone" inManagedObjectContext:self.managedObjectContext];
@@ -49,7 +49,7 @@
         [self addPhonesObject:phone];
     }
     
-    for (Email *email in self.emails) [self.managedObjectContext deleteObject:email];
+    //for (Email *email in self.emails) [self.managedObjectContext deleteObject:email];
     [self removeEmails:self.emails];
     for (NSDictionary *emailDict in dictionary[@"emails"]) {
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Email" inManagedObjectContext:self.managedObjectContext];
@@ -61,7 +61,7 @@
         [self addEmailsObject:email];
     }
     
-    for (Address *address in self.addresses) [self.managedObjectContext deleteObject:address];
+    //for (Address *address in self.addresses) [self.managedObjectContext deleteObject:address];
     [self removeAddresses:self.addresses];
     for (NSDictionary *addressDict in dictionary[@"addresses"]) {
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Address" inManagedObjectContext:self.managedObjectContext];
@@ -77,7 +77,7 @@
         [self addAddressesObject:address];
     }
     
-    for (Social *social in self.socials) [self.managedObjectContext deleteObject:social];
+    //for (Social *social in self.socials) [self.managedObjectContext deleteObject:social];
     [self removeSocials:self.socials];
     for (NSDictionary *socialDict in dictionary[@"socials"]) {
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Social" inManagedObjectContext:self.managedObjectContext];

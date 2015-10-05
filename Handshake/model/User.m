@@ -232,14 +232,4 @@
     [tempSet removeObject:value];
 }
 
-- (void)addPhones:(NSOrderedSet *)values {
-    NSMutableOrderedSet* tempSet = [self mutableOrderedSetValueForKey:@"cards"];
-    [tempSet addObjectsFromArray:[values array]];
-}
-
-- (void)removePhones:(NSOrderedSet *)values {
-    NSMutableOrderedSet* tempSet = [self mutableOrderedSetValueForKey:@"cards"];
-    [tempSet removeObjectsInArray:[values array]];
-}
-
 @end

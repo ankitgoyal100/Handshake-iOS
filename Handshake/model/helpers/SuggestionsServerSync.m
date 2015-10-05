@@ -87,6 +87,7 @@
                 [objectContext performBlockAndWait:^{
                     [objectContext save:nil];
                 }];
+                [[HandshakeCoreDataStore defaultStore] saveMainContext];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) completionBlock();

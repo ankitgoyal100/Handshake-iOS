@@ -82,6 +82,11 @@
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         self.window.rootViewController = [storyboard instantiateInitialViewController];
     }
+    
+    // store current version
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    [defaults setObject:version forKey:@"version"];
+    [defaults synchronize];
 
     return YES;
 }

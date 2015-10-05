@@ -169,6 +169,7 @@
                     [objectContext performBlockAndWait:^{
                         [objectContext save:nil];
                     }];
+                    [[HandshakeCoreDataStore defaultStore] saveMainContext];
                     
                     // check if last page (< 100 items returned)
                     if ([responseObject[@"feed"] count] < 100) {
