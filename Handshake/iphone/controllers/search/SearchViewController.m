@@ -294,9 +294,9 @@
     NSString *searchText = [self.searchBar text];
 
     for (User *contact in [self.contactsFetcher fetchedObjects]) {
-        NSComparisonResult firstName = [contact.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult lastName = [contact.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
-        NSComparisonResult name = [[contact formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
+        NSComparisonResult firstName = [contact.firstName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, MIN([contact.firstName length], [searchText length]))];
+        NSComparisonResult lastName = [contact.lastName compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, MIN([contact.lastName length], [searchText length]))];
+        NSComparisonResult name = [[contact formattedName] compare:searchText options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, MIN([[contact formattedName] length], [searchText length]))];
         
         if ((contact.firstName && [contact.firstName length] > 0 && firstName == NSOrderedSame) || (contact.lastName && [contact.lastName length] > 0 && lastName == NSOrderedSame) || name == NSOrderedSame) {
             [searchResults addObject:contact];

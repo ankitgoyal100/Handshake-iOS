@@ -21,7 +21,8 @@
 #import "NotificationsHelper.h"
 #import <AddressBook/AddressBook.h>
 #import "FeedItemServerSync.h"
-#import <HockeySDK/HockeySDK.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @interface AppDelegate ()
 
@@ -35,9 +36,11 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"0928683974cc9fd8cd69e6d66d535815"];
-    [[BITHockeyManager sharedHockeyManager] startManager];
-    [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
+//    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"0928683974cc9fd8cd69e6d66d535815"];
+//    [[BITHockeyManager sharedHockeyManager] startManager];
+//    [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
+    
+    [Fabric with:@[[Crashlytics class]]];
     
     // set navigation bar font
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[[UINavigationBar appearance] titleTextAttributes]];

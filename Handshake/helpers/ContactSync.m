@@ -118,23 +118,16 @@
         
         if ([CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts] != CNAuthorizationStatusAuthorized) return;
         
-        NSError *error;
-        
         CNContactStore *store = [[CNContactStore alloc] init];
         
         for (User *contact in results)
             [self syncContact:contact toContactStore:store];
         
-//        error = NULL;
-//        ABAddressBookSave(addressBook, &error);
-        
-        if (!error) {
-            // save
-            [objectContext performBlockAndWait:^{
-                [objectContext save:nil];
-            }];
-            [[HandshakeCoreDataStore defaultStore] saveMainContext];
-        }
+        // save
+        [objectContext performBlockAndWait:^{
+            [objectContext save:nil];
+        }];
+        [[HandshakeCoreDataStore defaultStore] saveMainContext];
         
         if (completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
