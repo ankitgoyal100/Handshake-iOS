@@ -104,6 +104,7 @@
         
         newPhone.number = phone.number;
         newPhone.label = phone.label;
+        newPhone.countryCode = phone.countryCode;
         
         [self addPhonesObject:newPhone];
     }

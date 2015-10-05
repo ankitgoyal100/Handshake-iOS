@@ -47,6 +47,13 @@
 	<string>209231715947381</string>
 	<key>FacebookDisplayName</key>
 	<string>Handshake</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>twitter</string>
+		<string>fb</string>
+		<string>instagram</string>
+		<string>snapchat</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
